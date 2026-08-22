@@ -1,0 +1,3835 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+
+<style nonce="{{ csp_nonce }}">
+/* ═══ Model Master — Refined Design System ═══════════════════════════════ */
+:root {
+  --mm-teal:        #0d9488;
+  --mm-theme-teal:  #0f9d8f;
+  --mm-theme-teal-dark: #087f74;
+  --mm-theme-teal-soft: #e7f6f3;
+  --mm-danger:      #dc3545;
+  --mm-teal-dark:   #0f766e;
+  --mm-teal-xdark:  #134e4a;
+  --mm-teal-light:  #f0fdfa;
+  --mm-accent:      #2563eb;
+  --mm-soft:        #f8fafc;
+  --mm-bg:          #f8fafc;
+  --mm-card:        #ffffff;
+  --mm-border:      #e2e8f0;
+  --mm-text:        #0f172a;
+  --mm-muted:       #64748b;
+  --mm-label:       #475569;
+  --mm-input-h:     38px;
+  --mm-radius:      8px;
+  --mm-radius-lg:   12px;
+  --mm-focus-ring:  0 0 0 3px rgba(13,148,136,.15);
+  --mm-shadow:      inset 0 1px 2px rgba(0,0,0,.04);
+}
+/* ── Page frame ── */
+.model-master-frame {
+  background: var(--mm-card);
+  border-radius: 14px;
+  box-shadow: 0 14px 36px rgba(15,23,42,.08);
+  margin: 0 auto;
+  max-width: 1320px;
+  overflow: hidden;
+  border: 1px solid var(--mm-border);
+  height: calc(100vh - var(--top-header-height, 96px) - var(--ttt-footer-height, 32px));
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+body.dp-modelmaster-page-active {
+  overflow: hidden;
+}
+
+body.dp-modelmaster-page-active .main-panel,
+body.dp-modelmaster-page-active .content-wrapper {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.dp-modelmaster-main {
+  min-height: 0;
+}
+
+/* ── Header ── */
+.model-master-header {
+  background: linear-gradient(135deg, var(--mm-teal-dark) 0%, var(--mm-teal-xdark) 100%);
+  color: #fff;
+  padding: 16px 24px;
+  flex: 0 0 auto;
+}
+.model-master-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -.01em;
+}
+.view-data-btn {
+  background: rgba(255,255,255,.15) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.3) !important;
+  border-radius: 20px !important;
+  padding: 6px 18px !important;
+  font-size: .82rem !important;
+  font-weight: 600;
+  transition: background .2s;
+}
+.view-data-btn:hover {
+  background: rgba(255,255,255,.28) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.back-to-dashboard-btn {
+  background: rgba(255,255,255,.15) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.3) !important;
+  border-radius: 20px !important;
+  padding: 6px 14px !important;
+  font-size: .82rem !important;
+  font-weight: 600;
+  transition: background .2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.back-to-dashboard-btn:hover {
+  background: rgba(255,255,255,.28) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  color: #fff !important;
+}
+
+/* ── Content area ── */
+.model-master-content {
+  padding: 20px;
+  background: var(--mm-bg);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.model-master-content > .container-fluid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Tab navigation ── */
+.elegant-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  border-bottom: 2px solid var(--mm-border);
+  margin-bottom: 20px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  overflow-x: auto;
+  flex: 0 0 auto;
+}
+.elegant-tabs .nav-item { flex: 0 0 auto; margin: 0; }
+.elegant-tabs .nav-link {
+  border: 1.5px solid transparent;
+  background: transparent;
+  color: var(--mm-muted);
+  font-weight: 500;
+  font-size: .79rem;
+  padding: 8px 13px;
+  border-radius: 6px 6px 0 0;
+  transition: all .15s ease;
+  white-space: nowrap;
+  position: relative;
+  bottom: -2px;
+  display: block;
+}
+.elegant-tabs .nav-link:hover:not(.active) {
+  color: var(--mm-teal);
+  background: var(--mm-teal-light);
+  border-color: transparent;
+}
+.elegant-tabs .nav-link.active {
+  color: var(--mm-teal-dark);
+  background: var(--mm-card);
+  border-color: var(--mm-border);
+  border-bottom-color: var(--mm-card);
+  font-weight: 700;
+}
+
+/* ── Tab pane card ── */
+.tab-content-frame {
+  background: var(--mm-card);
+  border-radius: var(--mm-radius-lg);
+  border: 1px solid var(--mm-border);
+  padding: 20px;
+}
+
+#modelTabsContent {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#modelTabsContent > .tab-pane {
+  min-height: 0;
+  overflow: hidden;
+}
+
+#modelTabsContent > .tab-pane.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+}
+
+.model-image-management-frame {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.model-images-tab-pane.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.model-image-management-frame > .message-area {
+  flex: 0 0 auto;
+}
+
+/* ── Form grid ── */
+.mm-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px 18px;
+  align-items: start;
+}
+/* Bootstrap column overrides inside mm-form */
+.mm-form > [class*="col-"] {
+  padding: 0;
+  width: auto;
+  max-width: 100%;
+  flex: none;
+}
+.mm-form > .col-md-12,
+.mm-form > .col-12 {
+  grid-column: 1 / -1;
+}
+.mm-form > .submit-section,
+.mm-form > .d-flex {
+  grid-column: 1 / -1;
+}
+
+/* ── Labels (uniform uppercase small) ── */
+.mm-form label,
+.form-label {
+  display: block;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--mm-label);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+
+/* ── Uniform inputs & selects ── */
+.form-control,
+.form-select {
+  height: var(--mm-input-h) !important;
+  border: 1.5px solid var(--mm-border) !important;
+  border-radius: var(--mm-radius) !important;
+  padding: 0 12px !important;
+  font-size: .875rem !important;
+  color: var(--mm-text) !important;
+  background: #fdfdfe !important;
+  box-shadow: var(--mm-shadow) !important;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none !important;
+  width: 100%;
+}
+.form-control::placeholder { color: #b0bec5 !important; }
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--mm-teal) !important;
+  box-shadow: var(--mm-focus-ring) !important;
+  background: #fff !important;
+  transform: none !important;
+}
+select, select option { color: var(--mm-text) !important; }
+
+/* Multi-select */
+select[multiple].form-select {
+  height: auto !important;
+  padding: 8px 12px !important;
+  min-height: 90px;
+}
+.mm-native-image-select {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+/* File input */
+input[type="file"].form-control {
+  height: auto !important;
+  padding: 7px 12px !important;
+  cursor: pointer;
+}
+/* Textarea */
+textarea.form-control {
+  height: auto !important;
+  padding: 8px 12px !important;
+  resize: vertical;
+}
+/* Number spin */
+input[type="number"].form-control::-webkit-inner-spin-button,
+input[type="number"].form-control::-webkit-outer-spin-button { opacity: .5; }
+
+/* ── Checkboxes ── */
+.form-check-input {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--mm-border);
+  border-radius: 4px;
+  cursor: pointer;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.form-check-input:checked {
+  background-color: var(--mm-teal);
+  border-color: var(--mm-teal);
+}
+.form-check-label {
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--mm-text);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── Submit section ── */
+.submit-section {
+  padding: 4px 0 0;
+  text-align: left;
+  margin-top: 0;
+  grid-column: 1 / -1;
+}
+.btn-elegant-primary {
+  background: var(--mm-teal);
+  border: none;
+  color: #fff;
+  padding: 9px 28px;
+  border-radius: var(--mm-radius);
+  font-weight: 600;
+  font-size: .875rem;
+  transition: all .2s ease;
+  box-shadow: 0 2px 8px rgba(13,148,136,.25);
+  letter-spacing: .01em;
+}
+.btn-elegant-primary:hover {
+  background: var(--mm-teal-dark);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(13,148,136,.3);
+  transform: translateY(-1px);
+}
+
+/* ── Alerts/messages ── */
+.message-area { margin-bottom: 14px; }
+.alert {
+  border-radius: var(--mm-radius);
+  padding: 10px 14px;
+  font-size: .84rem;
+  font-weight: 500;
+  border: none;
+}
+.alert-success {
+  background: #f0fdf4;
+  color: #166534;
+  border-left: 3px solid #22c55e;
+}
+.alert-danger {
+  background: #fef2f2;
+  color: #991b1b;
+  border-left: 3px solid #ef4444;
+}
+
+/* ── TrayID management section ── */
+.mm-tray-add-section { margin-bottom: 20px; }
+.mm-section-title {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--mm-teal-dark);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 14px;
+}
+.mm-tray-add-bar {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.mm-tray-field { min-width: 130px; flex: 1 1 130px; }
+.mm-tray-field label {
+  display: block;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--mm-label);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+.mm-tray-btns { display: flex; gap: 8px; align-items: flex-end; }
+.mm-tray-btns .btn {
+  white-space: nowrap;
+  font-size: .82rem !important;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--mm-radius);
+}
+#trayid-preview-area { margin-top: 14px; }
+.mm-tray-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.mm-tray-list-header .mm-search-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.mm-tray-list-header .mm-search-wrap .form-control {
+  width: 200px !important;
+  height: 34px !important;
+  font-size: .82rem !important;
+  padding: 0 10px !important;
+}
+.mm-tray-list-header .mm-search-wrap .btn {
+  white-space: nowrap;
+  font-size: .8rem !important;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--mm-radius);
+}
+#trayid-table-container {
+  max-height: 350px;
+  overflow-y: auto;
+  border: 1px solid var(--mm-border);
+  border-radius: var(--mm-radius-lg);
+}
+#trayid-table-container .table { font-size: .82rem; margin: 0; }
+#trayid-table-container thead th {
+  position: sticky; top: 0; z-index: 1;
+  background: #f1f5f9;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: .71rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--mm-muted);
+  border-bottom: 1px solid var(--mm-border);
+}
+#trayid-table-container tbody td {
+  padding: 8px 14px;
+  vertical-align: middle;
+  border-color: var(--mm-border);
+}
+#trayid-undo-bar {
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--mm-radius);
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .model-master-content { padding: 14px; }
+  .tab-content-frame { padding: 16px; }
+  .mm-form { grid-template-columns: 1fr; }
+  .elegant-tabs .nav-link { font-size: .75rem; padding: 6px 10px; }
+}
+@media (max-width: 576px) {
+  .model-master-frame { margin: 8px; border-radius: 12px; }
+}
+/* ── Phase 2: Split-panel layout ── */
+.mm-tab-layout { display: grid; grid-template-columns: minmax(250px, 330px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.image-management-layout { flex: 1 1 auto; height: 100%; min-height: 0; overflow: hidden; display: grid; grid-template-columns: minmax(300px, 330px) minmax(0, 1fr); gap: 18px; align-items: stretch; }
+.image-upload-sidebar { height: 100%; min-width: 0; min-height: 0; overflow: hidden; }
+.upload-column-scroll { height: 100%; min-height: 0; overflow-y: auto !important; overflow-x: hidden; overscroll-behavior: contain; padding-right: 6px; padding-bottom: 56px; display: flex; flex-direction: column; gap: 16px; }
+.image-album-viewer { height: 100%; min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.album-column-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding-right: 6px; padding-bottom: 28px; }
+.album-type-switch { display: inline-flex; gap: 6px; background: #f8fafc; border: 1px solid var(--mm-border); border-radius: 8px; padding: 4px; }
+.album-switch-btn { border: none; border-radius: 6px; background: transparent; color: #64748b; font-size: .74rem; font-weight: 700; padding: 6px 10px; cursor: pointer; }
+.album-switch-btn.active { background: #fff; color: var(--mm-teal-dark); box-shadow: 0 1px 4px rgba(15,23,42,.08); }
+.mm-panel-stack { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.mm-form-panel { background: var(--mm-soft); border: 1px solid var(--mm-border); border-top: 3px solid var(--mm-teal); border-radius: var(--mm-radius-lg); padding: 16px 18px; }
+.mm-form-panel .mm-form { grid-template-columns: 1fr; }
+.mm-form-panel .submit-section { padding-top: 4px; }
+.mm-list-panel { background: #fff; border: 1px solid var(--mm-border); border-radius: var(--mm-radius-lg); padding: 14px 16px; min-height: 180px; max-height: min(430px, calc(100vh - 255px)); overflow: hidden; display: flex; flex-direction: column; }
+.image-management-layout .mm-form-panel { height: auto; padding: 14px 16px; }
+.upload-column-scroll > .mm-form-panel { flex: 0 0 auto; }
+.image-album-viewer .mm-list-panel { flex: 1 1 auto; min-height: 0; max-height: none; overflow: hidden; }
+.image-album-viewer > .mm-list-panel > .mm-list-header { flex: 0 0 auto; }
+#modelImageAlbumPanel,
+#versionImageAlbumPanel { min-height: 0; overflow: visible; flex-direction: column; }
+#modelImageAlbumPanel:not([hidden]),
+#versionImageAlbumPanel:not([hidden]) { display: flex; }
+#modelImageAlbumPanel > .mm-list-header,
+#versionImageAlbumPanel > .mm-list-header { flex: 0 0 auto; }
+#images-gallery { flex: 1 1 auto; min-height: 0; overflow: visible; padding-right: 0; padding-bottom: 0; }
+#versionAlbumGalleryView { flex: 1 1 auto; min-height: 0; overflow: visible; display: flex; flex-direction: column; }
+#versionAlbumInlineImageView { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.mm-panel-title { font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--mm-muted); margin-bottom: 0; }
+.mm-panel-title-border { border-bottom:1px solid var(--mm-border); padding-bottom:8px; margin-bottom:14px; }
+.mm-list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--mm-border); gap: 8px; }
+.mm-count-badge { font-size: .68rem !important; font-weight: 600; vertical-align: middle; margin-left: 4px; }
+/* ── Tag pills ── */
+.mm-tag-list { display: flex; flex-wrap: wrap; gap: 6px; max-height: 318px; overflow-y: auto; align-content: flex-start; padding-right: 4px; }
+.mm-tag { display: inline-flex; align-items: center; gap: 5px; background: #f8fafc; border: 1px solid var(--mm-border); border-radius: 6px; padding: 5px 10px; font-size: .8rem; font-weight: 500; color: var(--mm-text); transition: border-color .12s; }
+.mm-tag:hover { border-color: #94a3b8; }
+.mm-tag-del { background: none; border: none; padding: 0 0 0 3px; cursor: pointer; color: #cbd5e1; line-height: 1; transition: color .12s; font-size: .9rem; }
+.mm-tag-del:hover { color: #ef4444; }
+.mm-tag-sub { font-size: .72rem; font-weight: 400; color: var(--mm-muted); }
+.mm-tag-badge { font-size: .66rem; background: #f0fdfa; color: #0f766e; border-radius: 4px; padding: 1px 5px; font-weight: 700; border: 1px solid #99f6e4; }
+/* ── Image gallery ── */
+.mm-gallery { min-height: 315px; overflow: hidden; }
+.mm-album-shell { display: grid; grid-template-columns: minmax(145px, 185px) minmax(0, 1fr); gap: 14px; min-height: 315px; }
+.mm-album-rail { border-right: 1px solid var(--mm-border); padding-right: 10px; max-height: 350px; overflow-y: auto; }
+.mm-album-tab { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; border: 1px solid transparent; background: #f8fafc; color: #334155; border-radius: 7px; padding: 8px 10px; margin-bottom: 6px; font-size: .78rem; font-weight: 500; text-align: left; cursor: pointer; }
+.mm-album-tab.active { background: #ecfeff; border-color: #99f6e4; color: #0f766e; }
+.mm-album-count { color: #64748b; font-size: .68rem; font-weight: 600; }
+.mm-album-stage { min-width: 0; display: grid; grid-template-rows: auto minmax(210px, 1fr) auto; gap: 9px; }
+.mm-album-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #334155; font-size: .78rem; }
+.mm-album-model { font-weight: 650; color: #0f172a; }
+.mm-album-position { color: var(--mm-muted); font-size: .72rem; }
+.mm-album-preview { position: relative; min-height: 230px; border: 1px solid var(--mm-border); border-radius: 10px; background: linear-gradient(180deg, #fff 0%, #f8fafc 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.mm-album-preview img { max-width: 100%; max-height: 245px; object-fit: contain; display: block; }
+.mm-album-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 1px solid rgba(15,23,42,.12); border-radius: 50%; background: rgba(255,255,255,.92); color: #0f172a; font-size: 1.25rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(15,23,42,.12); }
+.mm-album-nav:hover { background: #fff; border-color: var(--mm-teal); color: var(--mm-teal-dark); }
+.mm-album-prev { left: 10px; }
+.mm-album-next { right: 10px; }
+.mm-album-delete { position: absolute; top: 10px; right: 10px; background: rgba(220,38,38,.92); color: #fff; border: none; border-radius: 6px; padding: 4px 9px; font-size: .72rem; font-weight: 600; cursor: pointer; }
+.mm-album-caption { color: var(--mm-muted); font-size: .72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mm-album-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+.mm-album-thumb { width: 58px; height: 58px; flex: 0 0 auto; border: 2px solid transparent; border-radius: 7px; padding: 2px; background: #f8fafc; cursor: pointer; }
+.mm-album-thumb.active { border-color: var(--mm-teal); background: #ecfeff; }
+.mm-album-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.version-image-card { border-top-color: var(--mm-teal); }
+.version-image-upload-card { padding: 16px; border-radius: 12px; height: auto !important; min-height: 0 !important; overflow: visible; flex: 0 0 auto; border-top: 3px solid var(--mm-theme-teal) !important; }
+.version-image-upload-card .mm-form { gap: 10px; }
+.version-image-upload-card .form-label { margin-bottom: 4px; font-size: 12px; }
+.version-image-upload-card input[type="text"],
+.version-image-upload-card input[type="number"],
+.version-image-upload-card input[type="file"],
+.version-image-upload-card select { min-height: 34px; padding-top: 5px; padding-bottom: 5px; }
+.version-image-upload-card input:focus,
+.version-image-upload-card select:focus {
+  border-color: var(--mm-theme-teal) !important;
+  box-shadow: 0 0 0 3px rgba(15, 157, 143, 0.12) !important;
+}
+.version-image-upload-card .help-text { display: block; margin: 4px 0 8px; font-size: 11px; line-height: 1.3; }
+.version-image-upload-card .submit-section { padding-top: 0; }
+.version-image-upload-card button { margin-top: 4px; }
+.version-select-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; }
+.version-info-toggle-btn { border: 1px solid var(--mm-theme-teal); border-radius: 8px; background: #f8fafc; color: var(--mm-theme-teal-dark); font-size: 12px; font-weight: 700; min-height: 34px; padding: 6px 12px; }
+.version-info-toggle-btn:hover,
+.version-info-toggle-btn[aria-expanded="true"] { border-color: var(--mm-theme-teal); color: #fff; background: var(--mm-theme-teal); }
+.version-config-message { display: block; min-height: 14px; margin-top: 4px; color: var(--mm-muted); font-size: 11px; line-height: 1.25; }
+.version-info-state { display: block; min-height: 14px; margin-top: 4px; color: #166534; font-size: 11px; font-weight: 700; line-height: 1.25; }
+.version-info-modal .modal-content { border: 0; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 55px rgba(0, 0, 0, 0.22); }
+.version-info-dialog { max-width: 680px; }
+.version-info-modal .modal-header { padding: 20px 24px; border-bottom: 1px solid #e5eceb; background: linear-gradient(135deg, rgba(8, 129, 120, 0.10), rgba(255, 255, 255, 1)); }
+.version-info-modal .modal-title { margin: 0; font-weight: 700; color: #164e49; }
+.version-info-context-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 4px 9px; border-radius: 999px; background: var(--mm-theme-teal-soft); color: var(--mm-theme-teal-dark); font-size: 12px; font-weight: 600; }
+.version-info-modal .modal-body { max-height: min(62vh, 560px); overflow-y: auto; overscroll-behavior: contain; padding: 22px 24px; }
+.version-info-modal-fields,
+.version-info-fields-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.version-info-field-full { grid-column: 1 / -1; }
+.version-info-modal .form-label { margin-bottom: 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.03em; color: #475569; text-transform: uppercase; }
+.version-info-modal .form-control,
+.version-info-modal .form-select { min-height: 42px !important; border-radius: 9px !important; border: 1px solid #d9e2e1 !important; background: #fff !important; }
+.version-info-modal .form-control:focus,
+.version-info-modal .form-select:focus { border-color: var(--mm-theme-teal) !important; box-shadow: 0 0 0 3px rgba(15, 157, 143, 0.13) !important; }
+.version-info-modal .modal-footer { padding: 16px 24px 20px; border-top: 1px solid #e8eeee; background: #fbfdfd; }
+.version-info-save-btn { min-width: 125px; border: 0; border-radius: 9px; background: var(--mm-theme-teal); color: #fff; font-weight: 700; box-shadow: 0 5px 12px rgba(7, 152, 139, 0.22); }
+.version-info-save-btn:hover { background: var(--mm-theme-teal-dark); color: #fff; }
+.version-info-close-btn { min-width: 95px; border: 1px solid var(--mm-danger); border-radius: 9px; background: #fff; color: var(--mm-danger); font-weight: 700; }
+.version-info-close-btn:hover { background: var(--mm-danger); color: #fff; }
+.version-info-modal .btn-close:hover { filter: invert(28%) sepia(96%) saturate(3221%) hue-rotate(340deg) brightness(91%); }
+.version-info-validation { min-height: 18px; margin-top: 8px; color: #991b1b; font-size: 12px; font-weight: 700; }
+.version-image-album-list { flex: 1 1 auto; min-height: 0; display: grid; align-content: start; gap: 10px; overflow: visible; padding-right: 0; padding-bottom: 0; }
+.version-image-album-card { border: 1px solid var(--mm-border); border-radius: 10px; background: #fff; padding: 12px; }
+.version-image-thumbs { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 2px; }
+.version-image-thumb,
+.version-image-inline-view-trigger { width: 118px; height: 86px; flex: 0 0 auto; border: 1px solid var(--mm-border); border-radius: 8px; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0; cursor: zoom-in; }
+.version-image-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.version-image-inline-view-trigger img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.version-image-meta { min-width: 0; }
+.version-image-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.version-image-model { color: var(--mm-text); font-size: .86rem; font-weight: 700; }
+.version-image-status { font-size: .65rem; font-weight: 700; border-radius: 999px; padding: 2px 7px; background: #dcfce7; color: #166534; white-space: nowrap; }
+.version-image-name { color: #334155; font-size: .8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.version-image-updated { color: var(--mm-muted); font-size: .7rem; margin-top: 3px; }
+.version-image-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.version-image-actions .versionComparisonInfoBtn { border-color: var(--mm-theme-teal); color: var(--mm-theme-teal-dark); font-weight: 700; }
+.version-image-actions .versionComparisonInfoBtn:hover { background: var(--mm-theme-teal); border-color: var(--mm-theme-teal); color: #fff; }
+.version-inline-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+#versionAlbumInlineZoomLabel { min-width: 52px; text-align: center; font-weight: 700; }
+#versionAlbumInlineImageViewport { height: 420px; overflow: auto; background: #111; display: flex; align-items: center; justify-content: center; overscroll-behavior: contain; border-radius: 8px; }
+#versionAlbumInlineImage { max-width: 100%; max-height: 100%; transform-origin: center center; transition: transform .15s ease; }
+@media (max-width: 991px) {
+  .image-management-layout { grid-template-columns: 1fr; }
+  .model-master-frame { height: auto; min-height: calc(100vh - var(--top-header-height, 96px) - var(--ttt-footer-height, 32px) - 16px); }
+  .model-master-content { overflow: visible; }
+  .model-master-content > .container-fluid,
+  #modelTabsContent { overflow: visible; }
+  body.dp-modelmaster-page-active { overflow: auto; }
+  body.dp-modelmaster-page-active .main-panel,
+  body.dp-modelmaster-page-active .content-wrapper { overflow: visible !important; }
+  .image-upload-sidebar,
+  .upload-column-scroll,
+  .image-album-viewer,
+  .album-column-scroll { height: auto; overflow: visible; }
+}
+@media (max-width: 640px) {
+  .version-info-modal-fields,
+  .version-info-fields-grid { grid-template-columns: 1fr; }
+}
+/* ── Empty/loading states ── */
+.mm-list-empty { text-align: center; padding: 24px 12px; color: #94a3b8; font-size: .83rem; display: block; }
+/* ── Model master compact table ── */
+.mm-master-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.mm-master-table th { background: #f8fafc; font-weight: 600; color: var(--mm-muted); text-transform: uppercase; font-size: .68rem; letter-spacing: .05em; padding: 8px 10px; border-bottom: 2px solid var(--mm-border); white-space: nowrap; }
+.mm-master-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; color: var(--mm-text); }
+.mm-master-table tr:hover td { background: #fafcff; }
+.mm-table-scroll { max-height: 335px; overflow: auto; border: 1px solid #f1f5f9; border-radius: var(--mm-radius); }
+.mm-table-scroll .mm-master-table th { position: sticky; top: 0; z-index: 1; }
+
+/* ── Model Master workspace ── */
+.mm-model-workspace { display: grid; grid-template-columns: minmax(420px, .95fr) minmax(440px, 1.05fr); gap: 18px; align-items: start; }
+.mm-model-frame { padding: 18px; }
+.mm-model-form-panel { max-height: min(650px, calc(100vh - 230px)); overflow-y: auto; }
+.mm-model-list-panel { max-height: min(520px, calc(100vh - 230px)); }
+.mm-model-form-panel .mm-form { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+.mm-model-form-panel .mm-image-field,
+.mm-model-form-panel .submit-section { grid-column: 1 / -1; }
+.mm-image-picker { border: 1px solid var(--mm-border); border-radius: var(--mm-radius); background: #fff; padding: 12px; min-height: 166px; }
+.mm-picker-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.mm-picker-title { color: #334155; font-size: .74rem; font-weight: 600; }
+.mm-picker-clear { border: 1px solid var(--mm-border); background: #fff; color: var(--mm-muted); border-radius: 6px; padding: 4px 8px; font-size: .7rem; font-weight: 600; cursor: pointer; }
+.mm-picker-clear:hover { color: #dc2626; border-color: #fecaca; }
+.mm-picker-browser { display: grid; grid-template-columns: 34px minmax(0, 1fr) 34px; gap: 9px; align-items: stretch; }
+.mm-picker-nav { width: 34px; height: 34px; border: 1px solid var(--mm-border); background: #fff; color: #334155; border-radius: 50%; font-size: 1rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.mm-picker-nav:hover { border-color: var(--mm-teal); color: var(--mm-teal-dark); }
+.mm-picker-album-card { min-width: 0; border: 1px solid #e8eef5; border-radius: 10px; background: #f8fafc; padding: 10px; }
+.mm-picker-album-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+.mm-picker-album-name { min-width: 0; color: #0f172a; font-size: .78rem; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mm-picker-album-meta { color: var(--mm-muted); font-size: .7rem; white-space: nowrap; }
+.mm-picker-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px; max-height: 166px; overflow-y: auto; padding-right: 3px; }
+.mm-picker-image-card { border: 1px solid var(--mm-border); background: #fff; border-radius: 8px; padding: 6px; cursor: pointer; position: relative; text-align: left; min-width: 0; }
+.mm-picker-image-card:hover { border-color: #99f6e4; box-shadow: 0 2px 9px rgba(15,23,42,.08); }
+.mm-picker-image-card.selected { border-color: var(--mm-teal); background: #ecfeff; }
+.mm-picker-image-card.selected::after { content: 'Selected'; position: absolute; top: 5px; right: 5px; background: var(--mm-teal); color: #fff; border-radius: 999px; padding: 1px 6px; font-size: .58rem; font-weight: 700; }
+.mm-picker-image-card img { width: 100%; height: 54px; object-fit: contain; display: block; margin-bottom: 5px; }
+.mm-picker-image-card.is-missing { display: flex; align-items: center; justify-content: center; min-height: 88px; color: #64748b; font-size: .68rem; background: #f8fafc; }
+.mm-picker-image-name { color: #334155; font-size: .68rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1050px) { .mm-model-workspace { grid-template-columns: 1fr; } .mm-model-form-panel, .mm-model-list-panel { max-height: none; } }
+@media (max-width: 900px) { .mm-tab-layout { grid-template-columns: 1fr; } .mm-list-panel { max-height: 420px; } .mm-album-shell { grid-template-columns: 1fr; } .mm-album-rail { border-right: 0; border-bottom: 1px solid var(--mm-border); padding-right: 0; padding-bottom: 8px; max-height: 120px; } }
+@media (max-width: 640px) { .mm-model-form-panel .mm-form { grid-template-columns: 1fr; } .mm-picker-browser { grid-template-columns: 1fr; } .mm-picker-nav { width: 100%; border-radius: 7px; } }
+</style>
+
+<div class="model-master-frame dp-modelmaster-main">
+  <div class="model-master-header dp-modelmaster-titlebar d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center" style="gap:14px;">
+      <a href="{% url 'index' %}" class="btn back-to-dashboard-btn" title="Back to Dashboard"><i class="fa fa-arrow-left"></i> Back</a>
+      <h3>Model Master Management System</h3>
+    </div>
+    <a href="{% url 'view_master' %}" class="btn view-data-btn">View Masters</a>
+  </div>
+
+  <div class="model-master-content">
+    <div class="container-fluid p-0">
+      <ul class="nav nav-tabs elegant-tabs dp-modelmaster-tabs" id="modelTabs" role="tablist">
+        <!-- Polish Finish Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="polish-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#polish"
+            type="button"
+            role="tab"
+            aria-controls="polish"
+            aria-selected="false"
+          >
+            Polish Finish
+          </button>
+        </li>
+        <!-- Plating Color Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="plating-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#plating"
+            type="button"
+            role="tab"
+            aria-controls="plating"
+            aria-selected="false"
+          >
+            Plating Colors
+          </button>
+        </li>
+        <!-- Tray Type Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="tray-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#tray"
+            type="button"
+            role="tab"
+            aria-controls="tray"
+            aria-selected="false"
+          >
+            Tray Types
+          </button>
+        </li>
+        <!-- Model Images Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="images-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#images"
+            type="button"
+            role="tab"
+            aria-controls="images"
+            aria-selected="false"
+          >
+            Model Images
+          </button>
+        </li>
+        <!-- Category Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="category-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#category-tab-pane" 
+            type="button"
+            role="tab"
+            aria-controls="category"
+            aria-selected="false"
+          >
+            Category
+          </button>
+        </li>
+        <!-- Location Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="location-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#location"
+            type="button"
+            role="tab"
+            aria-controls="location"
+            aria-selected="false"
+          >
+            Location
+          </button>
+        </li>
+        <!-- TrayId Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="trayid-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#trayid"
+            type="button"
+            role="tab"
+            aria-controls="trayid"
+            aria-selected="false"
+          >
+            Tray ID
+          </button>
+        </li>
+
+        <!-- IP Rejection Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="iprejection-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#iprejection"
+            type="button"
+            role="tab"
+            aria-controls="iprejection"
+            aria-selected="false"
+          >
+            IP Rejection
+          </button>
+        </li>
+                <!-- BRASS/IQF Rejection Master -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="brassiqf-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#brassiqf"
+            type="button"
+            role="tab"
+            aria-controls="brassiqf"
+            aria-selected="false"
+          >
+            BQ/BA/IQF Rejection
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="nickelrejection-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#nickelrejection"
+            type="button"
+            role="tab"
+            aria-controls="nickelrejection"
+            aria-selected="false"
+          >
+            NQ/NA Rejection
+          </button>
+        </li>
+        <!-- Model Master Tab -->
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="model-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#model"
+            type="button"
+            role="tab"
+            aria-controls="model"
+            aria-selected="true"
+          >
+            Model Master
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content mt-3 dp-modelmaster-tab-content" id="modelTabsContent">
+        
+        <!-- 1. Model Master -->
+        <div class="tab-pane fade show active" id="model" role="tabpanel" aria-labelledby="model-tab">
+          <div class="tab-content-frame mm-model-frame">
+            <!-- Model Master message area -->
+            <div id="model-message-area" class="message-area"></div>
+            <div class="mm-model-workspace">
+              <section class="mm-form-panel mm-model-form-panel">
+                <p class="mm-panel-title mm-panel-title-border">Add Model Master</p>
+                <form class="mm-form" id="model-master-form">
+                  {% csrf_token %}
+                  <!-- Model No -->
+                  <div class="col-md-6">
+                    <label for="model_no" class="form-label">Model No</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="model_no"
+                      name="model_no"
+                      placeholder="Enter model number"
+                      required
+                    />
+                  </div>
+
+                  <!-- Polish Finish -->
+                  <div class="col-md-6">
+                    <label for="polish_finish" class="form-label">Polish Finish</label>
+                    <select class="form-select" id="polish_finish" name="polish_finish">
+                      <option value="">Select Polish Finish</option>
+                    </select>
+                  </div>
+
+                  <!-- EP Bath Type -->
+                  <div class="col-md-6">
+                    <label for="ep_bath_type" class="form-label">EP Bath Type</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="ep_bath_type"
+                      name="ep_bath_type"
+                      placeholder="Enter EP Bath Type"
+                      required
+                    />
+                  </div>
+
+                  <!-- Tray Type -->
+                  <div class="col-md-6">
+                    <label for="tray_type" class="form-label">Tray Type</label>
+                    <select class="form-select" id="tray_type" name="tray_type">
+                      <option value="">Select Tray Type</option>
+                    </select>
+                  </div>
+
+                  <!-- Tray Capacity -->
+                  <div class="col-md-6">
+                    <label for="tray_capacity" class="form-label">Tray Capacity</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="tray_capacity"
+                      name="tray_capacity"
+                      placeholder="Auto-filled from tray type"
+                      min="1"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="version" class="form-label">Version</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="version"
+                      name="version"
+                      placeholder="Enter version"
+                      required
+                    />
+                  </div>
+
+                  <!-- Images -->
+                  <div class="col-md-12 mm-image-field">
+                    <label for="model_images" class="form-label">Images</label>
+                    <select class="form-select mm-native-image-select" id="model_images" name="model_images" multiple aria-hidden="true" tabindex="-1">
+                      <option value="">Select Images</option>
+                    </select>
+                    <div id="model-image-picker" class="mm-image-picker">
+                      <span class="mm-list-empty">Loading image albums...</span>
+                    </div>
+                  </div>
+
+                  <!-- Source Name (Location Dropdown) -->
+                  <div class="col-md-6" style="display: none;">
+                    <label for="source_name" class="form-label">Source</label>
+                    <select class="form-select" id="source_name" name="source_name">
+                      <option value="">Select Source</option>
+                    </select>
+                  </div>
+
+                  <!-- Category Dropdown -->
+                  <div class="col-md-6" style="display: none;">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                      <option value="">Select Category</option>
+                    </select>
+                  </div>
+
+                  <!-- Submit Section -->
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save Model Master</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="mm-list-panel mm-model-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing Model Masters <span id="model-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="model-refresh-btn">↺ Refresh</button>
+                </div>
+                <div class="mm-table-scroll">
+                  <table class="mm-master-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Model No</th>
+                        <th>Polish Finish</th>
+                        <th>EP Bath Type</th>
+                        <th>Tray Type</th>
+                        <th>Version</th>
+                        <th style="text-align:center;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="model-list-body">
+                      <tr><td colspan="7" class="mm-list-empty">Loading...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Polish Finish Type -->
+        <div class="tab-pane fade" id="polish" role="tabpanel" aria-labelledby="polish-tab">
+          <div class="tab-content-frame">
+            <div id="polish-message-area" class="message-area"></div>
+            <div class="mm-tab-layout">
+              <div class="mm-form-panel">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Add New Polish Finish</p>
+                <form class="mm-form" id="polish-form">
+                  {% csrf_token %}
+                  <div>
+                    <label for="polish_finish_name" class="form-label">Polish Finish Name</label>
+                    <input type="text" class="form-control" id="polish_finish_name" name="polish_finish" placeholder="e.g. Matte" required />
+                  </div>
+                  <div>
+                    <label for="polish_internal" class="form-label">Internal Code</label>
+                    <input type="text" class="form-control" id="polish_internal" name="polish_internal" placeholder="e.g. MT" required />
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save Polish Finish</button>
+                  </div>
+                </form>
+              </div>
+              <div class="mm-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing Polish Finishes <span id="polish-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="polish-refresh-btn">↺ Refresh</button>
+                </div>
+                <div id="polish-tag-list" class="mm-tag-list"><span class="mm-list-empty">Loading…</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Plating Colors -->
+        <div class="tab-pane fade" id="plating" role="tabpanel" aria-labelledby="plating-tab">
+          <div class="tab-content-frame">
+            <div id="plating-message-area" class="message-area"></div>
+            <div class="mm-tab-layout">
+              <div class="mm-form-panel">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Add New Plating Color</p>
+                <form class="mm-form" id="plating-form">
+                  {% csrf_token %}
+                  <div>
+                    <label for="plating_color" class="form-label">Plating Color</label>
+                    <input type="text" class="form-control" id="plating_color" name="plating_color" placeholder="e.g. Gold" required />
+                  </div>
+                  <div>
+                    <label for="plating_internal" class="form-label">Internal Code</label>
+                    <input type="text" class="form-control" id="plating_internal" name="plating_color_internal" placeholder="e.g. GD" maxlength="10" />
+                  </div>
+                  <div style="display:flex;gap:20px;align-items:center;">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="jig_unload_zone_1" name="jig_unload_zone_1" />
+                      <label class="form-check-label" for="jig_unload_zone_1">Jig Unload Zone 1</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="jig_unload_zone_2" name="jig_unload_zone_2" />
+                      <label class="form-check-label" for="jig_unload_zone_2">Jig Unload Zone 2</label>
+                    </div>
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save Plating Color</button>
+                  </div>
+                </form>
+              </div>
+              <div class="mm-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing Plating Colors <span id="plating-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="plating-refresh-btn">↺ Refresh</button>
+                </div>
+                <div id="plating-tag-list" class="mm-tag-list"><span class="mm-list-empty">Loading…</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Tray Types -->
+        <div class="tab-pane fade" id="tray" role="tabpanel" aria-labelledby="tray-tab">
+          <div class="tab-content-frame">
+            <div id="tray-message-area" class="message-area"></div>
+            <div class="mm-tab-layout">
+              <div class="mm-form-panel">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Add New Tray Type</p>
+                <form class="mm-form" id="tray-form">
+                  {% csrf_token %}
+                  <div>
+                    <label for="tray_type_name" class="form-label">Tray Type Name</label>
+                    <input type="text" class="form-control" id="tray_type_name" name="tray_type" placeholder="e.g. JB-A" required />
+                  </div>
+                  <div>
+                    <label for="tray_capacity_value" class="form-label">Capacity (pcs)</label>
+                    <input type="number" class="form-control" id="tray_capacity_value" name="tray_capacity" placeholder="e.g. 60" min="1" required />
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save Tray Type</button>
+                  </div>
+                </form>
+              </div>
+              <div class="mm-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing Tray Types <span id="tray-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="tray-refresh-btn">↺ Refresh</button>
+                </div>
+                <div id="tray-tag-list" class="mm-tag-list"><span class="mm-list-empty">Loading…</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Model Images -->
+        <div class="tab-pane fade model-images-tab-pane" id="images" role="tabpanel" aria-labelledby="images-tab">
+          <div class="tab-content-frame model-image-management-frame">
+            <div id="images-message-area" class="message-area"></div>
+            <div class="image-management-layout model-image-management-layout">
+              <div class="image-upload-sidebar">
+                <div class="upload-column-scroll">
+                <div class="mm-form-panel model-upload-card">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Upload Model Image</p>
+                <form class="mm-form" id="images-form" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div>
+                    <label for="model_images_upload" class="form-label">Select Images</label>
+                    <input type="file" class="form-control" id="model_images_upload" name="images" multiple accept="image/jpeg,image/png,image/gif,.jpg,.jpeg,.png,.gif" required />
+                    <small class="text-muted" style="font-size:.78rem;">JPG, JPEG, PNG, GIF &mdash; hold Ctrl to select multiple.</small>
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Upload Images</button>
+                  </div>
+                </form>
+                </div>
+              <div class="mm-form-panel version-upload-card version-image-card version-image-upload-card">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Upload Version Image</p>
+                <form class="mm-form" id="versionComparisonUploadForm" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div>
+                    <label for="versionComparisonBaseModelNumber" class="form-label">Base Model Number</label>
+                    <input type="text" class="form-control" id="versionComparisonBaseModelNumber" name="model_number" placeholder="Example: 2617" autocomplete="off" required />
+                  </div>
+                  <div>
+                    <label for="versionComparisonVersion" class="form-label">Version</label>
+                    <div class="version-select-row">
+                      <select class="form-control" id="versionComparisonVersion" name="version" disabled required>
+                        <option value="">Select model first</option>
+                      </select>
+                      <button type="button" id="toggleVersionInfoBtn" class="version-info-toggle-btn" aria-haspopup="dialog">Info</button>
+                    </div>
+                    <small id="versionComparisonModelMessage" class="version-config-message">Select a configured model to choose a version.</small>
+                    <small id="versionInfoStateMessage" class="version-info-state"></small>
+                  </div>
+                  <div>
+                    <label for="versionComparisonImageInput" class="form-label">Select Version Images</label>
+                    <input type="file" class="form-control" id="versionComparisonImageInput" name="comparison_images" accept="image/png,image/jpeg,image/webp" multiple required />
+                    <small class="text-muted help-text">PNG, JPG, JPEG or WEBP. Hold Ctrl to select multiple.</small>
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary" id="versionComparisonUploadBtn">Upload Version Images</button>
+                  </div>
+                </form>
+                <div id="versionComparisonUploadStatus" class="message-area" style="margin-top:12px;margin-bottom:0;"></div>
+              </div>
+                </div>
+              </div>
+              <div class="image-album-viewer">
+                <div class="mm-list-panel">
+                  <div class="mm-list-header album-toolbar">
+                    <div class="album-type-switch" role="group" aria-label="Image album type">
+                      <button type="button" id="showModelImageAlbumsBtn" class="album-switch-btn active">Model Image Albums</button>
+                      <button type="button" id="showVersionImageAlbumsBtn" class="album-switch-btn">Version Image Albums</button>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="images-refresh-btn">↺ Refresh</button>
+                  </div>
+                  <div class="album-column-scroll">
+                  <div id="modelImageAlbumPanel">
+                    <div class="mm-list-header">
+                      <p class="mm-panel-title">Image Albums <span id="images-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                    </div>
+                    <div id="images-gallery" class="mm-gallery"><span class="mm-list-empty">Loading…</span></div>
+                  </div>
+                  <div id="versionImageAlbumPanel" hidden>
+                  <div class="mm-list-header">
+                    <p class="mm-panel-title">Version Image Albums <span id="versionComparisonCountBadge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  </div>
+                  <div id="versionAlbumGalleryView">
+                  <div id="versionComparisonGallery" class="version-image-album-list"><span class="mm-list-empty">Loading…</span></div>
+                  </div>
+                  <div id="versionAlbumInlineImageView" hidden>
+                    <div class="version-inline-toolbar">
+                      <button type="button" class="btn btn-outline-secondary btn-sm" id="versionAlbumInlineBackBtn">Back to Images</button>
+                      <button type="button" class="btn btn-outline-secondary btn-sm" id="versionAlbumInlineZoomOutBtn">-</button>
+                      <span id="versionAlbumInlineZoomLabel">100%</span>
+                      <button type="button" class="btn btn-outline-secondary btn-sm" id="versionAlbumInlineZoomInBtn">+</button>
+                      <button type="button" class="btn btn-outline-secondary btn-sm" id="versionAlbumInlineResetBtn">Reset</button>
+                    </div>
+                    <div id="versionAlbumInlineImageViewport">
+                      <img id="versionAlbumInlineImage" src="" alt="Version image preview">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+
+        <!-- 6. Category -->
+        <div class="tab-pane fade" id="category-tab-pane" role="tabpanel" aria-labelledby="category-tab">
+          <div class="tab-content-frame">
+            <div id="category-message-area" class="message-area"></div>
+            <div class="mm-tab-layout">
+              <div class="mm-form-panel">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Add New Category</p>
+                <form class="mm-form" id="category-form" method="post" action="">
+                  {% csrf_token %}
+                  <div>
+                    <label for="category_name" class="form-label">Category Name</label>
+                    <input type="text" class="form-control" id="category_name" name="category_name" placeholder="e.g. Jumbo" required />
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save Category</button>
+                  </div>
+                </form>
+              </div>
+              <div class="mm-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing Categories <span id="category-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="category-refresh-btn">↺ Refresh</button>
+                </div>
+                <div id="category-tag-list" class="mm-tag-list"><span class="mm-list-empty">Loading…</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Location -->
+        <div class="tab-pane fade" id="location" role="tabpanel" aria-labelledby="location-tab">
+          <div class="tab-content-frame">
+            <div id="location-message-area" class="message-area"></div>
+            <div class="mm-tab-layout">
+              <div class="mm-form-panel">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Add New Location</p>
+                <form class="mm-form" id="location-form">
+                  {% csrf_token %}
+                  <div>
+                    <label for="location_name" class="form-label">Location Name</label>
+                    <input type="text" class="form-control" id="location_name" name="location_name" placeholder="e.g. Warehouse A" required />
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save Location</button>
+                  </div>
+                </form>
+              </div>
+              <div class="mm-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing Locations <span id="location-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="location-refresh-btn">↺ Refresh</button>
+                </div>
+                <div id="location-tag-list" class="mm-tag-list"><span class="mm-list-empty">Loading…</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. TrayId -->
+        <div class="tab-pane fade" id="trayid" role="tabpanel" aria-labelledby="trayid-tab">
+          <div class="tab-content-frame">
+            <!-- TrayId message area -->
+            <div id="trayid-message-area" class="message-area"></div>
+
+            <!-- Add Tray IDs Section -->
+            <div class="mm-tray-add-section">
+              <p class="mm-section-title">Add Tray IDs</p>
+              <div class="mm-tray-add-bar">
+                <div class="mm-tray-field">
+                  <label for="trayid_tray_type_select">Tray Type</label>
+                  <select class="form-select" id="trayid_tray_type_select" required>
+                    <option value="">Select type</option>
+                    <option value="JB-A">JB-A (Jumbo)</option>
+                    <option value="JR-A">JR-A (Jumbo R)</option>
+                    <option value="JD-A">JD-A (Jumbo D)</option>
+                    <option value="JL-A">JL-A (Jumbo L)</option>
+                    <option value="NB-A">NB-A (Normal)</option>
+                    <option value="NR-A">NR-A (Normal R)</option>
+                    <option value="ND-A">ND-A (Normal D)</option>
+                    <option value="NL-A">NL-A (Normal L)</option>
+                  </select>
+                </div>
+                <div class="mm-tray-field">
+                  <label for="trayid_start_number">Start No</label>
+                  <input type="number" class="form-control" id="trayid_start_number" placeholder="e.g. 1" min="0" required />
+                </div>
+                <div class="mm-tray-field">
+                  <label for="trayid_end_number">End No</label>
+                  <input type="number" class="form-control" id="trayid_end_number" placeholder="e.g. 50" min="0" required />
+                </div>
+                <div class="mm-tray-btns">
+                  <button type="button" class="btn btn-outline-secondary" id="trayid-preview-btn">Generate Preview</button>
+                  <button type="button" class="btn btn-elegant-primary" id="trayid-add-btn">Add Trays</button>
+                </div>
+              </div>
+
+              <div id="trayid-preview-area" style="display:none;">
+                <label class="form-label" for="trayid_preview_text">Preview (editable)</label>
+                <textarea class="form-control" id="trayid_preview_text" rows="3"
+                  style="font-family:monospace;"
+                  placeholder="Tray IDs will appear here..."></textarea>
+                <small class="text-muted">One tray ID per line. Edit or remove before saving.</small>
+              </div>
+            </div>
+
+            <hr style="border-color:var(--mm-border);margin:20px 0;">
+
+            <!-- Tray ID List Section -->
+            <div class="mm-tray-list-header">
+              <p class="mm-section-title" style="margin-bottom:0;">
+                Existing Tray IDs
+                <span id="trayid-total-badge" class="badge bg-secondary" style="font-size:.75rem;vertical-align:middle;margin-left:6px;">0</span>
+              </p>
+              <div class="mm-search-wrap">
+                <input type="text" class="form-control" id="trayid-search-input" placeholder="Search tray ID..." />
+                <button type="button" class="btn btn-outline-info btn-sm" id="trayid-refresh-btn">Refresh</button>
+                <button type="button" class="btn btn-outline-danger btn-sm" id="trayid-delete-all-btn">Delete All</button>
+              </div>
+            </div>
+
+            <div id="trayid-table-container">
+              <table class="table table-hover table-sm mb-0">
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th>Tray ID</th>
+                    <th>Type</th>
+                    <th>Capacity</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th style="text-align:center;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="trayid-table-body">
+                  <tr><td colspan="7" style="text-align:center;padding:20px;color:#9ca3af;">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="trayid-undo-bar">
+              <span id="trayid-undo-msg" style="font-weight:600;color:#92400e;font-size:.85rem;"></span>
+              <div style="display:flex;gap:8px;">
+                <button type="button" class="btn btn-warning btn-sm" id="trayid-undo-btn">Undo</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="trayid-undo-dismiss">Dismiss</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. IP Rejection -->
+        <div class="tab-pane fade" id="iprejection" role="tabpanel" aria-labelledby="iprejection-tab">
+          <div class="tab-content-frame">
+            <div id="iprejection-message-area" class="message-area"></div>
+            <div class="mm-tab-layout">
+              <div class="mm-form-panel">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Add IP Rejection Reason</p>
+                <form class="mm-form" id="iprejection-form">
+                  {% csrf_token %}
+                  <div>
+                    <label for="iprejection_reason" class="form-label">Rejection Reason</label>
+                    <input type="text" class="form-control" id="iprejection_reason" name="rejection_reason" placeholder="e.g. Burr on surface" required />
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save IP Rejection</button>
+                  </div>
+                </form>
+              </div>
+              <div class="mm-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing IP Rejection Reasons <span id="iprejection-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="iprejection-refresh-btn">↺ Refresh</button>
+                </div>
+                <div id="iprejection-tag-list" class="mm-tag-list"><span class="mm-list-empty">Loading…</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+                <!-- 10. BRASS/IQF Rejection -->
+        <div class="tab-pane fade" id="brassiqf" role="tabpanel" aria-labelledby="brassiqf-tab">
+          <div class="tab-content-frame">
+            <div id="brassiqf-message-area" class="message-area"></div>
+            <div class="mm-tab-layout">
+              <div class="mm-form-panel">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Add BQ/BA/IQF Rejection Reason</p>
+                <form class="mm-form" id="brassiqf-form">
+                  {% csrf_token %}
+                  <div>
+                    <label for="brassiqf_reason" class="form-label">Rejection Reason</label>
+                    <input type="text" class="form-control" id="brassiqf_reason" name="rejection_reason" placeholder="e.g. Dimensional out of spec" required />
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save BQ/BA/IQF Rejection</button>
+                  </div>
+                </form>
+              </div>
+              <div class="mm-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing BQ/BA/IQF Reasons <span id="brassiqf-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="brassiqf-refresh-btn">↺ Refresh</button>
+                </div>
+                <div id="brassiqf-tag-list" class="mm-tag-list"><span class="mm-list-empty">Loading…</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="nickelrejection" role="tabpanel" aria-labelledby="nickelrejection-tab">
+          <div class="tab-content-frame">
+            <div id="nickelrejection-message-area" class="message-area"></div>
+            <div class="mm-tab-layout">
+              <div class="mm-form-panel">
+                <p class="mm-panel-title" style="border-bottom:1px solid var(--mm-border);padding-bottom:8px;margin-bottom:14px;">Add NQ/NA Rejection Reason</p>
+                <form class="mm-form" id="nickelrejection-form">
+                  {% csrf_token %}
+                  <div>
+                    <label for="nickelrejection_reason" class="form-label">Rejection Reason</label>
+                    <input type="text" class="form-control" id="nickelrejection_reason" name="rejection_reason" placeholder="e.g. Plating peel off" required />
+                  </div>
+                  <div class="submit-section">
+                    <button type="submit" class="btn btn-elegant-primary">Save NQ/NA Rejection</button>
+                  </div>
+                </form>
+              </div>
+              <div class="mm-list-panel">
+                <div class="mm-list-header">
+                  <p class="mm-panel-title">Existing NQ/NA Reasons <span id="nickelrejection-count-badge" class="badge bg-secondary mm-count-badge">0</span></p>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="nickelrejection-refresh-btn">↺ Refresh</button>
+                </div>
+                <div id="nickelrejection-tag-list" class="mm-tag-list"><span class="mm-list-empty">Loading…</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- End tab-content -->
+    </div> <!-- End container-fluid -->
+  </div> <!-- End model-master-content -->
+</div> <!-- End model-master-frame -->
+
+<div class="modal fade version-info-modal" id="versionInfoModal" tabindex="-1" aria-labelledby="versionInfoModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered version-info-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title" id="versionInfoModalTitle">Version Information</h5>
+          <small id="versionInfoModalContext" class="version-info-context-badge"></small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="versionInfoDynamicFields" class="version-info-modal-fields"></div>
+        <div id="versionInfoValidationMessage" class="version-info-validation"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn version-info-save-btn" id="saveVersionInfoBtn">Save Info</button>
+        <button type="button" class="btn version-info-close-btn" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for API Integration -->
+<script nonce="{{ csp_nonce }}">
+// Get CSRF token
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+// Helper function to format validation errors into user-friendly messages
+function formatValidationErrors(errors) {
+    if (!errors || typeof errors !== 'object') {
+        return 'Unknown validation error occurred.';
+    }
+    
+    let errorMessages = [];
+    
+    // Loop through each field error
+    for (let field in errors) {
+        let fieldErrors = errors[field];
+        
+        // Convert field name to user-friendly format
+        let fieldName = field
+            .replace(/_/g, ' ')
+            .replace(/([A-Z])/g, ' $1')
+            .toLowerCase()
+            .replace(/^./, str => str.toUpperCase());
+        
+        // Handle array of errors for this field
+        if (Array.isArray(fieldErrors)) {
+            fieldErrors.forEach(error => {
+                errorMessages.push(`${fieldName}: ${error}`);
+            });
+        } else if (typeof fieldErrors === 'string') {
+            errorMessages.push(`${fieldName}: ${fieldErrors}`);
+        }
+    }
+    
+    return errorMessages.length > 0 ? errorMessages.join('\n') : 'Validation failed.';
+}
+
+// Enhanced show message function for inline display
+// Security: message is always HTML-escaped (user input can be echoed back in
+// API messages, e.g. invalid tray IDs). Newlines are preserved as <br>.
+function showInlineMessage(messageAreaId, message, isSuccess = true) {
+    const messageArea = document.getElementById(messageAreaId);
+    if (messageArea) {
+        const alertClass = isSuccess ? 'alert-success' : 'alert-danger';
+        const safeMessage = escapeHtml(message).replace(/\n/g, '<br>');
+        messageArea.innerHTML = `<div class="alert ${alertClass}">${safeMessage}</div>`;
+        
+        // Auto-hide success messages after 5 seconds
+        if (isSuccess) {
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 5000);
+        }
+    }
+}
+
+// Polish Finish API Functions
+const PolishFinishAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/polish-finish/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showInlineMessage('polish-message-area', result.message || 'Polish finish created successfully!', true);
+                document.getElementById('polish_finish_name').value = '';
+                document.getElementById('polish_internal').value = '';
+                this.refreshDropdown();
+                refreshPolishList();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error creating polish finish');
+                showInlineMessage('polish-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            
+            return result;
+        } catch (error) {
+            showInlineMessage('polish-message-area', 'Error creating polish finish: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    },
+    
+    getAll: async function() {
+        try {
+            const response = await fetch('/adminportal/polish-finish/');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching polish finishes:', error);
+        }
+    },
+    
+    refreshDropdown: async function() {
+        const data = await this.getAll();
+        if (data && data.success) {
+            const select = document.getElementById('polish_finish');
+            select.innerHTML = '<option value="">Select Polish Finish</option>';
+            data.data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.polish_finish;
+                select.appendChild(option);
+            });
+        }
+    }
+};
+
+// Plating Color API Functions
+const PlatingColorAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/plating-color/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showInlineMessage('plating-message-area', result.message || 'Plating color created successfully!', true);
+                document.getElementById('plating_color').value = '';
+                document.getElementById('plating_internal').value = '';
+                document.getElementById('jig_unload_zone_1').checked = false;
+                document.getElementById('jig_unload_zone_2').checked = false;
+                refreshPlatingList();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error creating plating color');
+                showInlineMessage('plating-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            
+            return result;
+        } catch (error) {
+            showInlineMessage('plating-message-area', 'Error creating plating color: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    }
+};
+
+// Tray Type API Functions
+const TrayTypeAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/tray-type/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showInlineMessage('tray-message-area', result.message || 'Tray type created successfully!', true);
+                document.getElementById('tray_type_name').value = '';
+                document.getElementById('tray_capacity_value').value = '';
+                this.refreshDropdown();
+                refreshTrayTypeList();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error creating tray type');
+                showInlineMessage('tray-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            
+            return result;
+        } catch (error) {
+            showInlineMessage('tray-message-area', 'Error creating tray type: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    },
+    
+    getAll: async function() {
+        try {
+            const response = await fetch('/adminportal/tray-type/');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching tray types:', error);
+        }
+    },
+    
+    refreshDropdown: async function() {
+        const data = await this.getAll();
+        if (data && data.success) {
+            const select = document.getElementById('tray_type');
+            select.innerHTML = '<option value="">Select Tray Type</option>';
+            data.data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.tray_type;
+                option.setAttribute('data-capacity', item.tray_capacity);
+                select.appendChild(option);
+            });
+        }
+    }
+};
+
+// Model Image API Functions
+let modelImageUploadInProgress = false;
+
+function formatModelImageUploadResult(result) {
+    const uploadedCount = Number(result?.uploaded_count || 0);
+    const failed = Array.isArray(result?.failed) ? result.failed : [];
+    const failedCount = Number(result?.failed_count ?? failed.length);
+    const lines = [];
+
+    if (uploadedCount) {
+        lines.push(`${uploadedCount} image${uploadedCount === 1 ? '' : 's'} uploaded successfully.`);
+    }
+
+    if (failedCount) {
+        lines.push(`${failedCount} image${failedCount === 1 ? '' : 's'} failed:`);
+        failed.forEach(item => {
+            const filename = item && item.filename ? item.filename : 'Unknown file';
+            const reason = item && item.reason ? item.reason : 'Invalid image file';
+            lines.push(`&bull; ${escapeHtml(filename)} &mdash; ${escapeHtml(reason)}`);
+        });
+    }
+
+    return lines.join('<br>');
+}
+
+const ModelImageAPI = {
+    upload: async function(filesInput) {
+        if (modelImageUploadInProgress) {
+            return { success: false, message: 'Upload already in progress.' };
+        }
+
+        const form = document.getElementById('images-form');
+        const uploadButton = form ? form.querySelector('button[type="submit"]') : null;
+        modelImageUploadInProgress = true;
+        if (uploadButton) {
+            uploadButton.disabled = true;
+            uploadButton.textContent = 'Uploading...';
+        }
+        if (filesInput) {
+            filesInput.disabled = true;
+        }
+
+        try {
+            const formData = new FormData();
+            const files = filesInput.files;
+            
+            for (let i = 0; i < files.length; i++) {
+                formData.append('images', files[i]);
+            }
+            
+            const response = await fetch('/adminportal/model-image/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: formData
+            });
+
+            const contentType = response.headers.get('content-type') || '';
+            let result;
+            if (contentType.includes('application/json')) {
+                result = await response.json();
+            } else {
+                await response.text();
+                throw new Error(`Upload failed with HTTP ${response.status}. Server returned a non-JSON response.`);
+            }
+
+            if (!response.ok && !(result.uploaded_count > 0)) {
+                throw new Error(result.error || result.message || 'Image upload failed.');
+            }
+            
+            if (result.success || result.uploaded_count > 0) {
+                showInlineMessage('images-message-area', formatModelImageUploadResult(result) || result.message || 'Images uploaded successfully!', true);
+                filesInput.value = '';
+                await this.refreshDropdown();
+                await refreshImageGallery();
+            } else {
+                const errorMsg = result.failed_count
+                    ? formatModelImageUploadResult(result)
+                    : (result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error uploading images'));
+                showInlineMessage('images-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            
+            return result;
+        } catch (error) {
+            showInlineMessage('images-message-area', 'Error uploading images: ' + error.message, false);
+            console.error('Error:', error);
+        } finally {
+            modelImageUploadInProgress = false;
+            if (uploadButton) {
+                uploadButton.disabled = false;
+                uploadButton.textContent = 'Upload Images';
+            }
+            if (filesInput) {
+                filesInput.disabled = false;
+            }
+        }
+    },
+    
+    getAll: async function() {
+        try {
+            const response = await fetch('/adminportal/model-image/');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching model images:', error);
+        }
+    },
+    
+    refreshDropdown: async function() {
+        const data = await this.getAll();
+        if (data && data.success) {
+            const select = document.getElementById('model_images');
+            select.innerHTML = '<option value="">Select Images</option>';
+            data.data.forEach(item => {
+                const option = document.createElement('option');
+                const imageName = getImageDisplayName(item);
+                option.value = item.id;
+                option.textContent = imageName;
+                option.setAttribute('data-src', normalizeImageUrl(item.master_image || ''));
+                option.setAttribute('data-name', imageName);
+                select.appendChild(option);
+            });
+            renderModelImagePicker();
+        }
+    }
+};
+
+let versionImageUploadInProgress = false;
+
+const allowedModelVersions = {
+    "2617": ["Version A", "Version B", "Version C", "Version D"],
+    "2648": ["Version A", "Version B", "Version D", "Version E"],
+    "1805": ["Version D", "Version K"]
+};
+
+const versionInfoFieldConfig = {
+    "2617": [
+        {
+            name: "o_ring_pocket",
+            label: "O Ring Pocket in Case",
+            type: "select",
+            options: ["Not specified", "Yes", "No", "Without O Ring Box in Case Centre"]
+        },
+        { name: "cph_depth", label: "CPH Depth", type: "number" },
+        { name: "cph_centre_to_dial_butting", label: "CPH Centre to Dial Butting", type: "number" }
+    ],
+    "2648": [
+        {
+            name: "o_ring_pocket",
+            label: "O Ring Pocket in Case",
+            type: "select",
+            options: ["Not specified", "Yes", "No"]
+        },
+        { name: "dial_slant_finish", label: "Dial Slant Finish", type: "text", fullWidth: true },
+        { name: "thickness", label: "Thickness", type: "number" },
+        { name: "bcb_to_lug_bottom", label: "BCB to Lug Bottom", type: "number" },
+        { name: "dial_slant_angle", label: "Dial Slant Angle", type: "number" },
+        { name: "dial_slant_height", label: "Dial Slant Height", type: "number" }
+    ],
+    "1805": [
+        { name: "outer_wall_thickness", label: "Outer Wall Thickness", type: "number" },
+        { name: "cph_centre_to_bc_butting", label: "CPH Centre to BC Butting", type: "number" },
+        { name: "crm_length", label: "CRM Length", type: "number" }
+    ]
+};
+
+const pendingVersionInfo = {};
+let activeVersionInfoContext = null;
+
+function getVersionInfoKey(modelNumber, version) {
+    return `${String(modelNumber || '').trim().toUpperCase()}:${String(version || '').trim().toUpperCase()}`;
+}
+
+function getCurrentVersionInfoSelection() {
+    const modelInput = document.getElementById('versionComparisonBaseModelNumber');
+    const versionInput = document.getElementById('versionComparisonVersion');
+    return {
+        modelNumber: modelInput ? modelInput.value.trim().toUpperCase() : '',
+        version: versionInput ? versionInput.value.trim().toUpperCase() : ''
+    };
+}
+
+function setVersionInfoStateMessage(text) {
+    const state = document.getElementById('versionInfoStateMessage');
+    if (state) state.textContent = text || '';
+}
+
+function getInfoForModelVersion(modelNumber, version, fallbackInfo) {
+    const key = getVersionInfoKey(modelNumber, version);
+    return pendingVersionInfo[key] || fallbackInfo || {};
+}
+
+function buildVersionInfoFields(modelNumber, values) {
+    const container = document.getElementById('versionInfoDynamicFields');
+    if (!container) return;
+
+    const fields = versionInfoFieldConfig[modelNumber] || [];
+    container.innerHTML = fields.map(field => {
+        const fieldId = `versionInfoModalField_${field.name}`;
+        const value = values?.[field.name] || '';
+        const fieldClass = field.fullWidth ? ' class="version-info-field-full"' : '';
+        if (field.type === 'select') {
+            return `
+                <div${fieldClass}>
+                    <label for="${escapeAttr(fieldId)}" class="form-label">${escapeHtml(field.label)}</label>
+                    <select class="form-select version-info-modal-input" id="${escapeAttr(fieldId)}" data-field-name="${escapeAttr(field.name)}">
+                        ${(field.options || []).map(option => {
+                            const optionValue = option === 'Not specified' ? '' : option;
+                            return `<option value="${escapeAttr(optionValue)}"${value === optionValue ? ' selected' : ''}>${escapeHtml(option)}</option>`;
+                        }).join('')}
+                    </select>
+                </div>
+            `;
+        }
+
+        const inputType = field.type === 'number' ? 'number' : 'text';
+        const stepAttr = field.type === 'number' ? ' step="any"' : '';
+        return `
+            <div${fieldClass}>
+                <label for="${escapeAttr(fieldId)}" class="form-label">${escapeHtml(field.label)}</label>
+                <input type="${inputType}"${stepAttr} class="form-control version-info-modal-input" id="${escapeAttr(fieldId)}" data-field-name="${escapeAttr(field.name)}" value="${escapeAttr(value)}" autocomplete="off" />
+            </div>
+        `;
+    }).join('');
+}
+
+function updateVersionDropdown(selectedVersion) {
+    const modelInput = document.getElementById('versionComparisonBaseModelNumber');
+    const versionSelect = document.getElementById('versionComparisonVersion');
+    const message = document.getElementById('versionComparisonModelMessage');
+    if (!modelInput || !versionSelect) return;
+
+    const modelNumber = modelInput.value.trim().toUpperCase();
+    const versions = allowedModelVersions[modelNumber] || [];
+    versionSelect.innerHTML = '';
+
+    if (!modelNumber) {
+        versionSelect.disabled = true;
+        versionSelect.innerHTML = '<option value="">Select model first</option>';
+        if (message) message.textContent = 'Select a configured model to choose a version.';
+        setVersionInfoStateMessage('');
+        return;
+    }
+
+    if (!versions.length) {
+        versionSelect.disabled = true;
+        versionSelect.innerHTML = '<option value="">No configured versions</option>';
+        if (message) message.textContent = 'No configured versions for this model.';
+        setVersionInfoStateMessage('');
+        return;
+    }
+
+    versionSelect.disabled = false;
+    versionSelect.appendChild(new Option('Select version', ''));
+    versions.forEach(version => {
+        versionSelect.appendChild(new Option(version, version));
+    });
+    if (selectedVersion && versions.includes(selectedVersion)) {
+        versionSelect.value = selectedVersion;
+    }
+    if (message) message.textContent = `Allowed versions: ${versions.join(', ')}.`;
+    updateVersionInfoStateForSelection();
+}
+
+function collectVisibleVersionInfo() {
+    const container = document.getElementById('versionInfoDynamicFields');
+    const validation = document.getElementById('versionInfoValidationMessage');
+    const values = {};
+    if (validation) validation.textContent = '';
+
+    container?.querySelectorAll('.version-info-modal-input').forEach(field => {
+        const name = field.getAttribute('data-field-name');
+        const value = field.value.trim();
+        if (value) {
+            if (field.type === 'number' && Number.isNaN(Number(value))) {
+                if (validation) validation.textContent = `${field.closest('div')?.querySelector('label')?.textContent || name} must be a valid number.`;
+                throw new Error('Invalid version info number.');
+            }
+            values[name] = value;
+        }
+    });
+
+    return values;
+}
+
+function getVersionInfoModalInstance() {
+    const modalElement = document.getElementById('versionInfoModal');
+    if (!modalElement || !window.bootstrap || !window.bootstrap.Modal) return null;
+    return window.bootstrap.Modal.getOrCreateInstance(modalElement);
+}
+
+function openVersionInfoModal(context) {
+    const modelNumber = String(context.modelNumber || '').trim().toUpperCase();
+    const version = String(context.version || '').trim().toUpperCase();
+    const source = context.source || 'upload';
+    const validationTarget = source === 'upload' ? 'versionComparisonUploadStatus' : null;
+
+    if (!modelNumber) {
+        if (validationTarget) showInlineMessage(validationTarget, 'Base model number is required before adding version info.', false);
+        return;
+    }
+    if (!allowedModelVersions[modelNumber]) {
+        if (validationTarget) showInlineMessage(validationTarget, 'No configured versions for this model.', false);
+        return;
+    }
+    if (!version) {
+        if (validationTarget) showInlineMessage(validationTarget, 'Version is required before adding version info.', false);
+        return;
+    }
+    if (!allowedModelVersions[modelNumber].includes(version)) {
+        if (validationTarget) showInlineMessage(validationTarget, `Version ${version} is not configured for model ${modelNumber}.`, false);
+        return;
+    }
+
+    activeVersionInfoContext = {
+        modelNumber,
+        version,
+        source,
+        itemId: context.itemId || null
+    };
+
+    const modalContext = document.getElementById('versionInfoModalContext');
+    const validation = document.getElementById('versionInfoValidationMessage');
+    if (modalContext) modalContext.textContent = `Model ${modelNumber}, Version ${version}`;
+    if (validation) validation.textContent = '';
+    buildVersionInfoFields(modelNumber, getInfoForModelVersion(modelNumber, version, context.info));
+
+    const modal = getVersionInfoModalInstance();
+    if (modal) modal.show();
+}
+
+async function saveActiveVersionInfo() {
+    if (!activeVersionInfoContext) return;
+
+    let values;
+    try {
+        values = collectVisibleVersionInfo();
+    } catch (_error) {
+        return;
+    }
+
+    const { modelNumber, version, source } = activeVersionInfoContext;
+    const key = getVersionInfoKey(modelNumber, version);
+    pendingVersionInfo[key] = values;
+
+    if (source === 'album') {
+        const formData = new FormData();
+        formData.append('model_number', modelNumber);
+        formData.append('version', version);
+        formData.append('version_info', JSON.stringify(values));
+        const result = await VersionComparisonAPI.upload(formData);
+        if (!result || !result.success) {
+            const validation = document.getElementById('versionInfoValidationMessage');
+            if (validation) validation.textContent = result?.message || 'Unable to save version info.';
+            return;
+        }
+        refreshVersionComparisonGallery();
+    } else {
+        setVersionInfoStateMessage(Object.keys(values).length ? 'Info added' : '');
+    }
+
+    const modal = getVersionInfoModalInstance();
+    if (modal) modal.hide();
+}
+
+function updateVersionInfoStateForSelection() {
+    const { modelNumber, version } = getCurrentVersionInfoSelection();
+    const info = pendingVersionInfo[getVersionInfoKey(modelNumber, version)];
+    setVersionInfoStateMessage(info && Object.keys(info).length ? 'Info added' : '');
+}
+
+function initModelMasterScrollShell() {
+    const frame = document.querySelector('.model-master-frame');
+    if (!frame) return;
+    document.body.classList.add('dp-modelmaster-page-active');
+
+    const updateHeaderHeight = () => {
+        const candidates = [
+            document.querySelector('.navbar'),
+            document.querySelector('.topbar'),
+            document.querySelector('header')
+        ].filter(Boolean);
+        const headerHeight = candidates.reduce((height, element) => {
+            const rect = element.getBoundingClientRect();
+            return Math.max(height, rect.bottom);
+        }, 0);
+        document.documentElement.style.setProperty('--top-header-height', `${Math.max(headerHeight, 72)}px`);
+    };
+
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+}
+
+function initVersionInfoControls() {
+    const modelInput = document.getElementById('versionComparisonBaseModelNumber');
+    const versionSelect = document.getElementById('versionComparisonVersion');
+    const toggleButton = document.getElementById('toggleVersionInfoBtn');
+    const saveButton = document.getElementById('saveVersionInfoBtn');
+
+    if (modelInput && modelInput.dataset.versionDropdownBound !== 'true') {
+        modelInput.dataset.versionDropdownBound = 'true';
+        modelInput.addEventListener('input', function() {
+            updateVersionDropdown();
+            updateVersionInfoStateForSelection();
+        });
+        updateVersionDropdown();
+    }
+
+    if (versionSelect && versionSelect.dataset.versionInfoBound !== 'true') {
+        versionSelect.dataset.versionInfoBound = 'true';
+        versionSelect.addEventListener('change', updateVersionInfoStateForSelection);
+    }
+
+    if (toggleButton && toggleButton.dataset.bound !== 'true') {
+        toggleButton.dataset.bound = 'true';
+        toggleButton.addEventListener('click', function() {
+            const { modelNumber, version } = getCurrentVersionInfoSelection();
+            openVersionInfoModal({ modelNumber, version, source: 'upload' });
+        });
+    }
+
+    if (saveButton && saveButton.dataset.bound !== 'true') {
+        saveButton.dataset.bound = 'true';
+        saveButton.addEventListener('click', saveActiveVersionInfo);
+    }
+
+    initModelMasterScrollShell();
+}
+
+const VersionComparisonAPI = {
+    upload: async function(formData) {
+        const button = document.getElementById('versionComparisonUploadBtn');
+        const fileInput = document.getElementById('versionComparisonImageInput');
+
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Uploading...';
+        }
+
+        try {
+            const response = await fetch('/adminportal/api/model-version-comparison/upload/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                showInlineMessage('versionComparisonUploadStatus', result.message || 'Version image uploaded successfully.', true);
+                if (fileInput) fileInput.value = '';
+                setActiveImageAlbumPanel('version');
+            } else {
+                showInlineMessage('versionComparisonUploadStatus', result.message || 'Error uploading version image.', false);
+            }
+
+            return result;
+        } catch (error) {
+            showInlineMessage('versionComparisonUploadStatus', 'Error uploading version image: ' + error.message, false);
+            return { success: false, message: error.message };
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.textContent = 'Upload Version Images';
+            }
+        }
+    },
+
+    getAll: async function() {
+        try {
+            const response = await fetch('/adminportal/api/model-version-comparison/list/');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching version images:', error);
+            return { success: false, items: [] };
+        }
+    },
+
+    delete: async function(id) {
+        const formData = new FormData();
+        formData.append('id', id);
+
+        const response = await fetch('/adminportal/api/model-version-comparison/delete/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: formData
+        });
+        return await response.json();
+    }
+};
+
+// Model Master API Functions
+const ModelMasterAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/model-master/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showInlineMessage('model-message-area', result.message || 'Model master created successfully!', true);
+                document.getElementById('model-master-form').reset();
+                renderModelImagePicker();
+                refreshModelMasterList();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error creating model master');
+                showInlineMessage('model-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            
+            return result;
+        } catch (error) {
+            showInlineMessage('model-message-area', 'Error creating model master: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    }
+};
+
+// Location API Functions
+const LocationAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/location/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            if (result.success) {
+                showInlineMessage('location-message-area', result.message || 'Location created successfully!', true);
+                document.getElementById('location_name').value = '';
+                this.refreshDropdown();
+                refreshLocationList();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error creating location');
+                showInlineMessage('location-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            return result;
+        } catch (error) {
+            showInlineMessage('location-message-area', 'Error creating location: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    },
+    getAll: async function() {
+        try {
+            const response = await fetch('/adminportal/location/');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+        }
+    },
+    refreshDropdown: async function() {
+        const data = await this.getAll();
+        if (data && data.success) {
+            const select = document.getElementById('source_name');
+            if (select) {
+                select.innerHTML = '<option value="">Select Source</option>';
+                data.data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.location_name;
+                    select.appendChild(option);
+                });
+            }
+        }
+    }
+};
+
+// TrayId API Functions — Consolidated via /adminportal/api/tray/manage/
+const TrayIdAPI = {
+    manage: async function(payload) {
+        try {
+            const response = await fetch('/adminportal/api/tray/manage/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(payload)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('[TrayManage] Error:', error);
+            return { status: 'error', message: 'Network error: ' + error.message, data: [], conflicts: [] };
+        }
+    },
+    list: async function() {
+        return await this.manage({ action: 'list' });
+    },
+    refreshTable: async function() {
+        const result = await this.list();
+        renderTrayTable(result);
+    }
+};
+
+// IP Rejection API Functions
+const IPRejectionAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/ip-rejection/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            if (result.success) {
+                showInlineMessage('iprejection-message-area', result.message || 'IP Rejection saved successfully!', true);
+                document.getElementById('iprejection_reason').value = '';
+                refreshIPRejectionList();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error saving IP Rejection');
+                showInlineMessage('iprejection-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            return result;
+        } catch (error) {
+            showInlineMessage('iprejection-message-area', 'Error saving IP Rejection: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    }
+};
+
+// BRASS/IQF Rejection API Functions
+const BrassIQFRejectionAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/brass-iqf-rejection/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            if (result.success) {
+                showInlineMessage('brassiqf-message-area', result.message || 'BRASS/IQF Rejection saved successfully!', true);
+                document.getElementById('brassiqf_reason').value = '';
+                refreshBrassIQFList();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error saving BRASS/IQF Rejection');
+                showInlineMessage('brassiqf-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            return result;
+        } catch (error) {
+            showInlineMessage('brassiqf-message-area', 'Error saving BRASS/IQF Rejection: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    }
+};
+
+// BRASS/IQF Rejection Form Handler
+document.getElementById('brassiqf-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = {
+        rejection_reason: document.getElementById('brassiqf_reason').value.trim(),
+    };
+    await BrassIQFRejectionAPI.create(formData);
+  });
+
+// Nickel Audit/QC Rejection API Functions
+const NickelAuditQCRejectionAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/nickel-auditqc-rejection/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            if (result.success) {
+                showInlineMessage('nickelrejection-message-area', result.message || 'Nickel Audit/QC Rejection saved successfully!', true);
+                document.getElementById('nickelrejection_reason').value = '';
+                refreshNickelRejectionList();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error saving Nickel Audit/QC Rejection');
+                showInlineMessage('nickelrejection-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+            return result;
+        } catch (error) {
+            showInlineMessage('nickelrejection-message-area', 'Error saving Nickel Audit/QC Rejection: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    }
+};
+
+// Nickel Audit/QC Rejection Form Handler
+document.getElementById('nickelrejection-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = {
+        rejection_reason: document.getElementById('nickelrejection_reason').value.trim(),
+    };
+    await NickelAuditQCRejectionAPI.create(formData);
+});
+// In setupFormHandlers(), add this after the TrayId Form handler:
+document.getElementById('iprejection-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = {
+        rejection_reason: document.getElementById('iprejection_reason').value.trim(),
+    };
+    await IPRejectionAPI.create(formData);
+});
+// Category API Functions
+const CategoryAPI = {
+    create: async function(formData) {
+        try {
+            const response = await fetch('/adminportal/category/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showInlineMessage('category-message-area', result.message || 'Category created successfully!', true);
+                document.getElementById('category_name').value = '';
+                this.refreshDropdown();
+            } else {
+                const errorMsg = result.errors ? formatValidationErrors(result.errors) : (result.message || 'Error creating category');
+                showInlineMessage('category-message-area', errorMsg, false);
+                console.error('Validation errors:', result.errors);
+            }
+
+            return result;
+        } catch (error) {
+            showInlineMessage('category-message-area', 'Error creating category: ' + error.message, false);
+            console.error('Error:', error);
+        }
+    },
+
+    getAll: async function() {
+        try {
+            const response = await fetch('/adminportal/category/');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    },
+
+    refreshDropdown: async function() {
+        const data = await this.getAll();
+        if (data && data.success) {
+            const select = document.getElementById('category');
+            if (select) {
+                select.innerHTML = '<option value="">Select Category</option>';
+                data.data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.category_name;
+                    select.appendChild(option);
+                });
+            }
+        }
+    }
+};
+
+// (TrayId dropdown setup removed — now handled by consolidated TrayManage UI)
+
+// Auto-fill tray_capacity when tray_type changes in Model Master form
+function setupTrayCapacityAutoFill() {
+    const trayTypeSelect = document.getElementById('tray_type');
+    const trayCapacityInput = document.getElementById('tray_capacity');
+    if (trayTypeSelect && trayCapacityInput) {
+        trayTypeSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.getAttribute('data-capacity')) {
+                trayCapacityInput.value = selectedOption.getAttribute('data-capacity');
+            } else {
+                trayCapacityInput.value = '';
+            }
+        });
+    }
+}
+
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing...');
+    
+    // Load dropdown data
+    loadDropdownData();
+    
+    // Set up form event handlers
+    setupFormHandlers();
+    
+    // Set up tray capacity auto-fill
+    setupTrayCapacityAutoFill();
+    
+    // Initialize Tray ID management UI
+    initTrayManageUI();
+    
+    // Init refresh buttons and load all existing-data lists
+    initListRefreshButtons();
+    loadAllLists();
+    
+    console.log('Initialization complete!');
+});
+
+async function loadDropdownData() {
+    try {
+        const response = await fetch('/adminportal/dropdown-data/');
+        const result = await response.json();
+        if (result.success) {
+            const data = result.data;
+            
+            // Populate dropdowns
+            populateSelect('polish_finish', data.polish_finishes, 'id', 'polish_finish');
+            populateSelect('tray_type', data.tray_types, 'id', 'tray_type');
+            populateSelect('source_name', data.locations, 'id', 'location_name');
+            populateSelect('category', data.categories, 'id', 'category_name');
+            await ModelImageAPI.refreshDropdown();
+        }
+    } catch (error) {
+        console.error('Error loading dropdown data:', error);
+    }
+}
+
+function populateSelect(selectId, data, valueField, textField) {
+    const select = document.getElementById(selectId);
+    if (select && data) {
+        const placeholder = select.querySelector('option[value=""]');
+        select.innerHTML = '';
+        
+        if (placeholder) {
+            select.appendChild(placeholder);
+        }
+        
+        data.forEach(item => {
+            const option = document.createElement('option');
+          const displayText = textField === 'master_image'
+            ? getImageDisplayName(item)
+            : item[textField];
+            option.value = item[valueField];
+          option.textContent = displayText;
+            
+            if (selectId === 'tray_type') {
+                option.setAttribute('data-capacity', item.tray_capacity);
+            }
+          if (selectId === 'model_images') {
+            option.setAttribute('data-src', normalizeImageUrl(item.master_image || ''));
+            option.setAttribute('data-name', displayText || '');
+          }
+            
+            select.appendChild(option);
+        });
+    }
+}
+
+async function handleVersionImageUpload(event) {
+    event.preventDefault();
+
+    if (versionImageUploadInProgress) {
+        return;
+    }
+
+    const modelInput = document.getElementById('versionComparisonBaseModelNumber');
+    const versionInput = document.getElementById('versionComparisonVersion');
+    const fileInput = document.getElementById('versionComparisonImageInput');
+    const modelNumber = modelInput ? modelInput.value.trim().toUpperCase() : '';
+    const version = versionInput ? versionInput.value.trim().toUpperCase() : '';
+    const selectedFiles = fileInput ? Array.from(fileInput.files || []) : [];
+
+    if (!modelNumber) {
+        showInlineMessage('versionComparisonUploadStatus', 'Base model number is required.', false);
+        return;
+    }
+
+    if (!allowedModelVersions[modelNumber]) {
+        showInlineMessage('versionComparisonUploadStatus', 'No configured versions for this model.', false);
+        return;
+    }
+
+    if (!version) {
+        showInlineMessage('versionComparisonUploadStatus', 'Version is required.', false);
+        return;
+    }
+
+    if (!allowedModelVersions[modelNumber].includes(version)) {
+        showInlineMessage('versionComparisonUploadStatus', `Version ${version} is not configured for model ${modelNumber}.`, false);
+        return;
+    }
+
+    if (!selectedFiles.length) {
+        showInlineMessage('versionComparisonUploadStatus', 'Please select at least one version image to upload.', false);
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('model_number', modelNumber);
+    formData.append('version', version);
+    const infoKey = getVersionInfoKey(modelNumber, version);
+    formData.append('version_info', JSON.stringify(pendingVersionInfo[infoKey] || {}));
+    selectedFiles.forEach(file => {
+        formData.append('comparison_images', file);
+    });
+
+    versionImageUploadInProgress = true;
+    try {
+        const result = await VersionComparisonAPI.upload(formData);
+        if (result && result.success) {
+            delete pendingVersionInfo[infoKey];
+            setVersionInfoStateMessage('');
+        }
+    } finally {
+        versionImageUploadInProgress = false;
+    }
+}
+
+function setupFormHandlers() {
+    // Polish Finish Form
+    document.getElementById('polish-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const messageArea = document.getElementById('polish-message-area');
+        messageArea.innerHTML = ""; // Clear previous messages
+
+        const formData = {
+            polish_finish: document.getElementById('polish_finish_name').value.trim(),
+            polish_internal: document.getElementById('polish_internal').value.trim()
+        };
+
+        // Simple validation
+        if (!formData.polish_finish) {
+            messageArea.innerHTML = `<div class="alert alert-danger">Polish finish name cannot be empty.</div>`;
+            return;
+        }
+        if (!formData.polish_internal) {
+            messageArea.innerHTML = `<div class="alert alert-danger">Internal ID cannot be empty.</div>`;
+            return;
+        }
+
+        try {
+            const response = await fetch('/adminportal/polish-finish/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                messageArea.innerHTML = `<div class="alert alert-success">${escapeHtml(result.message || "Polish finish saved successfully!")}</div>`;
+                document.getElementById('polish_finish_name').value = '';
+                document.getElementById('polish_internal').value = '';
+                if (typeof PolishFinishAPI !== "undefined" && PolishFinishAPI.refreshDropdown) {
+                    PolishFinishAPI.refreshDropdown();
+                }
+                refreshPolishList();
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    messageArea.innerHTML = '';
+                }, 5000);
+            } else {
+                // Show serializer errors
+                let errorHtml = "";
+                if (result.errors) {
+                    for (const [field, errors] of Object.entries(result.errors)) {
+                        if (Array.isArray(errors)) {
+                            errors.forEach(err => {
+                                errorHtml += `<div>${escapeHtml(err)}</div>`;
+                            });
+                        } else {
+                            errorHtml += `<div>${escapeHtml(errors)}</div>`;
+                        }
+                    }
+                } else {
+                    errorHtml = escapeHtml(result.message || "Error saving polish finish.");
+                }
+                messageArea.innerHTML = `<div class="alert alert-danger">${errorHtml}</div>`;
+            }
+        } catch (error) {
+            messageArea.innerHTML = `<div class="alert alert-danger">Error: ${escapeHtml(error.message)}</div>`;
+        }
+    });
+
+    // Plating Color Form
+    document.getElementById('plating-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = {
+            plating_color: document.getElementById('plating_color').value.trim(),
+            plating_color_internal: document.getElementById('plating_internal').value.trim(),
+            jig_unload_zone_1: document.getElementById('jig_unload_zone_1').checked,
+            jig_unload_zone_2: document.getElementById('jig_unload_zone_2').checked
+        };
+        await PlatingColorAPI.create(formData);
+    });
+    
+    // Tray Type Form
+    document.getElementById('tray-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = {
+            tray_type: document.getElementById('tray_type_name').value.trim(),
+            tray_capacity: parseInt(document.getElementById('tray_capacity_value').value)
+        };
+        await TrayTypeAPI.create(formData);
+    });
+    
+    // Model Images Form
+    const imagesForm = document.getElementById('images-form');
+    if (imagesForm && imagesForm.dataset.bound !== 'true') {
+        imagesForm.dataset.bound = 'true';
+        imagesForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const filesInput = document.getElementById('model_images_upload');
+            if (filesInput && filesInput.files.length > 0) {
+                await ModelImageAPI.upload(filesInput);
+            } else {
+                showInlineMessage('images-message-area', 'Please select at least one image to upload', false);
+            }
+        });
+    }
+
+    const versionUploadForm = document.getElementById('versionComparisonUploadForm');
+    if (versionUploadForm && versionUploadForm.dataset.bound !== 'true') {
+        versionUploadForm.dataset.bound = 'true';
+        versionUploadForm.addEventListener('submit', handleVersionImageUpload);
+    }
+    initVersionInfoControls();
+
+    document.getElementById('showModelImageAlbumsBtn')?.addEventListener('click', function() {
+        setActiveImageAlbumPanel('model');
+    });
+
+    document.getElementById('showVersionImageAlbumsBtn')?.addEventListener('click', function() {
+        setActiveImageAlbumPanel('version');
+    });
+
+    bindVersionImageInlineDelegation(document.getElementById('versionComparisonGallery'));
+    initVersionAlbumInlineControls();
+    
+    // Model Master Form
+    document.getElementById('model-master-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = {
+            model_no: document.getElementById('model_no').value.trim(),
+            polish_finish: document.getElementById('polish_finish').value || null,
+            ep_bath_type: document.getElementById('ep_bath_type').value.trim(),
+            tray_type: document.getElementById('tray_type').value || null,
+            tray_capacity: parseInt(document.getElementById('tray_capacity').value) || null,
+            version: document.getElementById('version').value.trim(), // <-- Add this line
+            source_name: document.getElementById('source_name').value || null,
+            images: Array.from(document.getElementById('model_images').selectedOptions).map(option => option.value),
+            category: document.getElementById('category').value || null
+        };
+        await ModelMasterAPI.create(formData);
+    });
+
+    // Location Form
+    document.getElementById('location-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = {
+            location_name: document.getElementById('location_name').value.trim()
+        };
+        await LocationAPI.create(formData);
+    });
+
+    // TrayId — handled by dedicated event listeners below (not a form submit)
+
+    // Category Form AJAX submit
+    document.getElementById('category-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const messageArea = document.getElementById('category-message-area');
+        messageArea.innerHTML = ""; // Clear previous messages
+
+        const csrfToken = getCSRFToken();
+        const categoryName = document.getElementById('category_name').value.trim();
+
+        // Simple validation
+        if (!categoryName) {
+            messageArea.innerHTML = `<div class="alert alert-danger">Category name cannot be empty.</div>`;
+            return;
+        }
+
+        try {
+            const response = await fetch('/adminportal/category/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ category_name: categoryName })
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                messageArea.innerHTML = `<div class="alert alert-success">${escapeHtml(result.message || "Category saved successfully!")}</div>`;
+                document.getElementById('category_name').value = '';
+                // Optionally refresh the dropdown
+                if (typeof CategoryAPI !== "undefined" && CategoryAPI.refreshDropdown) {
+                    CategoryAPI.refreshDropdown();
+                }
+                refreshCategoryList();
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    messageArea.innerHTML = '';
+                }, 5000);
+            } else {
+                // Show serializer errors
+                let errorHtml = "";
+                if (result.errors) {
+                    for (const [field, errors] of Object.entries(result.errors)) {
+                        if (Array.isArray(errors)) {
+                            errors.forEach(err => {
+                                errorHtml += `<div>${escapeHtml(err)}</div>`;
+                            });
+                        } else {
+                            errorHtml += `<div>${escapeHtml(errors)}</div>`;
+                        }
+                    }
+                } else {
+                    errorHtml = escapeHtml(result.message || "Error saving category.");
+                }
+                messageArea.innerHTML = `<div class="alert alert-danger">${errorHtml}</div>`;
+            }
+        } catch (error) {
+            messageArea.innerHTML = `<div class="alert alert-danger">Error: ${escapeHtml(error.message)}</div>`;
+        }
+    });
+}
+
+// ── Tray ID Management UI ────────────────────────────────────────────────────
+
+let _trayListCache = []; // local cache for search/filter
+let _trayUndoPayload = null; // stores deleted tray data for undo
+let _trayUndoTimer = null;
+
+function initTrayManageUI() {
+    // Preview button
+    document.getElementById('trayid-preview-btn').addEventListener('click', function() {
+        const prefix = document.getElementById('trayid_tray_type_select').value;
+        const startNum = parseInt(document.getElementById('trayid_start_number').value);
+        const endNum = parseInt(document.getElementById('trayid_end_number').value);
+
+        if (!prefix) { showInlineMessage('trayid-message-area', 'Please select a Tray Type.', false); return; }
+        if (isNaN(startNum) || startNum < 0) { showInlineMessage('trayid-message-area', 'Please enter a valid start number.', false); return; }
+        if (isNaN(endNum) || endNum < 0) { showInlineMessage('trayid-message-area', 'Please enter a valid end number.', false); return; }
+        if (endNum < startNum) { showInlineMessage('trayid-message-area', 'End number must be >= start number.', false); return; }
+
+        const ids = [];
+        for (let i = startNum; i <= endNum; i++) {
+            ids.push(prefix + String(i).padStart(5, '0'));
+        }
+        document.getElementById('trayid_preview_text').value = ids.join('\n');
+        document.getElementById('trayid-preview-area').style.display = 'block';
+        showInlineMessage('trayid-message-area', '', true); // clear
+    });
+
+    // Add button
+    document.getElementById('trayid-add-btn').addEventListener('click', async function() {
+        const previewArea = document.getElementById('trayid-preview-area');
+        const textVal = document.getElementById('trayid_preview_text').value.trim();
+
+        if (!textVal) {
+            showInlineMessage('trayid-message-area', 'Generate preview first or enter tray IDs manually.', false);
+            return;
+        }
+
+        const trayIds = textVal.split('\n').map(s => s.trim()).filter(Boolean);
+        if (trayIds.length === 0) {
+            showInlineMessage('trayid-message-area', 'No valid tray IDs entered.', false);
+            return;
+        }
+
+        this.disabled = true;
+        this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Adding...';
+
+        const result = await TrayIdAPI.manage({ action: 'add', tray_ids: trayIds });
+        this.disabled = false;
+        this.innerHTML = 'Add Trays';
+
+        if (result.status === 'success') {
+            showInlineMessage('trayid-message-area', result.message, true);
+            document.getElementById('trayid_preview_text').value = '';
+            previewArea.style.display = 'none';
+            document.getElementById('trayid_start_number').value = '';
+            document.getElementById('trayid_end_number').value = '';
+        } else if (result.status === 'warning') {
+            let msg = result.message;
+            if (result.conflicts && result.conflicts.length) {
+                msg += '\n' + result.conflicts.join('\n');
+            }
+            showInlineMessage('trayid-message-area', msg, true);
+        } else {
+            let msg = result.message;
+            if (result.conflicts && result.conflicts.length) {
+                msg += '\n' + result.conflicts.join('\n');
+            }
+            showInlineMessage('trayid-message-area', msg, false);
+        }
+        TrayIdAPI.refreshTable();
+    });
+
+    // Refresh button
+    document.getElementById('trayid-refresh-btn').addEventListener('click', function() {
+        TrayIdAPI.refreshTable();
+    });
+
+    // Search input
+    document.getElementById('trayid-search-input').addEventListener('input', function() {
+        const q = this.value.trim().toLowerCase();
+        renderTrayTableFiltered(q);
+    });
+
+    // Delete All button
+    document.getElementById('trayid-delete-all-btn').addEventListener('click', async function() {
+        const btn = this;
+        Swal.fire({
+            title: 'Delete All Tray IDs?',
+            text: 'This will delete every tray ID in the system.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Delete All',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then(async (swalResult) => {
+            if (!swalResult.isConfirmed) return;
+
+            btn.disabled = true;
+            const result = await TrayIdAPI.manage({ action: 'delete_all', force_delete: false });
+            btn.disabled = false;
+
+            if (result.status === 'warning') {
+                Swal.fire({
+                    title: 'Occupied Trays Found',
+                    html: escapeHtml(result.message),
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Delete Anyway',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then(async (forceResult) => {
+                    if (!forceResult.isConfirmed) return;
+                    btn.disabled = true;
+                    const finalResult = await TrayIdAPI.manage({ action: 'delete_all', force_delete: true });
+                    btn.disabled = false;
+                    showInlineMessage('trayid-message-area', finalResult.message, finalResult.status === 'success');
+                    if (finalResult.status === 'success' && finalResult.data && finalResult.data.length) {
+                        showUndoBar(finalResult.data, finalResult.message);
+                    }
+                    TrayIdAPI.refreshTable();
+                });
+            } else {
+                showInlineMessage('trayid-message-area', result.message, result.status === 'success');
+                if (result.status === 'success' && result.data && result.data.length) {
+                    showUndoBar(result.data, result.message);
+                }
+                TrayIdAPI.refreshTable();
+            }
+        });
+    });
+
+    // Undo button
+    document.getElementById('trayid-undo-btn').addEventListener('click', async function() {
+        if (!_trayUndoPayload || !_trayUndoPayload.length) return;
+        this.disabled = true;
+        this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Restoring...';
+
+        const result = await TrayIdAPI.manage({ action: 'restore', tray_ids: _trayUndoPayload });
+
+        this.disabled = false;
+        this.innerHTML = 'Undo';
+
+        if (result.status === 'success') {
+            showInlineMessage('trayid-message-area', result.message, true);
+        } else {
+            showInlineMessage('trayid-message-area', result.message, false);
+        }
+        hideUndoBar();
+        TrayIdAPI.refreshTable();
+    });
+
+    // Dismiss undo
+    document.getElementById('trayid-undo-dismiss').addEventListener('click', function() {
+        hideUndoBar();
+    });
+
+    // Initial load
+    TrayIdAPI.refreshTable();
+}
+
+// ── Undo Bar Helpers ──
+
+function showUndoBar(deletedData, message) {
+    _trayUndoPayload = deletedData;
+    const bar = document.getElementById('trayid-undo-bar');
+    const msg = document.getElementById('trayid-undo-msg');
+    const count = Array.isArray(deletedData) ? deletedData.length : 0;
+    msg.textContent = `${count} tray(s) deleted. Click Undo to restore.`;
+    bar.style.display = 'flex';
+
+    // Auto-hide after 30 seconds
+    if (_trayUndoTimer) clearTimeout(_trayUndoTimer);
+    _trayUndoTimer = setTimeout(() => { hideUndoBar(); }, 30000);
+}
+
+function hideUndoBar() {
+    document.getElementById('trayid-undo-bar').style.display = 'none';
+    _trayUndoPayload = null;
+    if (_trayUndoTimer) { clearTimeout(_trayUndoTimer); _trayUndoTimer = null; }
+}
+
+// ── Table Rendering ──
+
+function renderTrayTable(result) {
+    const tbody = document.getElementById('trayid-table-body');
+    const badge = document.getElementById('trayid-total-badge');
+
+    if (!result || result.status === 'error') {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:#ef4444;">Error loading tray IDs.</td></tr>';
+        badge.textContent = '0';
+        _trayListCache = [];
+        return;
+    }
+
+    _trayListCache = result.data || [];
+    badge.textContent = _trayListCache.length;
+    renderTrayRows(_trayListCache);
+}
+
+function renderTrayTableFiltered(query) {
+    if (!query) {
+        renderTrayRows(_trayListCache);
+        return;
+    }
+    const filtered = _trayListCache.filter(t =>
+        t.tray_id.toLowerCase().includes(query) ||
+        (t.tray_type || '').toLowerCase().includes(query) ||
+        (t.lot_id || '').toLowerCase().includes(query)
+    );
+    renderTrayRows(filtered);
+}
+
+function renderTrayRows(data) {
+    const tbody = document.getElementById('trayid-table-body');
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:#9ca3af;">No tray IDs found.</td></tr>';
+        return;
+    }
+
+    let html = '';
+    data.forEach((t, idx) => {
+        const statusBadge = t.is_occupied
+            ? '<span class="badge bg-warning text-dark">Occupied</span>'
+            : '<span class="badge bg-success">Available</span>';
+        html += `<tr>
+            <td style="padding:8px 14px;">${idx + 1}</td>
+            <td style="padding:8px 14px;font-family:monospace;">${escapeHtml(t.tray_id)}</td>
+            <td style="padding:8px 14px;">${escapeHtml(t.tray_type)}</td>
+            <td style="padding:8px 14px;">${t.tray_capacity || '-'}</td>
+            <td style="padding:8px 14px;">${statusBadge}</td>
+            <td style="padding:8px 14px;">${escapeHtml(t.created)}</td>
+            <td style="padding:8px 14px;text-align:center;">
+                <button type="button" class="btn btn-outline-danger btn-sm trayid-delete-single"
+                    data-trayid="${escapeHtml(t.tray_id)}" data-occupied="${t.is_occupied}"
+                    data-type="${escapeHtml(t.tray_type)}" data-capacity="${t.tray_capacity || ''}"
+                    style="border-radius:6px;font-size:0.78rem;">
+                    Delete
+                </button>
+            </td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+
+    // Attach delete handlers
+    tbody.querySelectorAll('.trayid-delete-single').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const tid = this.getAttribute('data-trayid');
+            const occupied = this.getAttribute('data-occupied') === 'true';
+            const trayType = this.getAttribute('data-type');
+            const trayCapacity = parseInt(this.getAttribute('data-capacity')) || null;
+
+            if (occupied) {
+                // First check for occupied warning from backend
+                const checkResult = await TrayIdAPI.manage({ action: 'delete', tray_ids: [tid], force_delete: false });
+                if (checkResult.status === 'warning') {
+                    Swal.fire({
+                        title: 'Tray is Occupied',
+                        html: escapeHtml(checkResult.message),
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Delete Anyway',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true
+                    }).then(async (swalResult) => {
+                        if (!swalResult.isConfirmed) return;
+                        const forceResult = await TrayIdAPI.manage({ action: 'delete', tray_ids: [tid], force_delete: true });
+                        showInlineMessage('trayid-message-area', forceResult.message, forceResult.status === 'success');
+                        if (forceResult.status === 'success' && forceResult.data && forceResult.data.length) {
+                            showUndoBar(forceResult.data, forceResult.message);
+                        }
+                        TrayIdAPI.refreshTable();
+                    });
+                } else {
+                    showInlineMessage('trayid-message-area', checkResult.message, checkResult.status === 'success');
+                    if (checkResult.status === 'success' && checkResult.data && checkResult.data.length) {
+                        showUndoBar(checkResult.data, checkResult.message);
+                    }
+                    TrayIdAPI.refreshTable();
+                }
+            } else {
+                Swal.fire({
+                    title: 'Delete Tray?',
+                    text: `Are you sure you want to delete tray "${tid}"?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Delete',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then(async (swalResult) => {
+                    if (!swalResult.isConfirmed) return;
+                    const result = await TrayIdAPI.manage({ action: 'delete', tray_ids: [tid], force_delete: false });
+                    showInlineMessage('trayid-message-area', result.message, result.status === 'success');
+                    if (result.status === 'success' && result.data && result.data.length) {
+                        showUndoBar(result.data, result.message);
+                    }
+                    TrayIdAPI.refreshTable();
+                });
+            }
+        });
+    });
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
+function escapeAttr(str) {
+  return escapeHtml(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+let _uploadedImageAlbumGroups = [];
+let _uploadedImageAlbumState = { groupIndex: 0, imageIndex: 0 };
+let _modelImagePickerState = { groupIndex: 0, imageIndex: 0 };
+
+function normalizeImageUrl(src) {
+  const value = String(src || '').trim();
+  if (!value) return '';
+  if (/^(https?:|data:|blob:)/i.test(value) || value.startsWith('/')) return value;
+  if (value.startsWith('media/')) return '/' + value;
+  return '/media/' + value.replace(/^\/+/, '');
+}
+
+function getImageSource(item) {
+  if (!item) return '';
+  if (item.master_image) return normalizeImageUrl(item.master_image);
+  if (item.src) return normalizeImageUrl(item.src);
+  if (item.getAttribute) return normalizeImageUrl(item.getAttribute('data-src') || '');
+  return '';
+}
+
+function getImageFileName(src, fallback) {
+  let cleanSrc = String(src || '').split('?')[0].split('#')[0];
+  try { cleanSrc = decodeURIComponent(cleanSrc); } catch (e) {}
+  const parts = cleanSrc.split('/').filter(Boolean);
+  return parts.pop() || fallback || 'Image';
+}
+
+function getImageDisplayName(item) {
+  if (!item) return 'Image';
+  if (item.getAttribute) {
+    return item.getAttribute('data-name') || getImageFileName(getImageSource(item), item.textContent || 'Image');
+  }
+  if (item.name) return item.name;
+  return getImageFileName(getImageSource(item), item.id ? `Image ${item.id}` : 'Image');
+}
+
+function getImageAlbumKey(name) {
+  const baseName = String(name || 'Image').replace(/\.[^.]+$/, '');
+  const modelKey = baseName.replace(/(?:[_-]?(?:FSV|RSV|LSV|TV|FV|IV|BV))$/i, '');
+  return (modelKey || baseName || 'Images').toUpperCase();
+}
+
+function getImageViewOrder(name) {
+  const viewOrder = { TV: 1, FV: 2, FSV: 3, IV: 4, RSV: 5, LSV: 6, BV: 7 };
+  const match = String(name || '').match(/(?:[_-]?(FSV|RSV|LSV|TV|FV|IV|BV))(?:\.[^.]+)?$/i);
+  return match ? (viewOrder[match[1].toUpperCase()] || 99) : 99;
+}
+
+function buildImageAlbumGroups(items) {
+  const grouped = new Map();
+  (items || []).forEach(item => {
+    const src = getImageSource(item);
+    const name = getImageDisplayName(item);
+    const key = getImageAlbumKey(name);
+    if (!grouped.has(key)) grouped.set(key, { key, title: key, items: [] });
+    grouped.get(key).items.push({ ...item, src, name });
+  });
+  return Array.from(grouped.values())
+    .map(group => ({
+      ...group,
+      items: group.items.sort((a, b) => getImageViewOrder(a.name) - getImageViewOrder(b.name) || a.name.localeCompare(b.name))
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title));
+}
+
+function clampAlbumState(state, groups) {
+  if (!groups.length) {
+    state.groupIndex = 0;
+    state.imageIndex = 0;
+    return null;
+  }
+  state.groupIndex = Math.max(0, Math.min(state.groupIndex, groups.length - 1));
+  const group = groups[state.groupIndex];
+  state.imageIndex = Math.max(0, Math.min(state.imageIndex, group.items.length - 1));
+  return group;
+}
+
+function getModelImagePickerItems() {
+  const select = document.getElementById('model_images');
+  if (!select) return [];
+  return Array.from(select.options)
+    .filter(option => option.value)
+    .map(option => ({
+      id: option.value,
+      src: option.getAttribute('data-src') || '',
+      name: option.getAttribute('data-name') || option.textContent || `Image ${option.value}`,
+      option
+    }));
+}
+
+function renderModelImagePicker() {
+  const picker = document.getElementById('model-image-picker');
+  if (!picker) return;
+
+  const items = getModelImagePickerItems();
+  const groups = buildImageAlbumGroups(items);
+  const selectedCount = items.filter(item => item.option && item.option.selected).length;
+
+  if (!groups.length) {
+    picker.innerHTML = '<span class="mm-list-empty">Upload model images first, then select them here.</span>';
+    return;
+  }
+
+  const group = clampAlbumState(_modelImagePickerState, groups);
+  const selectedLabel = `${selectedCount} selected`;
+  const imageCards = group.items.map((image, index) => `
+    <button type="button" class="mm-picker-image-card ${image.option && image.option.selected ? 'selected' : ''}" data-index="${index}" title="${escapeAttr(image.name)}">
+      ${image.src ? `<img src="${escapeAttr(image.src)}" alt="${escapeAttr(image.name)}" loading="lazy">` : ''}
+      <div class="mm-picker-image-name">${escapeHtml(image.name)}</div>
+    </button>`).join('');
+
+  picker.innerHTML = `
+    <div class="mm-picker-head">
+      <span class="mm-picker-title">Choose from model albums - ${escapeHtml(selectedLabel)}</span>
+      <button type="button" class="mm-picker-clear">Clear</button>
+    </div>
+    <div class="mm-picker-browser">
+      <button type="button" class="mm-picker-nav" data-dir="-1" aria-label="Previous model album">&#8249;</button>
+      <div class="mm-picker-album-card">
+        <div class="mm-picker-album-head">
+          <div class="mm-picker-album-name" title="${escapeAttr(group.title)}">${escapeHtml(group.title)}</div>
+          <div class="mm-picker-album-meta">Album ${_modelImagePickerState.groupIndex + 1} of ${groups.length} - ${group.items.length} images</div>
+        </div>
+        <div class="mm-picker-card-grid">
+          ${imageCards}
+        </div>
+      </div>
+      <button type="button" class="mm-picker-nav" data-dir="1" aria-label="Next model album">&#8250;</button>
+    </div>`;
+
+  picker.querySelectorAll('.mm-picker-nav').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const direction = parseInt(this.getAttribute('data-dir')) || 0;
+      _modelImagePickerState.groupIndex = (groups.length + _modelImagePickerState.groupIndex + direction) % groups.length;
+      renderModelImagePicker();
+    });
+  });
+  picker.querySelectorAll('.mm-picker-image-card').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const image = group.items[parseInt(this.getAttribute('data-index')) || 0];
+      if (image.option) image.option.selected = !image.option.selected;
+      renderModelImagePicker();
+    });
+  });
+  picker.querySelectorAll('.mm-picker-image-card img').forEach(img => {
+    img.addEventListener('error', function() {
+      const card = this.closest('.mm-picker-image-card');
+      if (card) card.classList.add('is-missing');
+      this.remove();
+    });
+  });
+  const clear = picker.querySelector('.mm-picker-clear');
+  if (clear) {
+    clear.addEventListener('click', function() {
+      items.forEach(item => { if (item.option) item.option.selected = false; });
+      renderModelImagePicker();
+    });
+  }
+}
+
+function renderUploadedImageAlbum() {
+  const container = document.getElementById('images-gallery');
+  if (!container) return;
+
+  const group = clampAlbumState(_uploadedImageAlbumState, _uploadedImageAlbumGroups);
+  if (!group) {
+    container.innerHTML = '<span class="mm-list-empty">No images uploaded yet.</span>';
+    return;
+  }
+
+  const image = group.items[_uploadedImageAlbumState.imageIndex];
+  const albums = _uploadedImageAlbumGroups.map((album, index) => `
+    <button type="button" class="mm-album-tab ${index === _uploadedImageAlbumState.groupIndex ? 'active' : ''}" data-index="${index}">
+      <span>${escapeHtml(album.title)}</span>
+      <span class="mm-album-count">${album.items.length}</span>
+    </button>`).join('');
+  const thumbs = group.items.map((thumb, index) => `
+    <button type="button" class="mm-album-thumb ${index === _uploadedImageAlbumState.imageIndex ? 'active' : ''}" data-index="${index}" title="${escapeAttr(thumb.name)}">
+      <img src="${escapeAttr(thumb.src)}" alt="${escapeAttr(thumb.name)}" loading="lazy">
+    </button>`).join('');
+
+  container.innerHTML = `
+    <div class="mm-album-shell">
+      <div class="mm-album-rail">${albums}</div>
+      <div class="mm-album-stage">
+        <div class="mm-album-title-row">
+          <div><span class="mm-album-model">${escapeHtml(group.title)}</span> <span class="mm-album-count">${group.items.length} images</span></div>
+          <span class="mm-album-position">${_uploadedImageAlbumState.imageIndex + 1} / ${group.items.length}</span>
+        </div>
+        <div class="mm-album-preview">
+          <button type="button" class="mm-album-nav mm-album-prev" data-dir="-1" aria-label="Previous image">&#8249;</button>
+          <img src="${escapeAttr(image.src)}" alt="${escapeAttr(image.name)}" loading="lazy">
+          <button type="button" class="mm-album-nav mm-album-next" data-dir="1" aria-label="Next image">&#8250;</button>
+          <button type="button" class="mm-album-delete" data-id="${escapeAttr(image.id)}">Delete</button>
+        </div>
+        <div class="mm-album-caption" title="${escapeAttr(image.name)}">${escapeHtml(image.name)}</div>
+        <div class="mm-album-thumbs">${thumbs}</div>
+      </div>
+    </div>`;
+
+  container.querySelectorAll('.mm-album-tab').forEach(btn => {
+    btn.addEventListener('click', function() {
+      _uploadedImageAlbumState.groupIndex = parseInt(this.getAttribute('data-index')) || 0;
+      _uploadedImageAlbumState.imageIndex = 0;
+      renderUploadedImageAlbum();
+    });
+  });
+  container.querySelectorAll('.mm-album-nav').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const direction = parseInt(this.getAttribute('data-dir')) || 0;
+      const activeGroup = _uploadedImageAlbumGroups[_uploadedImageAlbumState.groupIndex];
+      _uploadedImageAlbumState.imageIndex = (activeGroup.items.length + _uploadedImageAlbumState.imageIndex + direction) % activeGroup.items.length;
+      renderUploadedImageAlbum();
+    });
+  });
+  container.querySelectorAll('.mm-album-thumb').forEach(btn => {
+    btn.addEventListener('click', function() {
+      _uploadedImageAlbumState.imageIndex = parseInt(this.getAttribute('data-index')) || 0;
+      renderUploadedImageAlbum();
+    });
+  });
+  const deleteButton = container.querySelector('.mm-album-delete');
+  if (deleteButton) {
+    deleteButton.addEventListener('click', async function() {
+      const id = this.getAttribute('data-id');
+      if (!id) return;
+      this.disabled = true;
+      const result = await apiDelete(`/adminportal/model-image/${id}/`);
+      if (result && result.success) {
+        ModelImageAPI.refreshDropdown();
+        refreshImageGallery();
+      } else {
+        this.disabled = false;
+        alert(result?.message || 'Delete failed.');
+      }
+    });
+  }
+}
+
+function formatVersionComparisonDate(value) {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString();
+}
+
+function getVersionInfoRows(modelNumber, info) {
+  const details = info || {};
+  return (versionInfoFieldConfig[modelNumber] || [])
+    .filter(field => details[field.name])
+    .map(field => [field.label, details[field.name]]);
+}
+
+function renderVersionComparisonGallery(items) {
+  const container = document.getElementById('versionComparisonGallery');
+  const badge = document.getElementById('versionComparisonCountBadge');
+  if (!container) return;
+
+  if (badge) badge.textContent = (items || []).length;
+
+  if (!items || !items.length) {
+    container.innerHTML = '<span class="mm-list-empty">No version images uploaded yet.</span>';
+    return;
+  }
+
+  container.innerHTML = items.map((item, index) => `
+    <div class="version-image-album-card">
+      <div class="version-image-meta">
+        <div class="version-image-title-row">
+          <span class="version-image-model">Model: ${escapeHtml(item.model_number || '-')}</span>
+          <span class="version-image-status">${item.is_active ? 'Active' : 'Inactive'}</span>
+        </div>
+        <div class="version-image-name" title="${escapeAttr(item.version || '')}">Version: ${escapeHtml(item.version || '-')}</div>
+        <div class="version-image-updated">Image count: ${escapeHtml(String(item.image_count || (item.images || []).length || 0))}</div>
+        <div class="version-image-updated">Updated: ${escapeHtml(formatVersionComparisonDate(item.updated_at))}</div>
+        <div class="version-image-thumbs">
+          ${(item.images || []).map(image => `
+            <button type="button" class="version-image-inline-view-trigger" data-image-url="${escapeAttr(image.url || '')}" data-image-name="${escapeAttr(image.filename || '')}" title="${escapeAttr(image.filename || '')}">
+              ${image.url ? `<img src="${escapeAttr(image.url)}" alt="${escapeAttr(image.filename || item.model_number || 'Version image')}" loading="lazy">` : '<span class="mm-list-empty">No image</span>'}
+            </button>
+          `).join('') || '<span class="mm-list-empty">No images</span>'}
+        </div>
+        <div class="version-image-actions">
+          <button type="button" class="btn btn-outline-secondary btn-sm versionComparisonInfoBtn" data-index="${escapeAttr(String(index))}">Info</button>
+          <button type="button" class="btn btn-outline-primary btn-sm versionComparisonReplaceBtn" data-model-number="${escapeAttr(item.model_number || '')}" data-version="${escapeAttr(item.version || '')}">Replace</button>
+          <button type="button" class="btn btn-outline-danger btn-sm versionComparisonDeleteBtn" data-id="${escapeAttr(item.id)}">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('.versionComparisonInfoBtn').forEach(btn => {
+    btn.addEventListener('click', function(event) {
+      event.stopPropagation();
+      const item = items[parseInt(this.getAttribute('data-index'), 10)];
+      if (!item) return;
+      openVersionInfoModal({
+        modelNumber: item.model_number || '',
+        version: item.version || '',
+        source: 'album',
+        itemId: item.id,
+        info: item.info || {}
+      });
+    });
+  });
+
+  container.querySelectorAll('.versionComparisonReplaceBtn').forEach(btn => {
+    btn.addEventListener('click', function(event) {
+      event.stopPropagation();
+      const modelNumber = this.getAttribute('data-model-number') || '';
+      const version = this.getAttribute('data-version') || '';
+      const card = this.closest('.version-image-album-card');
+      const cardIndex = card ? Array.from(container.children).indexOf(card) : -1;
+      const modelInput = document.getElementById('versionComparisonBaseModelNumber');
+      const versionInput = document.getElementById('versionComparisonVersion');
+      const fileInput = document.getElementById('versionComparisonImageInput');
+      if (modelInput) modelInput.value = modelNumber;
+      updateVersionDropdown(version);
+      if (versionInput && !versionInput.value) versionInput.value = version;
+      const info = items[cardIndex]?.info || {};
+      if (Object.keys(info).length) {
+        pendingVersionInfo[getVersionInfoKey(modelNumber, version)] = info;
+      }
+      updateVersionInfoStateForSelection();
+      if (fileInput) fileInput.focus();
+    });
+  });
+
+  container.querySelectorAll('.versionComparisonDeleteBtn').forEach(btn => {
+    btn.addEventListener('click', async function(event) {
+      event.stopPropagation();
+      const id = this.getAttribute('data-id');
+      if (!id || !confirm('Delete this version comparison image?')) return;
+      this.disabled = true;
+      const result = await VersionComparisonAPI.delete(id);
+      if (result && result.success) {
+        showInlineMessage('versionComparisonUploadStatus', result.message || 'Version image deleted successfully.', true);
+        refreshVersionComparisonGallery();
+      } else {
+        this.disabled = false;
+        showInlineMessage('versionComparisonUploadStatus', result?.message || 'Delete failed.', false);
+      }
+    });
+  });
+}
+
+async function refreshVersionComparisonGallery() {
+  resetVersionAlbumInlineViewer();
+  const data = await VersionComparisonAPI.getAll();
+  if (data && data.success) {
+    renderVersionComparisonGallery(data.items || []);
+  } else {
+    renderVersionComparisonGallery([]);
+  }
+}
+
+let activeImageAlbumPanel = 'model';
+
+function setActiveImageAlbumPanel(type) {
+  activeImageAlbumPanel = type === 'version' ? 'version' : 'model';
+  resetVersionAlbumInlineViewer();
+
+  const modelPanel = document.getElementById('modelImageAlbumPanel');
+  const versionPanel = document.getElementById('versionImageAlbumPanel');
+  const modelBtn = document.getElementById('showModelImageAlbumsBtn');
+  const versionBtn = document.getElementById('showVersionImageAlbumsBtn');
+
+  if (modelPanel) modelPanel.hidden = activeImageAlbumPanel !== 'model';
+  if (versionPanel) versionPanel.hidden = activeImageAlbumPanel !== 'version';
+  if (modelBtn) modelBtn.classList.toggle('active', activeImageAlbumPanel === 'model');
+  if (versionBtn) versionBtn.classList.toggle('active', activeImageAlbumPanel === 'version');
+
+  if (activeImageAlbumPanel === 'version') {
+    refreshVersionComparisonGallery();
+  }
+}
+
+function refreshActiveImageAlbumPanel() {
+  if (activeImageAlbumPanel === 'version') {
+    return refreshVersionComparisonGallery();
+  }
+  return refreshImageGallery();
+}
+
+let versionAlbumInlineScale = 1;
+const VERSION_ALBUM_INLINE_MIN_SCALE = 0.5;
+const VERSION_ALBUM_INLINE_MAX_SCALE = 4;
+const VERSION_ALBUM_INLINE_SCALE_STEP = 0.25;
+
+function applyVersionAlbumInlineScale() {
+  const inlineImage = document.getElementById('versionAlbumInlineImage');
+  const zoomLabel = document.getElementById('versionAlbumInlineZoomLabel');
+  if (inlineImage) {
+    inlineImage.style.transform = `scale(${versionAlbumInlineScale})`;
+  }
+  if (zoomLabel) {
+    zoomLabel.textContent = `${Math.round(versionAlbumInlineScale * 100)}%`;
+  }
+}
+
+function resetVersionAlbumInlineViewer() {
+  const galleryView = document.getElementById('versionAlbumGalleryView');
+  const inlineView = document.getElementById('versionAlbumInlineImageView');
+  const inlineImage = document.getElementById('versionAlbumInlineImage');
+
+  versionAlbumInlineScale = 1;
+  if (inlineImage) {
+    inlineImage.removeAttribute('src');
+    inlineImage.style.transform = 'scale(1)';
+  }
+  if (inlineView) inlineView.hidden = true;
+  if (galleryView) galleryView.hidden = false;
+  applyVersionAlbumInlineScale();
+}
+
+function showVersionAlbumInlineImage(imageUrl) {
+  if (!imageUrl) return;
+  const galleryView = document.getElementById('versionAlbumGalleryView');
+  const inlineView = document.getElementById('versionAlbumInlineImageView');
+  const inlineImage = document.getElementById('versionAlbumInlineImage');
+  if (!galleryView || !inlineView || !inlineImage) return;
+
+  versionAlbumInlineScale = 1;
+  inlineImage.src = imageUrl;
+  galleryView.hidden = true;
+  inlineView.hidden = false;
+  applyVersionAlbumInlineScale();
+}
+
+function bindVersionImageInlineDelegation(container) {
+  if (!container || container.dataset.inlineViewBound === 'true') return;
+  container.dataset.inlineViewBound = 'true';
+  container.addEventListener('click', function(event) {
+    const trigger = event.target.closest('.version-image-inline-view-trigger');
+    if (!trigger) return;
+    event.preventDefault();
+    event.stopPropagation();
+    showVersionAlbumInlineImage(trigger.dataset.imageUrl);
+  });
+}
+
+function initVersionAlbumInlineControls() {
+  const back = document.getElementById('versionAlbumInlineBackBtn');
+  const zoomOut = document.getElementById('versionAlbumInlineZoomOutBtn');
+  const zoomIn = document.getElementById('versionAlbumInlineZoomInBtn');
+  const reset = document.getElementById('versionAlbumInlineResetBtn');
+
+  if (back && back.dataset.bound !== 'true') {
+    back.dataset.bound = 'true';
+    back.addEventListener('click', resetVersionAlbumInlineViewer);
+  }
+  if (zoomOut && zoomOut.dataset.bound !== 'true') {
+    zoomOut.dataset.bound = 'true';
+    zoomOut.addEventListener('click', function() {
+      versionAlbumInlineScale = Math.max(VERSION_ALBUM_INLINE_MIN_SCALE, versionAlbumInlineScale - VERSION_ALBUM_INLINE_SCALE_STEP);
+      applyVersionAlbumInlineScale();
+    });
+  }
+  if (zoomIn && zoomIn.dataset.bound !== 'true') {
+    zoomIn.dataset.bound = 'true';
+    zoomIn.addEventListener('click', function() {
+      versionAlbumInlineScale = Math.min(VERSION_ALBUM_INLINE_MAX_SCALE, versionAlbumInlineScale + VERSION_ALBUM_INLINE_SCALE_STEP);
+      applyVersionAlbumInlineScale();
+    });
+  }
+  if (reset && reset.dataset.bound !== 'true') {
+    reset.dataset.bound = 'true';
+    reset.addEventListener('click', function() {
+      versionAlbumInlineScale = 1;
+      applyVersionAlbumInlineScale();
+    });
+  }
+}
+
+// ── Master List Helpers ───────────────────────────────────────────────
+
+async function apiDelete(url) {
+    try {
+        const r = await fetch(url, { method: 'DELETE', headers: { 'X-CSRFToken': getCSRFToken() } });
+        return await r.json();
+    } catch (e) {
+        return { success: false, message: 'Network error: ' + e.message };
+    }
+}
+
+function renderTagList(containerId, badgeId, items, labelFn, deleteUrlFn) {
+    const c = document.getElementById(containerId);
+    const b = document.getElementById(badgeId);
+    if (!c) return;
+    if (b) b.textContent = items.length;
+    if (!items.length) {
+        c.innerHTML = '<span class="mm-list-empty">No items yet.</span>';
+        return;
+    }
+    c.innerHTML = items.map(item => {
+        const { label, sub, badge } = labelFn(item);
+        const delBtn = deleteUrlFn
+            ? `<button type="button" class="mm-tag-del" data-id="${item.id}" data-url="${deleteUrlFn(item.id)}" title="Delete">&times;</button>`
+            : '';
+        const subHtml = sub ? `<span class="mm-tag-sub ms-1">${escapeHtml(sub)}</span>` : '';
+        const badgeHtml = badge ? `<span class="mm-tag-badge ms-1">${escapeHtml(badge)}</span>` : '';
+        return `<span class="mm-tag">${escapeHtml(label)}${subHtml}${badgeHtml}${delBtn}</span>`;
+    }).join('');
+    c.querySelectorAll('.mm-tag-del[data-url]').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const url = this.getAttribute('data-url');
+            const tag = this.closest('.mm-tag');
+            this.disabled = true;
+            const result = await apiDelete(url);
+            if (result && result.success) {
+                tag.remove();
+                if (b) b.textContent = Math.max(0, parseInt(b.textContent || '1') - 1);
+            } else {
+                this.disabled = false;
+                alert(result?.message || 'Delete failed.');
+            }
+        });
+    });
+}
+
+async function refreshPolishList() {
+    const data = await PolishFinishAPI.getAll();
+    if (data && data.success) {
+        renderTagList('polish-tag-list', 'polish-count-badge', data.data,
+            item => ({ label: item.polish_finish, sub: item.polish_internal }),
+            id => `/adminportal/polish-finish/${id}/`);
+    }
+}
+
+async function refreshPlatingList() {
+    try {
+        const r = await fetch('/adminportal/plating-color/');
+        const data = await r.json();
+        if (data && data.success) {
+            renderTagList('plating-tag-list', 'plating-count-badge', data.data,
+                item => {
+                    let badge = '';
+                    if (item.jig_unload_zone_1 && item.jig_unload_zone_2) badge = 'Z1+Z2';
+                    else if (item.jig_unload_zone_1) badge = 'Z1';
+                    else if (item.jig_unload_zone_2) badge = 'Z2';
+                    return { label: item.plating_color, sub: item.plating_color_internal || '', badge };
+                },
+                id => `/adminportal/plating-color/${id}/`);
+        }
+    } catch (e) { console.error('refreshPlatingList:', e); }
+}
+
+async function refreshTrayTypeList() {
+    const data = await TrayTypeAPI.getAll();
+    if (data && data.success) {
+        renderTagList('tray-tag-list', 'tray-count-badge', data.data,
+            item => ({ label: item.tray_type, badge: `${item.tray_capacity} pcs` }),
+            id => `/adminportal/tray-type/${id}/`);
+    }
+}
+
+async function refreshImageGallery() {
+    const data = await ModelImageAPI.getAll();
+    const c = document.getElementById('images-gallery');
+    const b = document.getElementById('images-count-badge');
+    if (!c) return;
+    if (!data || !data.success || !data.data.length) {
+        _uploadedImageAlbumGroups = [];
+        c.innerHTML = '<span class="mm-list-empty">No images uploaded yet.</span>';
+        if (b) b.textContent = '0';
+        return;
+    }
+    if (b) b.textContent = data.data.length;
+    _uploadedImageAlbumGroups = buildImageAlbumGroups(data.data);
+    renderUploadedImageAlbum();
+}
+
+async function refreshCategoryList() {
+    const data = await CategoryAPI.getAll();
+    if (data && data.success) {
+        renderTagList('category-tag-list', 'category-count-badge', data.data,
+            item => ({ label: item.category_name }),
+            id => `/adminportal/category/${id}/`);
+    }
+}
+
+async function refreshLocationList() {
+    const data = await LocationAPI.getAll();
+    if (data && data.success) {
+        renderTagList('location-tag-list', 'location-count-badge', data.data,
+            item => ({ label: item.location_name }),
+            id => `/adminportal/location/${id}/`);
+    }
+}
+
+async function refreshIPRejectionList() {
+    try {
+        const r = await fetch('/adminportal/ip-rejection/');
+        const data = await r.json();
+        if (data && data.success) {
+            renderTagList('iprejection-tag-list', 'iprejection-count-badge', data.data,
+                item => ({ label: item.rejection_reason }),
+                id => `/adminportal/ip-rejection/${id}/`);
+        }
+    } catch (e) { console.error('refreshIPRejectionList:', e); }
+}
+
+async function refreshBrassIQFList() {
+    try {
+        const r = await fetch('/adminportal/brass-iqf-rejection/');
+        const data = await r.json();
+        if (data && data.success) {
+            renderTagList('brassiqf-tag-list', 'brassiqf-count-badge', data.data,
+                item => ({ label: item.rejection_reason }),
+                id => `/adminportal/brass-iqf-rejection/${id}/`);
+        }
+    } catch (e) { console.error('refreshBrassIQFList:', e); }
+}
+
+async function refreshNickelRejectionList() {
+    try {
+        const r = await fetch('/adminportal/nickel-auditqc-rejection/');
+        const data = await r.json();
+        if (data && data.success) {
+            renderTagList('nickelrejection-tag-list', 'nickelrejection-count-badge', data.data,
+                item => ({ label: item.rejection_reason }),
+                id => `/adminportal/nickel-auditqc-rejection/${id}/`);
+        }
+    } catch (e) { console.error('refreshNickelRejectionList:', e); }
+}
+
+async function refreshModelMasterList() {
+    try {
+        const r = await fetch('/adminportal/model-master/');
+        const data = await r.json();
+        const tbody = document.getElementById('model-list-body');
+        const badge = document.getElementById('model-count-badge');
+        if (!tbody) return;
+        if (!data || !data.success || !data.data || !data.data.length) {
+            tbody.innerHTML = '<tr><td colspan="7" class="mm-list-empty">No model masters yet.</td></tr>';
+            if (badge) badge.textContent = '0';
+            return;
+        }
+        if (badge) badge.textContent = data.data.length;
+        tbody.innerHTML = data.data.map((m, i) => `<tr>
+            <td>${i + 1}</td>
+            <td>${escapeHtml(m.model_no || '')}</td>
+            <td>${escapeHtml(m.polish_finish_name || (typeof m.polish_finish === 'string' ? m.polish_finish : '') || '-')}</td>
+            <td>${escapeHtml(m.ep_bath_type || '-')}</td>
+            <td>${escapeHtml(m.tray_type_name || (typeof m.tray_type === 'string' ? m.tray_type : '') || '-')}</td>
+            <td>${escapeHtml(m.version || '-')}</td>
+            <td style="text-align:center;">
+                <button type="button" class="btn btn-outline-danger btn-sm model-del-btn" data-id="${m.id}" style="font-size:.72rem;padding:2px 10px;border-radius:5px;">Delete</button>
+            </td>
+        </tr>`).join('');
+        tbody.querySelectorAll('.model-del-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const id = this.getAttribute('data-id');
+                if (!confirm('Delete this model master?')) return;
+                this.disabled = true;
+                const result = await apiDelete(`/adminportal/model-master/${id}/`);
+                if (result && result.success) {
+                    refreshModelMasterList();
+                } else {
+                    this.disabled = false;
+                    alert(result?.message || 'Delete failed.');
+                }
+            });
+        });
+    } catch (e) { console.error('refreshModelMasterList:', e); }
+}
+
+function initListRefreshButtons() {
+    const btnMap = {
+        'polish-refresh-btn': refreshPolishList,
+        'plating-refresh-btn': refreshPlatingList,
+        'tray-refresh-btn': refreshTrayTypeList,
+        'images-refresh-btn': refreshActiveImageAlbumPanel,
+        'category-refresh-btn': refreshCategoryList,
+        'location-refresh-btn': refreshLocationList,
+        'iprejection-refresh-btn': refreshIPRejectionList,
+        'brassiqf-refresh-btn': refreshBrassIQFList,
+        'nickelrejection-refresh-btn': refreshNickelRejectionList,
+        'model-refresh-btn': refreshModelMasterList,
+    };
+    Object.entries(btnMap).forEach(([id, fn]) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', fn);
+    });
+}
+
+async function loadAllLists() {
+    await Promise.all([
+        refreshPolishList(),
+        refreshPlatingList(),
+        refreshTrayTypeList(),
+        refreshImageGallery(),
+        refreshCategoryList(),
+        refreshLocationList(),
+        refreshIPRejectionList(),
+        refreshBrassIQFList(),
+        refreshNickelRejectionList(),
+        refreshModelMasterList(),
+    ]);
+}
+// ── End Master List Refresh Functions ─────────────────────────────────────────────
+</script>
+
+{% endblock %}

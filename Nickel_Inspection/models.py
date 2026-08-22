@@ -1,0 +1,397 @@
+from django.db import models
+from modelmasterapp.models import *
+
+# Create your models here.
+
+class NickelQcTrayId(models.Model):
+    """
+    NickelQcTrayId Model
+    Represents a tray identifier in the Titan Track and Traceability system.
+    """
+    lot_id = models.CharField(max_length=50, null=True, blank=True, help_text="Lot ID")
+    tray_id = models.CharField(max_length=100,  help_text="Tray ID")
+    tray_quantity = models.IntegerField(null=True, blank=True, help_text="Quantity in the tray")
+    date = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    top_tray = models.BooleanField(default=False)
+
+    delink_tray = models.BooleanField(default=False, help_text="Is tray delinked")
+    delink_tray_qty = models.CharField(max_length=50, null=True, blank=True, help_text="Delinked quantity")
+    
+    IP_tray_verified= models.BooleanField(default=False, help_text="Is tray verified in IP")
+    
+    rejected_tray= models.BooleanField(default=False, help_text="Is tray rejected")
+
+    new_tray=models.BooleanField(default=True, help_text="Is tray new")
+    
+    # Tray configuration fields (filled by admin)
+    tray_type = models.CharField(max_length=50, null=True, blank=True, help_text="Type of tray (Jumbo, Normal, etc.) - filled by admin")
+    tray_capacity = models.IntegerField(null=True, blank=True, help_text="Capacity of this specific tray - filled by admin")
+
+    def __str__(self):
+        return f"{self.tray_id} - {self.lot_id} - {self.tray_quantity}"
+
+    @property
+    def is_available_for_scanning(self):
+        """
+        Check if tray is available for scanning
+        Available if: not scanned OR delinked (can be reused)
+        """
+        return not self.scanned or self.delink_tray
+
+    @property
+    def status_display(self):
+        """Get human-readable status"""
+        if self.delink_tray:
+            return "Delinked (Reusable)"
+        elif self.scanned:
+            return "Already Scanned"
+        elif self.batch_id:
+            return "In Use"
+        else:
+            return "Available"
+
+    class Meta:
+        verbose_name = "NickelQc Tray ID"
+        verbose_name_plural = "NickelQc Tray IDs"
+        
+# Add these new models to your models.py (if not already exist)
+class Nickel_QC_Draft_Store(models.Model):
+    lot_id = models.CharField(max_length=255)
+    batch_id = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    draft_type = models.CharField(max_length=50)  # 'batch_rejection' or 'tray_rejection'
+    draft_data = models.JSONField()  # Store all draft data as JSON
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['lot_id', 'draft_type']
+        
+
+class Nickel_QC_Rejection_Table(models.Model):
+    rejection_reason_id = models.CharField(max_length=10, null=True, blank=True, editable=False)
+    rejection_reason = models.TextField(help_text="Reason for rejection")
+    date_time = models.DateTimeField(default=now, help_text="Timestamp of the record")
+    def save(self, *args, **kwargs):
+        if not self.rejection_reason_id:
+            last = Nickel_QC_Rejection_Table.objects.order_by('-rejection_reason_id').first()
+            if last and last.rejection_reason_id.startswith('R'):
+                last_num = int(last.rejection_reason_id[1:])
+                new_num = last_num + 1
+            else:
+                new_num = 1
+            self.rejection_reason_id = f"R{new_num:02d}"
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.rejection_reason} "
+
+
+class Nickel_QC_Rejection_ReasonStore(models.Model):
+    rejection_reason = models.ManyToManyField(Nickel_QC_Rejection_Table, blank=True)
+    lot_id = models.CharField(max_length=50, null=True, blank=True, help_text="Lot ID")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    total_rejection_quantity = models.PositiveIntegerField(help_text="Total Rejection Quantity")
+    batch_rejection=models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=now, help_text="Timestamp of the record")
+    lot_rejected_comment = models.CharField(max_length=255,null=True,blank=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.total_rejection_quantity} - {self.lot_id}"
+
+
+class Nickel_QC_TopTray_Draft_Store(models.Model):
+    lot_id = models.CharField(max_length=255)
+    batch_id = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tray_id = models.CharField(max_length=255, blank=True, null=True)
+    tray_qty = models.IntegerField(blank=True, null=True)
+    
+    # ✅ UPDATED: Store delink trays with position information
+    delink_trays_data = JSONField(blank=True, default=dict)  # Store structured data: {"positions": [{"position": 0, "tray_id": "JB-A00130", "original_capacity": 12}]}
+    
+    # ✅ KEEP for backward compatibility (but we'll use delink_trays_data going forward)
+    delink_tray_ids = ArrayField(models.CharField(max_length=255), blank=True, default=list)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['lot_id']  # Only one draft per lot
+        
+    def __str__(self):
+        return f"Top Tray Draft - {self.lot_id} - {self.tray_id}"
+
+
+class Nickel_QC_Rejected_TrayScan(models.Model):
+    lot_id = models.CharField(max_length=50, null=True, blank=True, help_text="Lot ID")
+    rejected_tray_quantity = models.CharField(help_text="Rejected Tray Quantity")
+    rejected_tray_id= models.CharField(max_length=100, null=True, blank=True, help_text="Rejected Tray ID")
+    rejection_reason = models.ForeignKey(Nickel_QC_Rejection_Table, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.rejection_reason} - {self.rejected_tray_quantity} - {self.lot_id}"
+
+class Nickel_Qc_Accepted_TrayScan(models.Model):
+    lot_id = models.CharField(max_length=50, null=True, blank=True, help_text="Lot ID")
+    accepted_tray_quantity = models.CharField(help_text="Accepted Tray Quantity")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.accepted_tray_quantity} - {self.lot_id}"
+    
+    
+class Nickel_Qc_Accepted_TrayID_Store(models.Model):
+    lot_id = models.CharField(max_length=50, null=True, blank=True, help_text="Lot ID")
+    tray_id = models.CharField(max_length=100, unique=True)
+    tray_qty = models.IntegerField(null=True, blank=True, help_text="Quantity in the tray")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_draft = models.BooleanField(default=False, help_text="Draft Save")
+    is_save= models.BooleanField(default=False, help_text="Save")
+    
+    def __str__(self):
+        return f"{self.tray_id} - {self.lot_id}"
+    
+class Nickel_QC_AutoSave(models.Model):
+    lot_id = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    auto_save_data = models.JSONField(help_text="Auto-saved form data")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Nickel QC Auto Save"
+        verbose_name_plural = "Nickel QC Auto Saves"
+    
+    def __str__(self):
+        return f"Auto-save for lot {self.lot_id} by {self.user.username}"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Nickel QC Submission & Partial Lot Tables (mirrors Brass QC pattern)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class NickelQC_Submission(models.Model):
+    """
+    Full submission record for Nickel QC.
+    Created for every accept / reject action (full or partial).
+    Mirrors Brass_QC_Submission pattern.
+    """
+    SUBMISSION_TYPES = [
+        ('FULL_ACCEPT', 'Full Accept'),
+        ('PARTIAL', 'Partial Accept / Partial Reject'),
+        ('FULL_REJECT', 'Full Reject'),
+    ]
+    lot_id = models.CharField(max_length=100, db_index=True,
+                              help_text="Parent lot ID from JigUnloadAfterTable")
+    submission_type = models.CharField(max_length=20, choices=SUBMISSION_TYPES)
+    total_lot_qty = models.IntegerField(default=0)
+    accepted_qty = models.IntegerField(default=0)
+    rejected_qty = models.IntegerField(default=0)
+    accept_trays_data = models.JSONField(default=list, blank=True,
+                                        help_text="Accept tray snapshot: [{tray_id, qty, is_top}]")
+    reject_trays_data = models.JSONField(default=list, blank=True,
+                                        help_text="Reject tray snapshot: [{tray_id, qty}]")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Nickel QC Submission"
+        verbose_name_plural = "Nickel QC Submissions"
+        indexes = [models.Index(fields=['lot_id'])]
+
+    def __str__(self):
+        return f"NQ-Submission: {self.lot_id} ({self.submission_type})"
+
+
+class NickelQC_PartialAcceptLot(models.Model):
+    """
+    Partial accept child lot created when partial acceptance occurs in Nickel QC.
+    new_lot_id = the auto-generated lot_id of the child JigUnloadAfterTable row.
+    Mirrors BrassQC_PartialAcceptLot pattern.
+    """
+    new_lot_id = models.CharField(max_length=100, db_index=True,
+                                  help_text="Child lot ID (JigUnloadAfterTable.lot_id) for accepted portion")
+    parent_lot_id = models.CharField(max_length=100, db_index=True,
+                                     help_text="Original parent lot ID")
+    parent_submission = models.ForeignKey(
+        'NickelQC_Submission',
+        on_delete=models.CASCADE,
+        related_name='partial_accept_lots',
+        null=True, blank=True,
+    )
+    accepted_qty = models.IntegerField(help_text="Total accepted quantity")
+    trays_snapshot = models.JSONField(default=list, blank=True,
+                                     help_text="Accept tray snapshot: [{tray_id, qty, is_top}]")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                                   related_name='nq_partial_accept_lots')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Nickel QC Partial Accept Lot"
+        verbose_name_plural = "Nickel QC Partial Accept Lots"
+        indexes = [
+            models.Index(fields=['new_lot_id']),
+            models.Index(fields=['parent_lot_id']),
+        ]
+
+    def __str__(self):
+        return f"NQ-PartialAccept: {self.new_lot_id} (from {self.parent_lot_id}, qty={self.accepted_qty})"
+
+
+class NickelQC_PartialRejectLot(models.Model):
+    """
+    Partial reject record created when partial rejection occurs in Nickel QC.
+    parent_lot_id = the original JigUnloadAfterTable lot_id (which carries nq_qc_few_cases_accptance=True).
+    Mirrors BrassQC_PartialRejectLot pattern.
+    """
+    new_lot_id = models.CharField(max_length=100, db_index=True, unique=True,
+                                  help_text="Generated unique ID for this reject record")
+    parent_lot_id = models.CharField(max_length=100, db_index=True,
+                                     help_text="Original parent lot ID")
+    parent_submission = models.ForeignKey(
+        'NickelQC_Submission',
+        on_delete=models.CASCADE,
+        related_name='partial_reject_lots',
+        null=True, blank=True,
+    )
+    rejected_qty = models.IntegerField(help_text="Total rejected quantity")
+    rejection_reasons = models.JSONField(default=dict, blank=True,
+                                        help_text='Schema: {"<reason_id>": {"reason": "...", "qty": N}}')
+    trays_snapshot = models.JSONField(default=list, blank=True,
+                                     help_text="Reject tray snapshot: [{tray_id, qty}]")
+    remarks = models.TextField(null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                                   related_name='nq_partial_reject_lots')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Nickel QC Partial Reject Lot"
+        verbose_name_plural = "Nickel QC Partial Reject Lots"
+        indexes = [
+            models.Index(fields=['new_lot_id']),
+            models.Index(fields=['parent_lot_id']),
+        ]
+
+    def __str__(self):
+        return f"NQ-PartialReject: {self.new_lot_id} (from {self.parent_lot_id}, qty={self.rejected_qty})"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Nickel Wiping Submission Records (ERR3 Fix)
+# One table per submission type, each with its own independent lot ID generation.
+# Prefix conventions:
+#   NWFA — Nickel Wiping Full Accept
+#   NWFR — Nickel Wiping Full Reject
+#   NWPA — Nickel Wiping Partial Accept
+#   NWPR — Nickel Wiping Partial Reject
+# ─────────────────────────────────────────────────────────────────────────────
+
+class NickelWiping_FullAcceptRecord(models.Model):
+    """Stores tray scan data for FULL ACCEPT submissions in Nickel Wiping (Z1 and Z2)."""
+    record_lot_id = models.CharField(max_length=50, unique=True, db_index=True,
+                                     help_text="Auto-generated ID: NWFA{timestamp}")
+    source_lot_id = models.CharField(max_length=100, db_index=True,
+                                     help_text="Original lot ID from JigUnloadAfterTable")
+    total_qty = models.IntegerField(default=0)
+    accept_trays = models.JSONField(default=list, blank=True,
+                                    help_text="[{tray_id, qty, is_top}]")
+    delink_trays = models.JSONField(default=list, blank=True,
+                                    help_text="[{tray_id, qty}]")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Nickel Wiping Full Accept Record"
+        verbose_name_plural = "Nickel Wiping Full Accept Records"
+        indexes = [models.Index(fields=['source_lot_id'])]
+
+    def __str__(self):
+        return f"NWFA: {self.record_lot_id} (lot={self.source_lot_id})"
+
+
+class NickelWiping_FullRejectRecord(models.Model):
+    """Stores tray scan data for FULL REJECT submissions in Nickel Wiping (Z1 and Z2)."""
+    record_lot_id = models.CharField(max_length=50, unique=True, db_index=True,
+                                     help_text="Auto-generated ID: NWFR{timestamp}")
+    source_lot_id = models.CharField(max_length=100, db_index=True,
+                                     help_text="Original lot ID from JigUnloadAfterTable")
+    total_qty = models.IntegerField(default=0)
+    rejected_qty = models.IntegerField(default=0)
+    reject_trays = models.JSONField(default=list, blank=True,
+                                    help_text="[{tray_id, qty}]")
+    delink_trays = models.JSONField(default=list, blank=True,
+                                    help_text="[{tray_id, qty}]")
+    reject_reasons = models.JSONField(default=dict, blank=True,
+                                      help_text='{"reason_id": {"reason": "..."}}')
+    remarks = models.TextField(blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Nickel Wiping Full Reject Record"
+        verbose_name_plural = "Nickel Wiping Full Reject Records"
+        indexes = [models.Index(fields=['source_lot_id'])]
+
+    def __str__(self):
+        return f"NWFR: {self.record_lot_id} (lot={self.source_lot_id})"
+
+
+class NickelWiping_PartialAcceptRecord(models.Model):
+    """Stores accept tray data for PARTIAL submissions in Nickel Wiping (Z1 and Z2)."""
+    record_lot_id = models.CharField(max_length=50, unique=True, db_index=True,
+                                     help_text="Auto-generated ID: NWPA{timestamp}")
+    source_lot_id = models.CharField(max_length=100, db_index=True,
+                                     help_text="Parent lot ID from JigUnloadAfterTable")
+    child_lot_id = models.CharField(max_length=100, blank=True, db_index=True,
+                                    help_text="Child JigUnloadAfterTable lot_id for accepted portion")
+    accepted_qty = models.IntegerField(default=0)
+    rejected_qty = models.IntegerField(default=0)
+    accept_trays = models.JSONField(default=list, blank=True,
+                                    help_text="[{tray_id, qty, is_top}]")
+    delink_trays = models.JSONField(default=list, blank=True,
+                                    help_text="[{tray_id, qty}]")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Nickel Wiping Partial Accept Record"
+        verbose_name_plural = "Nickel Wiping Partial Accept Records"
+        indexes = [
+            models.Index(fields=['source_lot_id']),
+            models.Index(fields=['child_lot_id']),
+        ]
+
+    def __str__(self):
+        return f"NWPA: {self.record_lot_id} (lot={self.source_lot_id})"
+
+
+class NickelWiping_PartialRejectRecord(models.Model):
+    """Stores reject tray data for PARTIAL submissions in Nickel Wiping (Z1 and Z2)."""
+    record_lot_id = models.CharField(max_length=50, unique=True, db_index=True,
+                                     help_text="Auto-generated ID: NWPR{timestamp}")
+    source_lot_id = models.CharField(max_length=100, db_index=True,
+                                     help_text="Parent lot ID from JigUnloadAfterTable")
+    rejected_qty = models.IntegerField(default=0)
+    reject_trays = models.JSONField(default=list, blank=True,
+                                    help_text="[{tray_id, qty}]")
+    reject_reasons = models.JSONField(default=dict, blank=True,
+                                      help_text='{"reason_id": {"reason": "..."}}')
+    remarks = models.TextField(blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Nickel Wiping Partial Reject Record"
+        verbose_name_plural = "Nickel Wiping Partial Reject Records"
+        indexes = [models.Index(fields=['source_lot_id'])]
+
+    def __str__(self):
+        return f"NWPR: {self.record_lot_id} (lot={self.source_lot_id})"
+
+
+
+
+

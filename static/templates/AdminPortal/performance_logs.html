@@ -1,0 +1,656 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style nonce="{{ csp_nonce }}">
+  .perf-log-page {
+    padding: 20px;
+    background: #f7fafc;
+    min-height: calc(100vh - 80px);
+  }
+  .perf-log-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .perf-log-title {
+    margin: 0;
+    color: #172033;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .perf-log-subtitle {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 13px;
+  }
+  .perf-log-actions,
+  .perf-log-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .perf-log-actions {
+    justify-content: flex-end;
+  }
+  .perf-log-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .perf-log-button:hover {
+    color: #0f766e;
+    border-color: #14b8a6;
+    text-decoration: none;
+  }
+  .perf-log-button.active {
+    color: #ffffff;
+  }
+  .perf-log-button[disabled],
+  .perf-log-button.disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  .perf-filter-all.active { background: #334155; border-color: #334155; }
+  .perf-filter-errors.active { background: #dc2626; border-color: #dc2626; }
+  .perf-filter-slow.active { background: #d97706; border-color: #d97706; }
+  .perf-filter-db.active { background: #2563eb; border-color: #2563eb; }
+  .perf-filter-login.active { background: #059669; border-color: #059669; }
+  .perf-filter-reports.active { background: #7c3aed; border-color: #7c3aed; }
+  .perf-filter-images.active { background: #92400e; border-color: #92400e; }
+  .perf-auto-toggle {
+    gap: 6px;
+  }
+  .perf-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .perf-monitor-banner {
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+  }
+  .perf-monitor-banner.paused {
+    border-color: #fed7aa;
+    background: #fff7ed;
+    color: #c2410c;
+  }
+  .perf-summary-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 14px;
+    min-height: 86px;
+  }
+  .perf-summary-label {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .perf-summary-value {
+    margin-top: 8px;
+    color: #111827;
+    font-size: 24px;
+    font-weight: 800;
+  }
+  .perf-summary-value.server {
+    color: #047857;
+    font-size: 18px;
+  }
+  .perf-log-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .perf-log-toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+  .perf-log-table-wrap {
+    overflow-x: auto;
+  }
+  .perf-log-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+  }
+  .perf-log-table th,
+  .perf-log-table td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 12px;
+  }
+  .perf-log-table th {
+    background: #ffffff;
+    color: #475569;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .perf-log-table td {
+    color: #1f2937;
+    word-break: break-word;
+  }
+  .perf-row-error td {
+    background: #fff1f2;
+  }
+  .perf-row-slow td {
+    background: #fffbeb;
+  }
+  .perf-row-success td {
+    background: #ecfdf5;
+  }
+  .perf-row-info td {
+    background: #ffffff;
+  }
+  .perf-log-level {
+    display: inline-flex;
+    min-width: 66px;
+    justify-content: center;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #334155;
+    font-weight: 800;
+  }
+  .perf-log-level.ERROR,
+  .perf-log-level.CRITICAL {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  .perf-log-level.WARNING {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .perf-log-empty,
+  .perf-log-notice {
+    padding: 16px;
+    color: #64748b;
+    font-size: 13px;
+  }
+  .perf-log-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    background: #f8fafc;
+  }
+  .perf-log-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #475569;
+    font-size: 12px;
+  }
+  .perf-log-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e2e8f0;
+  }
+  .perf-log-muted {
+    color: #64748b;
+    font-size: 12px;
+  }
+  @media (max-width: 1100px) {
+    .perf-summary-grid {
+      grid-template-columns: repeat(2, minmax(150px, 1fr));
+    }
+  }
+  @media (max-width: 700px) {
+    .perf-log-header,
+    .perf-log-toolbar,
+    .perf-log-footer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .perf-log-actions {
+      justify-content: flex-start;
+    }
+    .perf-summary-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="perf-log-page">
+  <div class="perf-log-header">
+    <div>
+      <h1 class="perf-log-title">Performance Logs</h1>
+      <p class="perf-log-subtitle">Internal viewer for {{ log_file_name }}. Only the current 100-line window is loaded.</p>
+    </div>
+    <div class="perf-log-actions">
+      <a id="perfRefreshButton" class="perf-log-button" href="{% url 'performance_logs' %}?filter={{ selected_filter }}{% if viewer_token_query %}&{{ viewer_token_query }}{% endif %}">Refresh</a>
+      {% if has_more %}
+        <button class="perf-log-button perf-load-more" type="button">Load More</button>
+      {% endif %}
+      {% if selected_filter != 'all' %}
+        <a class="perf-log-button" href="{% url 'performance_logs' %}{% if viewer_token_query %}?{{ viewer_token_query }}{% endif %}">Clear Filters</a>
+      {% else %}
+        <span class="perf-log-button" aria-disabled="true">Clear Filters</span>
+      {% endif %}
+      <button id="perfPauseButton" class="perf-log-button" type="button">Pause</button>
+      <label class="perf-log-button perf-auto-toggle">
+        <input id="perfAutoRefresh" type="checkbox">
+        Auto Refresh
+      </label>
+    </div>
+  </div>
+
+  <div id="perfMonitorBanner" class="perf-monitor-banner">🟢 Live Monitoring</div>
+
+  <section class="perf-summary-grid" aria-label="Performance log health summary">
+    <div class="perf-summary-card">
+      <div class="perf-summary-label">🟢 Server Status</div>
+      <div class="perf-summary-value server">{{ summary.server_status }}</div>
+    </div>
+    <div class="perf-summary-card">
+      <div class="perf-summary-label">📄 Total Logs Loaded</div>
+      <div class="perf-summary-value">{{ summary.total_loaded }}</div>
+    </div>
+    <div class="perf-summary-card">
+      <div class="perf-summary-label">🐢 Slow Events</div>
+      <div class="perf-summary-value">{{ summary.slow_events }}</div>
+    </div>
+    <div class="perf-summary-card">
+      <div class="perf-summary-label">❌ Errors</div>
+      <div class="perf-summary-value">{{ summary.errors }}</div>
+    </div>
+    <div class="perf-summary-card">
+      <div class="perf-summary-label">🗄 Database Events</div>
+      <div class="perf-summary-value">{{ summary.db_events }}</div>
+    </div>
+    <div class="perf-summary-card">
+      <div class="perf-summary-label">🖼 Image Events</div>
+      <div class="perf-summary-value">{{ summary.image_events }}</div>
+    </div>
+    <div class="perf-summary-card">
+      <div class="perf-summary-label">📊 Report Events</div>
+      <div class="perf-summary-value">{{ summary.report_events }}</div>
+    </div>
+    <div class="perf-summary-card">
+      <div class="perf-summary-label">🔐 Login Events</div>
+      <div class="perf-summary-value">{{ summary.login_events }}</div>
+    </div>
+  </section>
+
+  <div class="perf-log-panel">
+    <div class="perf-log-toolbar">
+      <div class="perf-log-filters" aria-label="Performance log filters">
+        {% for key, item in filters.items %}
+          <a
+            class="perf-log-button perf-filter-{{ item.class }} {% if selected_filter == key %}active{% endif %}"
+            href="{% url 'performance_logs' %}?filter={{ key }}{% if viewer_token_query %}&{{ viewer_token_query }}{% endif %}"
+          >{% if item.icon %}{{ item.icon }} {% endif %}{{ item.label }}</a>
+        {% endfor %}
+      </div>
+      <span class="perf-log-muted">Filters apply to the loaded page only.</span>
+    </div>
+
+    {% if read_error %}
+      <div class="perf-log-notice">No performance logs available.</div>
+    {% else %}
+      <div class="perf-log-notice">Viewer self-requests are hidden.</div>
+    {% endif %}
+
+    <div class="perf-log-table-wrap">
+      <table class="perf-log-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Category</th>
+            <th>Event</th>
+            <th>Path</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody id="perfLogRows">
+          {% for row in rows %}
+            <tr class="perf-row-{{ row.row_state }}" data-row-id="{{ row.row_id }}">
+              <td>{{ row.timestamp }}</td>
+              <td>{{ row.event_category|default:"-" }}</td>
+              <td>
+                <span class="perf-log-level {{ row.level }}">{{ row.level }}</span>
+                {{ row.event_type }}
+              </td>
+              <td>{{ row.path|default:"-" }}</td>
+              <td>{{ row.display_duration|default:"-" }}</td>
+              <td>{{ row.display_status|default:"-" }}</td>
+              <td>{{ row.message|default:"-" }}</td>
+            </tr>
+          {% empty %}
+            <tr class="perf-empty-row">
+              <td colspan="7" class="perf-log-empty">
+                {% if read_error or not loaded_line_count %}
+                  No performance logs available.
+                {% elif not summary.total_loaded %}
+                  No application events in the current window. Use Load More or open another page.
+                {% else %}
+                  No matching events found.
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="perf-log-footer">
+      <div class="perf-log-stats">
+        <span class="perf-log-stat">Loaded rows: <span id="perfLoadedRows">{{ rows|length }}</span></span>
+        <span class="perf-log-stat">Loaded raw lines: {{ loaded_line_count }}</span>
+        <span class="perf-log-stat">Skipped invalid JSON rows: {{ invalid_count }}</span>
+        <span class="perf-log-stat">Current filter: {{ selected_filter_label }}</span>
+        <span class="perf-log-stat">Log file size: {{ log_file_size }}</span>
+      </div>
+      {% if has_more %}
+        <button class="perf-log-button perf-load-more" type="button">Load More</button>
+      {% else %}
+        <span id="perfNoOlderRows" class="perf-log-muted">No older loaded page available.</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{{ rows|json_script:"perfInitialRows" }}
+<script nonce="{{ csp_nonce }}">
+  (function () {
+    var checkbox = document.getElementById('perfAutoRefresh');
+    var refreshButton = document.getElementById('perfRefreshButton');
+    var pauseButton = document.getElementById('perfPauseButton');
+    var monitorBanner = document.getElementById('perfMonitorBanner');
+    var tableBody = document.getElementById('perfLogRows');
+    var loadedRows = document.getElementById('perfLoadedRows');
+    var loadMoreButtons = Array.prototype.slice.call(document.querySelectorAll('.perf-load-more'));
+    var noOlderRows = document.getElementById('perfNoOlderRows');
+    var storageKey = 'performanceLogViewerAutoRefresh';
+    var pauseStorageKey = 'performanceLogViewerPaused';
+    var selectedFilter = '{{ selected_filter|escapejs }}';
+    var tokenQuery = '{{ viewer_token_query|escapejs }}';
+    var nextBefore = '{{ next_before|escapejs }}';
+    var hasMore = '{{ has_more|yesno:"true,false" }}' === 'true';
+    var timer = null;
+    var knownRows = {};
+    var paused = false;
+    var autoRefreshBeforePause = false;
+
+    function initialRows() {
+      var script = document.getElementById('perfInitialRows');
+      if (!script) {
+        return [];
+      }
+      try {
+        return JSON.parse(script.textContent || '[]');
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function markKnown(rows) {
+      rows.forEach(function (row) {
+        if (row.row_id) {
+          knownRows[row.row_id] = true;
+        }
+      });
+    }
+
+    function cell(value) {
+      var td = document.createElement('td');
+      td.textContent = value || '-';
+      return td;
+    }
+
+    function rowElement(row) {
+      var tr = document.createElement('tr');
+      tr.className = 'perf-row-' + (row.row_state || 'info');
+      if (row.row_id) {
+        tr.setAttribute('data-row-id', row.row_id);
+      }
+      tr.appendChild(cell(row.timestamp));
+      tr.appendChild(cell(row.event_category));
+
+      var eventCell = document.createElement('td');
+      var level = document.createElement('span');
+      level.className = 'perf-log-level ' + (row.level || '');
+      level.textContent = row.level || '';
+      eventCell.appendChild(level);
+      eventCell.appendChild(document.createTextNode(' ' + (row.event_type || '-')));
+      tr.appendChild(eventCell);
+
+      tr.appendChild(cell(row.path));
+      tr.appendChild(cell(row.display_duration));
+      tr.appendChild(cell(row.display_status));
+      tr.appendChild(cell(row.message));
+      return tr;
+    }
+
+    function requestUrl(before) {
+      var params = new URLSearchParams();
+      params.set('partial', '1');
+      params.set('filter', selectedFilter);
+      if (before) {
+        params.set('before', before);
+      }
+      if (tokenQuery) {
+        tokenQuery.split('&').forEach(function (part) {
+          var pieces = part.split('=');
+          if (pieces[0]) {
+            params.set(decodeURIComponent(pieces[0]), decodeURIComponent(pieces.slice(1).join('=')));
+          }
+        });
+      }
+      return "{% url 'performance_logs' %}?" + params.toString();
+    }
+
+    function updateLoadedCount() {
+      if (loadedRows && tableBody) {
+        loadedRows.textContent = tableBody.querySelectorAll('tr[data-row-id]').length;
+      }
+    }
+
+    function removeEmptyRows() {
+      if (!tableBody) {
+        return;
+      }
+      Array.prototype.slice.call(tableBody.querySelectorAll('.perf-empty-row')).forEach(function (row) {
+        row.remove();
+      });
+    }
+
+    function updateLoadMoreState() {
+      loadMoreButtons.forEach(function (button) {
+        button.disabled = !hasMore;
+        button.style.display = hasMore ? 'inline-flex' : 'none';
+      });
+      if (noOlderRows) {
+        noOlderRows.style.display = hasMore ? 'none' : 'inline';
+      }
+    }
+
+    function appendOlder(rows) {
+      if (!tableBody) {
+        return;
+      }
+      rows.forEach(function (row) {
+        if (!row.row_id || knownRows[row.row_id]) {
+          return;
+        }
+        removeEmptyRows();
+        knownRows[row.row_id] = true;
+        tableBody.appendChild(rowElement(row));
+      });
+      updateLoadedCount();
+    }
+
+    function prependNew(rows) {
+      if (!tableBody) {
+        return;
+      }
+      var fragment = document.createDocumentFragment();
+      rows.forEach(function (row) {
+        if (!row.row_id || knownRows[row.row_id]) {
+          return;
+        }
+        removeEmptyRows();
+        knownRows[row.row_id] = true;
+        fragment.appendChild(rowElement(row));
+      });
+      if (fragment.childNodes.length) {
+        tableBody.insertBefore(fragment, tableBody.firstChild);
+      }
+      updateLoadedCount();
+    }
+
+    function fetchRows(before, onRows) {
+      if (paused && !before) {
+        return Promise.resolve(null);
+      }
+      return window.fetch(requestUrl(before), {
+        credentials: 'same-origin',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Unable to load performance log rows.');
+          }
+          return response.json();
+        })
+        .then(function (payload) {
+          onRows(payload.rows || []);
+          if (before) {
+            nextBefore = payload.next_before || '';
+            hasMore = !!payload.has_more;
+            updateLoadMoreState();
+          }
+        })
+        .catch(function () {
+          return null;
+        });
+    }
+
+    function setAutoRefresh(enabled) {
+      window.localStorage.setItem(storageKey, enabled ? '1' : '0');
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+      if (enabled && !paused) {
+        timer = window.setInterval(function () {
+          fetchRows(null, prependNew);
+        }, 10000);
+      }
+    }
+
+    function updatePauseUi() {
+      if (monitorBanner) {
+        monitorBanner.textContent = paused ? '⏸ Viewer Paused' : '🟢 Live Monitoring';
+        monitorBanner.classList.toggle('paused', paused);
+      }
+      if (pauseButton) {
+        pauseButton.textContent = paused ? 'Resume' : 'Pause';
+      }
+      if (refreshButton) {
+        refreshButton.classList.toggle('disabled', paused);
+        refreshButton.setAttribute('aria-disabled', paused ? 'true' : 'false');
+        refreshButton.setAttribute('title', paused ? 'Resume to fetch latest events.' : 'Refresh latest events');
+      }
+    }
+
+    function setPaused(enabled) {
+      paused = enabled;
+      window.localStorage.setItem(pauseStorageKey, paused ? '1' : '0');
+      if (paused) {
+        autoRefreshBeforePause = checkbox ? checkbox.checked : false;
+        if (timer) {
+          window.clearInterval(timer);
+          timer = null;
+        }
+      }
+      updatePauseUi();
+    }
+
+    function resumeViewer() {
+      window.localStorage.setItem(pauseStorageKey, '0');
+      if (autoRefreshBeforePause) {
+        window.localStorage.setItem(storageKey, '1');
+      }
+      window.location.href = "{% url 'performance_logs' %}?filter={{ selected_filter }}{% if viewer_token_query %}&{{ viewer_token_query }}{% endif %}";
+    }
+
+    markKnown(initialRows());
+    updateLoadMoreState();
+    paused = window.localStorage.getItem(pauseStorageKey) === '1';
+    window.localStorage.setItem(pauseStorageKey, '0');
+    paused = false;
+    updatePauseUi();
+    loadMoreButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        if (!hasMore || !nextBefore) {
+          return;
+        }
+        fetchRows(nextBefore, appendOlder);
+      });
+    });
+
+    if (refreshButton) {
+      refreshButton.addEventListener('click', function (event) {
+        if (paused) {
+          event.preventDefault();
+        }
+      });
+    }
+
+    if (pauseButton) {
+      pauseButton.addEventListener('click', function () {
+        if (paused) {
+          resumeViewer();
+          return;
+        }
+        setPaused(true);
+      });
+    }
+
+    if (!checkbox) {
+      return;
+    }
+    checkbox.checked = window.localStorage.getItem(storageKey) === '1';
+    setAutoRefresh(checkbox.checked);
+    checkbox.addEventListener('change', function () {
+      setAutoRefresh(checkbox.checked);
+    });
+  }());
+</script>
+{% endblock content %}

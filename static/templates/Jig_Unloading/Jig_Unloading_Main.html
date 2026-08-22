@@ -1,0 +1,4154 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% load stock_filters %}
+{% load custom_tags %}
+{% block content %}
+ 
+<style nonce="{{ csp_nonce }}">
+@import url('/static/assets/css/auto-save-sweetalert.css');
+
+ /* ========== Tablet override — paste at file end (after other table styles) ========== */
+/* --- Tablet: freeze first 3 columns consistently with desktop --- */
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+
+*{
+  font-size: var(--ttt-font-size-tablet) !important; /* Increase font size for better readability */
+}
+
+:root { --app-font-size: var(--ttt-font-size-tablet); }
+.rounded-circle{
+  padding: 17px !important;
+}
+.model-image-tooltip{
+  transform: translateX(-25%) !important;
+  top: 45% !important;
+  z-index: 500000 !important; /* high so it sits above table & scrollbar */
+
+}
+
+/* Position gallery arrow at top and align hover arrow */
+.model-gallery-icon{ vertical-align: top; margin-top: -6px; }
+.expand-model-remark{ vertical-align: top; margin-top: -6px; }
+
+
+  /* Core layout blocks */
+  .content-wrapper,
+  .card, .card-body,
+  .table-responsive,
+  #order-listing,
+  #trayScanModal_DayPlanning,
+  .tray-scan-modal-DayPlanning,
+  .pagination-wrapper {
+    font-size: var(--app-font-size) !important;
+    line-height: 1.35 !important;
+  }
+
+  /* Table headings / cells / icons */
+  #order-listing th,
+  #order-listing td,
+  #order-listing thead th {
+    font-size: var(--app-font-size) !important;
+    vertical-align: middle !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  /* Ensure heading/title and date controls match */
+  h4.text-left.mt-0.mb-3,
+  .calendar-bar .date-input-group label,
+  .calendar-bar .date-input-group input,
+  #search-date-range-simple,
+  #clear-date-filter-simple,
+  .calendar-btn,
+  #trayScanModal_DayPlanning input.form-control,#trayValidateBtn,
+  #trayScanModal_DayPlanning table th, #trayScanModal_DayPlanning table td,
+  #modalModelNo_DayPlanning
+ {
+    font-size: var(--app-font-size) !important;
+  }  
+
+  /* Reserve space for filter icons in header cells */
+#order-listing th {
+  position: relative;
+  overflow: visible !important;
+  white-space: normal !important; /* allow wrapping */
+}
+
+/* Ensure filter icons always stay to the right */
+#order-listing th .fa-filter {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px !important;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+  /* Column 1 */
+  #order-listing th:nth-child(1),
+  #order-listing td:nth-child(1) {
+    position: sticky;
+    left: 0 !important;
+    min-width: 75px !important;
+    max-width: 75px !important;
+    background: #f7fafd;
+    z-index: 30;
+  }
+
+  /* Column 2 - JIG ID */
+  #order-listing th:nth-child(2),
+  #order-listing td:nth-child(2) {
+    position: sticky;
+    left: 75px !important;
+    min-width: 130px !important;
+    max-width: 130px !important;
+    background: #f7fafd;
+    z-index: 25;
+  }
+
+  /* Sticky header */
+  #order-listing thead th {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: #028084 !important;
+    color: #e5fcff !important;
+  }
+}
+
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+  .table-container {
+    overflow-x: auto;
+  }
+
+  /* Other columns (fit remaining space) */
+  #order-listing th:nth-child(4)  { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(5)  { min-width: 135px !important; max-width: 135px !important; }
+  #order-listing th:nth-child(6)  { min-width: 115px !important; max-width: 125px !important; }
+  #order-listing th:nth-child(7)  { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(8)  { min-width: 140px !important; max-width: 145px !important; }
+  #order-listing th:nth-child(9) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(10) { min-width: 120px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(11) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(12) { min-width: 120px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(13) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(14) { min-width: 115px !important; max-width: 115px !important; }
+  #order-listing th:nth-child(15) { min-width: 130px !important; max-width: 150px !important; }
+  #order-listing th:nth-child(16) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(17) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(18) { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(19) { min-width: 130px !important; max-width: 130px !important; }
+
+
+  /* Prevent overlap */
+  #order-listing th:nth-child(-n+2),
+  #order-listing td:nth-child(-n+2) {
+    z-index: 45 !important;
+  }
+
+  /* Hide hidden columns */
+  #order-listing th[hidden],
+  #order-listing td[hidden] {
+    display: none !important;
+  }
+}
+      /* Add to your CSS file for Excel-like grid lines */
+.table-bordered th, .table-bordered td {
+  border: 1px solid #d9dedf !important;
+}
+  /* Make the table header sticky */
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: white; /* or your table header bg color */
+  z-index: 5; /* ensure it stays above the table rows */
+  
+}
+
+#order-listing thead th {
+  height: 38px !important; /* Increase as needed */
+  background: #028084 !important;
+  color: #e5fcff !important;
+  vertical-align: middle !important;
+  border-bottom: 2.5px solid #bdbdbd !important; /* Thicker grey line below heading */
+}
+/* style for hol/unhold row - blurred bg */
+#order-listing tr:last-child td {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  /* background: #f4f3f3 !important; */
+}
+/* Gird line color combination */
+#order-listing th,
+#order-listing td {
+  border-right: 1.5px solid #bababa !important; /* Vertical lines: blue */
+  border-bottom: 1.5px solid #121413 !important; /* Horizontal lines: green */
+}
+
+  
+/* Default: Desktop/Laptop (wider columns for larger font) - server */
+/* #order-listing th:nth-child(1) {
+  min-width: 90px;
+  max-width: 90px;
+} */ /* S.No */
+/* #order-listing th:nth-child(2) {
+  min-width: 90px;
+  max-width: 100px;
+} */ /* Last Updated */
+/* #order-listing th:nth-child(3) {
+  min-width: 90px;
+  max-width: 120px;
+} */ /* Plating */
+#order-listing th:nth-child(4) {
+  min-width: 100px;
+  max-width: 120px;
+} /* Model Presents */
+
+ /* Plating Color */
+#order-listing th:nth-child(5) {
+  min-width: 90px;
+  max-width: 100px;
+} /* Polish Finish */
+#order-listing th:nth-child(6) {
+  min-width: 100px;
+  max-width: 110px;
+} /* Version */
+#order-listing th:nth-child(7) {
+  min-width: 105px;
+  max-width: 105px;
+} /* Tray Cate-Capacity */
+#order-listing th:nth-child(8) {
+  min-width: 115px;
+  max-width: 115px;
+} /* Source */
+#order-listing th:nth-child(9) {
+  min-width: 115px;
+  max-width: 120px;
+} /* Input Qty */
+#order-listing th:nth-child(10) {
+  min-width: 95px;
+  max-width: 100px;
+} /* Process Status */
+#order-listing th:nth-child(11) {
+  min-width: 100px;
+  max-width: 100px;
+} /*  Action */
+#order-listing th:nth-child(12) {
+  min-width: 100px;
+  max-width: 100px;
+} /* Lot Status */
+#order-listing th:nth-child(13) {
+  min-width: 100px;
+  max-width: 100px;
+} /* Current Stage */
+#order-listing th:nth-child(14) {
+  min-width: 110px;
+  max-width: 100px;
+} /* Remarks */
+#order-listing th:nth-child(15) {
+  min-width: 135px;
+  max-width: 140px;
+}
+#order-listing th:nth-child(16) {
+  min-width: 115px;
+  max-width: 140px;
+}
+@media (min-width: 600px) and (max-width: 900px) {
+  #order-listing {
+    table-layout: auto !important; /* Let columns auto-fit content */
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: 100vw !important;
+  }
+  /* Adjust width for all headings (th) and cells (td) */
+  #order-listing th,
+  #order-listing td {
+    min-width: 160px !important;
+    max-width: 260px !important;
+    width: 180px !important;
+  }
+  #order-listing th {
+    position: relative;
+    padding-right: 48px !important; /* More space for filter icon */
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: ellipsis;
+  }
+  #order-listing th .fa-filter {
+    position: absolute;
+    right: 18px !important;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: transparent;
+    pointer-events: auto;
+  }
+}
+/* Right-align filter icons */
+#order-listing th .fa-filter {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+#order-listing th .fa-filter:hover {
+  opacity: 1;
+}
+
+
+  
+#order-listing th:last-child,
+#order-listing td:last-child {
+  border-right: none;
+  max-width: 95px;
+  min-width: 100px;
+}
+/* Overall Table Shrink */
+#order-listing tr,
+#order-listing td,
+#order-listing th {
+  height: 20px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+/* Table heading font size */
+/* Add this at the end of your <style> block in DP_PickTable.html */
+
+/* Professional table header styling with proper text wrapping */
+#order-listing th {
+  position: relative;
+  padding: 8px 12px 8px 16px !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  white-space: normal !important;
+  line-height: 1.3 !important;
+  word-break: keep-all !important;
+  hyphens: none !important;
+  /* font-size: 13px; */
+  /* font-weight: 600 !important; */
+  background: #028084 !important;
+  color: #e5fcff !important;
+  border-bottom: 2.5px solid #bdbdbd !important;
+  /* min-width: 80px;
+  max-width: 140px; */
+   overflow-wrap: break-word;
+  word-wrap: break-word;
+   z-index: 16 !important;
+}
+
+/* Make sure header cells for sticky columns are always above body cells */
+/* Fix: Prevent shadow/rows from showing behind sticky columns while scrolling */
+#order-listing th:nth-child(-n+2),
+#order-listing td:nth-child(-n+2) {
+  z-index: 30 !important; 
+box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+}
+
+/* Prevent sticky columns from overlapping sticky header */
+#order-listing td:nth-child(-n+2) {
+  z-index: 11 !important;
+}
+  /* Make the first column sticky and opaque */
+#order-listing td:first-child,
+#order-listing th:first-child {
+  position: sticky;
+  left: 0;
+  background: #fff;      /* Or match your table background */
+  z-index: 2;            /* Above blurred rows */
+  box-shadow: 2px 0 4px rgba(0,0,0,0.03); /* Optional: subtle shadow */
+}
+/* Force specific table headers to wrap onto two lines */
+#order-listing th:nth-child(4),   /* Model Presents */
+#order-listing th:nth-child(6),   /* Polish Finish */
+#order-listing th:nth-child(8),   /* Tray Cate-Capacity */
+#order-listing th:nth-child(10),  /* Bath No */
+#order-listing th:nth-child(11),  /* Process Status */
+#order-listing th:nth-child(12)   /* Action */ {
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  word-break: break-word !important;
+
+  text-align: center;
+  vertical-align: middle;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+/* Freeze style for 1st - 3 columns */
+/* --- Freeze first 3 columns and table header for #order-listing --- */
+#order-listing {
+  position: relative;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: #fff;
+  /* Ensure enough left padding for sticky columns */
+}
+
+#order-listing th,
+#order-listing td {
+  background-clip: padding-box;
+  /* Prevent overlap artifacts */
+  z-index: 1;
+}
+
+/* Sticky header */
+#order-listing thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #028084 !important;
+  color: #e5fcff !important;
+}
+
+/* Freeze 1st column - S.No (width 75px, left 0) */
+#order-listing th:nth-child(1),
+#order-listing td:nth-child(1) {
+  position: sticky !important;
+  left: 0px !important;
+  width: 75px !important;
+  min-width: 75px !important;
+  max-width: 75px !important;
+  background: #f7fafd !important;
+  box-sizing: border-box !important;
+}
+
+/* Freeze 2nd column - JIG ID (width 130px, left 75px) */
+#order-listing th:nth-child(2),
+#order-listing td:nth-child(2) {
+  position: sticky !important;
+  left: 75px !important;
+  width: 130px !important;
+  min-width: 130px !important;
+  max-width: 130px !important;
+  background: #f7fafd !important;
+  box-sizing: border-box !important;
+}
+
+/* Freeze 3rd column - Last Updated (width 100px, left 205px) */
+#order-listing th:nth-child(3),
+#order-listing td:nth-child(3) {
+  position: sticky !important;
+  left: 205px !important;
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+  background: #f7fafd !important;
+  box-sizing: border-box !important;
+}
+
+/* Header sticky cols must be above body sticky cols */
+#order-listing thead th:nth-child(1),
+#order-listing thead th:nth-child(2),
+#order-listing thead th:nth-child(3) {
+  z-index: 30 !important;
+  background: #028084 !important;
+}
+
+/* Body sticky cols above non-sticky body cells */
+#order-listing tbody td:nth-child(1),
+#order-listing tbody td:nth-child(2),
+#order-listing tbody td:nth-child(3) {
+  z-index: 11 !important;
+}
+
+/* Ensure sticky columns and header work together */
+#order-listing th,
+#order-listing td {
+  box-sizing: border-box;
+  /* Prevent content shake */
+  /* overflow: hidden; */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+
+    .blurred-heading, .blurred-cell {
+    filter: blur(2px) grayscale(0.7);
+    opacity: 0.6;
+    user-select: none;
+    cursor: not-allowed;
+    background: #f5f5f5 !important;
+    /* ❌ REMOVED pointer-events:none — it blocks action buttons */
+  }
+  
+  /* ✅ CRITICAL: Force all links and buttons to be clickable */
+  a, button, .z1-unload-btn, .z1-view-btn {
+    pointer-events: auto !important;
+    position: relative;
+  }
+  /* Active row highlight — only set by JS on explicit click */
+  #order-listing tbody tr.z1-row-open td {
+    background-color: #e8f5e9 !important;
+  }
+    /* Show remark tooltip above the trigger instead of below */
+  .remark-tooltip {
+    top: auto !important;
+    bottom: 110% !important;
+  }
+#trayScanDetails.table-grid {
+  display: grid !important;
+  grid-template-columns: 94px 175px 150px !important;
+  gap: 0px !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+}
+
+#trayScanDetails.table-grid::-webkit-scrollbar {
+  width: 8px;
+}
+ 
+#trayScanDetails.table-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+ 
+#trayScanDetails.table-grid::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+ 
+#trayScanDetails.table-grid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+ 
+ 
+.tray-scan-modal.open {
+  width:500px !important;
+}
+/* For the 4-column layout (with validation status) */
+#trayScanDetails.table-grid.four-column {
+  grid-template-columns: 50px 1fr 100px 140px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+ 
+/* Styling individual grid cells, only inside trayScanDetails */
+#trayScanDetails.table-grid > div {
+  background: #f7f7f7;
+  padding: 8px 12px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  margin: 0; /* reset any margin from <p> or others */
+}
+ 
+/* S.no column specific styling */
+#trayScanDetails.table-grid > div:nth-child(3n+1):not(:nth-child(-n+4)) {
+  text-align: center;
+  font-weight: 600;
+  padding: 8px 4px; /* Reduced horizontal padding for S.no */
+}
+ 
+/* For mobile responsiveness */
+@media (max-width: 768px) {
+  #trayScanDetails.table-grid {
+    grid-template-columns: 45px 1fr 1fr !important; /* Even smaller S.no column on mobile */
+  }
+  #trayScanDetails.table-grid.four-column {
+    grid-template-columns: 40px 1fr 80px 100px !important;
+  }
+  #trayScanDetails.table-grid > div:nth-child(3n+1):not(:nth-child(-n+4)) {
+    padding: 6px 2px; /* Further reduced padding on mobile */
+    font-size: 11px;
+  }
+}
+ 
+/* For very small screens */
+@media (max-width: 480px) {
+  #trayScanDetails.table-grid {
+    grid-template-columns: 35px 1fr 80px !important; /* Minimal S.no column */
+  }
+  #trayScanDetails.table-grid.four-column {
+    grid-template-columns: 30px 1fr 70px 90px !important;
+  }
+}
+.row-checkbox, #selectAllCheckbox {
+  display: none;
+}
+body.add-model-mode .row-checkbox,
+body.add-model-mode #selectAllCheckbox {
+  display: inline-block;
+}
+
+
+        /* Model Image Gallery Styles */
+        
+        /* General model circle styling */
+        .model-circle {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: -4px;
+            margin-bottom: 2px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .model-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* =========================================================
+   JIG UNLOADING ZONE 1 - MODEL PRESENTS HOVER
+   Keep tooltip outside table clipping area
+   ========================================================= */
+
+        .model-stock-no-text {
+    position: relative;
+}
+
+.model-stock-no-text .model-hover-list {
+    display: none;
+    position: fixed !important;
+    left: 0;
+    top: 110%;
+    background: #fff;
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.16);
+    padding: 8px 14px;
+    z-index: 15000;
+    white-space: nowrap;
+    font-size: 11px;
+    color: #263238;
+    line-height: 1.7;
+}
+
+.model-stock-no-text:hover .model-hover-list {
+    display: block;
+}
+        
+        /* Quantity badge styling for multi-model quantities */
+        .quantity-badge {
+            color: white;
+            padding: 5px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 1px;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+            cursor: help;
+            transition: all 0.2s ease;
+        }
+        
+        .quantity-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* Debug info styling */
+        .model-stock-no-cell .debug-info {
+            font-size: 9px;
+            color: #666;
+            margin-top: 4px;
+            border-top: 1px solid #eee;
+            padding-top: 4px;
+            line-height: 1.2;
+        }
+        
+        .model-stock-no-cell .debug-info strong {
+            color: #444;
+            font-weight: 600;
+        }
+
+        /* Model Image Gallery modal — centered overlay with a proper grid */
+        #modelRemarkModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            background: rgba(15, 23, 42, 0.55);
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        #modelRemarkModal .gallery-dialog {
+            position: relative;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            width: fit-content;
+            min-width: 220px;
+            max-width: min(720px, 96vw);
+            max-height: 88vh;
+            padding: 24px 28px 20px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        #modelRemarkModal .gallery-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: #616161;
+            margin-bottom: 20px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        /* Horizontal gallery: up to 3 cards fit without scrolling; a 4th+
+           model scrolls within the row instead of wrapping to new rows. */
+        #modelRemarkModalContent {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            gap: 18px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 10px;
+        }
+
+        #modelRemarkModalContent::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        #modelRemarkModalContent::-webkit-scrollbar-thumb {
+            background: #c7ccd1;
+            border-radius: 4px;
+        }
+
+        #modelRemarkModal .close-btn,
+        #closeModelRemarkModal {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 22px;
+            line-height: 1;
+            color: #888;
+            cursor: pointer;
+        }
+
+        #modelRemarkModal .close-btn:hover,
+        #closeModelRemarkModal:hover {
+            color: #333;
+        }
+
+        #modelRemarkModal .gallery-card {
+            flex: 0 0 200px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #modelRemarkModal .gallery-card-header {
+            background: #f5f7f8;
+            padding: 8px 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            font-size: 13px;
+            color: #00695c;
+            word-break: break-all;
+        }
+
+        #modelRemarkModal .gallery-card-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+            border: 1px solid rgba(0,0,0,0.15);
+        }
+
+        #modelRemarkModal .gallery-card-body {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #modelRemarkModal .gallery-empty {
+            padding: 15px;
+            text-align: center;
+            color: #999;
+        }
+
+        #modelRemarkModal img {
+            width: 100%;
+            height: 130px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid #eee;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
+        #modelRemarkModal .model-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 2px;
+        }
+
+        #modelRemarkModal .model-circle {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 2px;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        #modelRemarkModal .model-no {
+            font-weight: 600;
+            color: #023E4DCC;
+            font-size: 0.98rem;
+            margin-bottom: 2px;
+        }
+
+        #modelRemarkModal .remark-label {
+            font-size: 11px;
+            color: #222;
+            margin-bottom: 1px;
+        }
+
+        #modelRemarkModal .remark-text {
+            font-size: 11px;
+            color: #444;
+            background: #f7f7f7;
+            border-radius: 5px;
+            padding: 5px 8px;
+            min-width: 80px;
+            min-height: 18px;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 700px) {
+            #modelRemarkModal {
+                padding: 10px;
+            }
+
+            #modelRemarkModal .gallery-dialog {
+                width: fit-content;
+                min-width: 0;
+                max-width: 96vw;
+                max-height: 92vh;
+                padding: 16px;
+                font-size: 11px;
+            }
+
+            #modelRemarkModalContent {
+                gap: 12px;
+            }
+
+            #modelRemarkModal .gallery-card {
+                flex: 0 0 150px;
+            }
+
+            #modelRemarkModal img {
+                height: 100px;
+            }
+
+            #modelRemarkModal .model-no {
+                font-size: 0.92rem;
+            }
+
+            #modelRemarkModal .remark-label,
+            #modelRemarkModal .remark-text {
+                font-size: 10px;
+            }
+        }
+
+        /* Tooltip for model images */
+        .model-image-tooltip {
+            position: absolute;
+            z-index: 99999;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+            padding: 10px;
+            min-width: 220px;
+            max-width: 350px;
+            max-height: 220px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .model-image-tooltip .image-slider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .model-image-tooltip img {
+            max-width: 180px;
+            max-height: 180px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .model-image-tooltip .slider-btn {
+            background: #eee;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .model-image-tooltip.static {
+            display: block !important;
+            position: fixed !important;
+            top: 80px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 100000;
+        }
+
+        .model-image-tooltip .close-btn {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 18px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        /* Image slider modal */
+        .image-slider-modal {
+            display: none;
+            position: fixed;
+            top: 40px;
+            right: 20px;
+            width: 600px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            z-index: 10000;
+            transition: right 0.3s ease;
+        }
+
+        .image-slider-modal.open {
+            display: block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .slider {
+            position: relative;
+            overflow: hidden;
+            height: 350px;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease;
+            width: 100%;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            box-sizing: border-box;
+            display: none;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .prev,
+        .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            user-select: none;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        @media (max-width: 767px) {
+            .image-slider-modal {
+                width: 100%;
+                right: 0;
+                top: 0;
+                border-radius: 0;
+                padding: 10px;
+            }
+            
+            .slider {
+                height: 250px;
+            }
+            
+            .slide img {
+                height: 250px;
+            }
+        }
+
+        /* Add Jig Remark Modal Styles */
+        
+        /* Modal backdrop styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1040;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+        }
+
+        .modal-backdrop.fade {
+            opacity: 0;
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.5;
+        }
+
+        /* Modal base styles */
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+            transform: translate(0, -50px);
+        }
+
+        .modal.show .modal-dialog {
+            transform: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            outline: 0;
+        }
+
+        .modal.show {
+            display: block !important;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* Remarks modal specific styles */
+        #remarksModal .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+        }
+
+        #remarksModal .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        #remarksModal .modal-header {
+            border-bottom: none;
+            padding: 0;
+        }
+
+        #remarksModal .modal-body {
+            padding: 1rem 2rem 2rem 2rem;
+        }
+
+        #remarksModal .modal-title {
+            color: #023E4DCC;
+            font-weight: 700;
+            font-size: 1.25rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        /* Loading spinner styles */
+        #remarksLoadingSpinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #remarksLoadingSpinner .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.25em;
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            vertical-align: text-bottom;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border 0.75s linear infinite;
+        }
+
+        @keyframes spinner-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .text-primary {
+            color: #007bff !important;
+        }
+
+        /* Form styles for remarks modal */
+        #remarksModalForm .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        #remarksModalForm .form-control:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        #remarksModalForm .form-check-input {
+            width: 1em;
+            height: 1em;
+            margin-top: 0.25em;
+            vertical-align: top;
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            appearance: none;
+            color-adjust: exact;
+        }
+
+        #remarksModalForm .form-check-input:checked {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        #remarksModalForm .form-check-input[type="radio"] {
+            border-radius: 50%;
+        }
+
+        #remarksModalForm .form-check-input[type="radio"]:checked {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+        }
+
+        #remarksModalForm .btn {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            cursor: pointer;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            border-radius: 0.375rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        #remarksModalForm .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        #remarksModalForm .btn-primary:hover {
+            color: #fff;
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        #remarksModalForm .btn-secondary {
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        #remarksModalForm .btn-secondary:hover {
+            color: #fff;
+            background-color: #545b62;
+            border-color: #4e555b;
+        }
+
+        /* Character count styling */
+        #remarksCharCount {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 0.75rem;
+            pointer-events: none;
+        }
+
+        /* Position relative for character count container */
+        .position-relative {
+            position: relative !important;
+        }
+
+        /* Bootstrap utility classes used in the modal */
+        .mb-3 {
+            margin-bottom: 1rem !important;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: calc(-0.5 * 0);
+            margin-right: calc(-0.5 * 1.5rem);
+            margin-left: calc(-0.5 * 1.5rem);
+        }
+
+        .col-5 {
+            flex: 0 0 auto;
+            width: 41.66666667%;
+        }
+
+        .col-7 {
+            flex: 0 0 auto;
+            width: 58.33333333%;
+        }
+
+        .col-12 {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+
+        .d-flex {
+            display: flex !important;
+        }
+
+        .align-items-center {
+            align-items: center !important;
+        }
+
+        .justify-content-center {
+            justify-content: center !important;
+        }
+
+        .gap-3 {
+            gap: 1rem !important;
+        }
+
+        .text-end {
+            text-align: right !important;
+        }
+
+        .fw-bold {
+            font-weight: 700 !important;
+        }
+
+        .px-4 {
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+        }
+
+        .me-2 {
+            margin-right: 0.5rem !important;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            opacity: 0.5;
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            opacity: 0.75;
+        }
+
+        .position-absolute {
+            position: absolute !important;
+        }
+
+        .end-0 {
+            right: 0 !important;
+        }
+
+        .top-0 {
+            top: 0 !important;
+        }
+
+        .m-2 {
+            margin: 0.5rem !important;
+        }
+        /* Enhanced model circle with animation */
+        .model-circle {
+            transition: all 0.2s ease;
+        }
+        
+        .model-row:hover .model-circle {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Tooltip for model images */
+        .model-image-tooltip {
+            position: absolute;
+            z-index: 99999;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+            padding: 10px;
+            min-width: 220px;
+            max-width: 350px;
+            max-height: 220px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .model-image-tooltip .image-slider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .model-image-tooltip img {
+            max-width: 180px;
+            max-height: 180px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .model-image-tooltip .slider-btn {
+            background: #eee;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .model-image-tooltip.static {
+            display: block !important;
+            position: fixed !important;
+            top: 80px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 100000;
+        }
+
+        .model-image-tooltip .close-btn {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 18px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        /* Image slider modal */
+        .image-slider-modal {
+            display: none;
+            position: fixed;
+            top: 40px;
+            right: 20px;
+            width: 600px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            z-index: 10000;
+            transition: right 0.3s ease;
+        }
+
+        .image-slider-modal.open {
+            display: block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .slider {
+            position: relative;
+            overflow: hidden;
+            height: 350px;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease;
+            width: 100%;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            box-sizing: border-box;
+            display: none;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .prev,
+        .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            user-select: none;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        @media (max-width: 767px) {
+            .image-slider-modal {
+                width: 100%;
+                right: 0;
+                top: 0;
+                border-radius: 0;
+                padding: 10px;
+            }
+
+            .slider {
+                height: 250px;
+            }
+
+            .slide img {
+                height: 250px;
+            }
+        }
+        
+        /* ======= Tray Edit Functionality Styling ======= */
+        
+        /* Disabled tray quantity input styling */
+        .jig-loading-table input[type="number"]:disabled {
+            background-color: #f9f9f9;
+            border-color: #ddd;
+            color: #666;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        /* Enabled (editing) tray quantity input styling */
+        .jig-loading-table input[type="number"]:not(:disabled) {
+            background-color: #fff;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            color: #333;
+        }
+        
+        /* Edit button hover effects */
+        .jig-loading-table img[alt="Edit"] {
+            transition: all 0.2s ease;
+            border-radius: 3px;
+            padding: 2px;
+        }
+        
+        .jig-loading-table img[alt="Edit"]:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            transform: scale(1.1);
+        }
+        
+        /* Save button (when in edit mode) styling */
+        .jig-loading-table img[title="Save Changes"] {
+            filter: hue-rotate(120deg) brightness(1.1);
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+        
+        /* Tray quantity change animation */
+        .jig-loading-table input[type="number"].qty-updated {
+            background-color: #e8f5e8;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Lot quantity update animation */
+        #jigQrId.lot-qty-updated {
+            background-color: #e8f5e8;
+            border-color: #28a745;
+            transition: all 0.5s ease;
+        }
+</style>
+
+<!-- Model/Stock No Modal Popup -->
+<div id="modelRemarkModal">
+  <div class="gallery-dialog">
+    <span id="closeModelRemarkModal" class="close-btn">&times;</span>
+    <div class="gallery-title">Model Image Gallery</div>
+    <div id="modelRemarkModalContent"></div>
+  </div>
+</div>
+
+<div class="content-wrapper">
+  <!-- <h5 class="text-left mt-0 mb-3">Day Planning Pick Table</h5> -->
+  
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+          <div class="card-body">
+            <h5 class="text-left mt-0 mb-4" style="font-weight:700;">
+              Jig Unloading Main Table Zone I
+
+              <span id="scanStatusMessage" style="display: none; margin-left: 12px; vertical-align: middle; color: #28a745; font-size: 15px; font-weight: 700;">PLEASE SCAN</span>
+            </h5>
+            
+            <!-- Hidden input for scanner -->
+            <input type="text" id="scanHiddenInput" style="position: absolute; left: -9999px; opacity: 0;" />
+            
+            <!-- Status message -->
+            <div id="scanMessage" style="display: none; margin-top: 8px; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600;"></div>
+
+            <!-- Table Section -->
+            <div class="table-responsive" style="overflow: scroll !important">
+            <table id="order-listing" class="table" data-lock-module="JIG_UNLOADING">
+                <thead>
+                  <tr>
+                    <th>S.No <i class="fa fa-filter" aria-hidden="true"></i>
+                      <input type="checkbox" id="selectAllCheckbox" title="Select All" />
+                    </th>
+                    <th>JIG ID <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Last<br>Updated <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Action <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Lot Qty <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Model Presents <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Bath No <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Process Status <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Lot Status <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Current Stage <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Polish Finish <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Type of Input <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Remarks <i class="fa fa-filter" aria-hidden="true"></i></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for jig_detail in jig_unload %}
+                  <tr class="highlighted-tray-scan" 
+                      data-jig-lot-id="{{ jig_detail.jig_lot_id }}" 
+                      data-jig-qr-id="{{ jig_detail.jig_qr_id }}"
+                      data-jig-completed-id="{{ jig_detail.id }}"
+                      data-lot-id="{{ jig_detail.lot_id }}" 
+                      data-lot-id-quantities='{{ jig_detail.lot_id_quantities|json_encode }}' 
+                      data-lot-id-model-map='{{ jig_detail.lot_id_model_map|json_encode }}'
+                      data-has-draft="{{ jig_detail.has_unload_draft|yesno:'true,false' }}"
+                      data-already-loaded="{{ jig_detail.is_already_loaded_z1|yesno:'true,false' }}">
+                                      
+                    <!-- S.No -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur"  {% endif %}>                  
+                        <span style="display:flex; align-items:center; gap:3px;">
+                    {% if can_hold_release %}
+                      <label class="hold-toggle-switch" style="margin-bottom:0;">
+                        {% if not jig_detail.unload_hold_lot %}
+                          <input type="checkbox" class="hold-toggle-btn" checked />
+                          <span class="hold-slider"></span>
+                        {% else %}
+                          <input type="checkbox" class="hold-toggle-btn" />
+                          <span class="hold-slider"></span>
+                        {% endif %}
+                      </label>
+                      <span class="hold-remark-icon"
+                            style="display:{% if jig_detail.unload_hold_lot or jig_detail.unload_release_lot or jig_detail.unload_holding_reason or jig_detail.unload_release_reason %}inline-block{% else %}none{% endif %}; cursor:pointer;"
+                            title="{% if jig_detail.unload_holding_reason %}Holding Reason: {{ jig_detail.unload_holding_reason }} (by {{ jig_detail.unload_hold_by }} on {{ jig_detail.unload_hold_at|date:"d-M-Y h:i A" }}){% endif %}{% if jig_detail.unload_holding_reason and jig_detail.unload_release_reason %}&#10;{% endif %}{% if jig_detail.unload_release_reason %}Release Reason: {{ jig_detail.unload_release_reason }} (by {{ jig_detail.unload_release_by }} on {{ jig_detail.unload_release_at|date:"d-M-Y h:i A" }}){% endif %}">
+                        {% if jig_detail.unload_hold_lot or jig_detail.unload_release_lot or jig_detail.unload_holding_reason or jig_detail.unload_release_reason %}
+                          <img src="{% static 'assets/icons/view.png' %}" alt="Remark" style="width:12px; height:12px;" />
+                        {% endif %}
+                      </span>
+                    {% else %}
+                      {% if jig_detail.unload_hold_lot or jig_detail.unload_release_lot or jig_detail.unload_holding_reason or jig_detail.unload_release_reason %}
+                        <span class="hold-remark-icon"
+                              style="display:inline-block; cursor:pointer;"
+                              title="{% if jig_detail.unload_holding_reason %}Holding Reason: {{ jig_detail.unload_holding_reason }} (by {{ jig_detail.unload_hold_by }} on {{ jig_detail.unload_hold_at|date:"d-M-Y h:i A" }}){% endif %}{% if jig_detail.unload_holding_reason and jig_detail.unload_release_reason %}&#10;{% endif %}{% if jig_detail.unload_release_reason %}Release Reason: {{ jig_detail.unload_release_reason }} (by {{ jig_detail.unload_release_by }} on {{ jig_detail.unload_release_at|date:"d-M-Y h:i A" }}){% endif %}">
+                          <img src="{% static 'assets/icons/view.png' %}" alt="View Reason" style="width:18px; height:18px;" />
+                        </span>
+                      {% endif %}
+                    {% endif %}
+                    <span class="sno-value">{{ forloop.counter }}</span>
+                    <input type="checkbox" class="row-checkbox" style="vertical-align:middle; margin-left:4px;" />
+                        </span>
+                    </td>
+                    
+                    <!-- JIG ID -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur"  {% endif %}>{{ jig_detail.jig_qr_id }}</td>
+                    
+                    <!-- Last Updated -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      {{ jig_detail.jig_loaded_date_time|date:"d-M-y" }}<br>
+                      <span style="display:inline-block; margin-top:4px;word-break: break-all;">{{ jig_detail.jig_loaded_date_time|date:"h:i A" }}</span>
+                    </td>
+                    
+                    <!-- Action -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur" {% endif %}>
+                        <a href="#" title="Delete" class="delete-jig-btn" data-lot-id="{{ jig_detail.lot_id }}">
+                          <img src="{% static 'assets/icons/bin.png' %}" alt="Delete" style="width: 20px; margin-right: 8px; height: auto; cursor:pointer;"/>
+                        </a>
+                        {% if jig_detail.all_models_submitted_z1 %}
+                          <a href="#" class="text-success z1-view-btn" style="text-decoration: none; font-weight:600;"
+                             data-jig-completed-id="{{ jig_detail.id }}"
+                             title="View unloaded tray data">
+                             <img src="{% static 'assets/icons/view.png' %}" alt="View" style="width:18px; height:18px; margin-right:4px; vertical-align:middle;" />
+                             <span>Unloaded</span>
+                          </a>
+                        {% else %}
+                          <a href="#" class="text-primary z1-unload-btn{% if jig_detail.jig_unload_draft %} draft-resume-btn{% endif %}" 
+                             style="text-decoration: underline; font-weight:600; pointer-events: auto !important; position: relative;"
+                             data-jig-completed-id="{{ jig_detail.id }}"
+                             title="Unload jig trays">
+                             <span>Unload</span>
+                          </a>
+                        {% endif %}
+                    </td>
+                    
+                    <!-- Lot Qty -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur" {% endif %}>
+                        {% if jig_detail.colored_quantities %}
+                          {% for item in jig_detail.colored_quantities %}
+                            <span class="quantity-badge"
+                                  data-color="{{ item.color }}"
+                                  title="{{ item.tooltip }}">
+                              {{ item.quantity }}
+                            </span>
+                          {% endfor %}
+                        {% else %}
+                          {{jig_detail.lot_id_quantities.values|join:", "|default:"0"}}
+                        {% endif %}
+                    </td>
+                    
+                    <!-- Model Presents -->
+                    <td class="model-stock-no-cell{% if jig_detail.unload_hold_lot %} row-inactive-blur{% endif %}" 
+                          data-images='{{ jig_detail.model_images|json_encode }}'
+                          data-model-colors='{{ jig_detail.model_colors|json_encode }}'
+                          data-model-list='{{ jig_detail.no_of_model_cases|json_encode }}'
+                          data-plating-stock-no='{{ jig_detail.plating_stock_num }}'>
+                          <span class="model-stock-no-text" style="cursor:pointer;">
+                              {% for model_no in jig_detail.no_of_model_cases %}
+                                  {% with color=jig_detail.model_colors|get_item:model_no %}
+                                      {% if color and color != 'NOT_FOUND' and color != '#cccccc' %}
+                                          <span class="model-circle"
+                                                style="background-color: {{ color }};
+                                                       border: 2px solid {{ color }};
+                                                       color: white;
+                                                       font-weight: bold;
+                                                       text-align: center;
+                                                       line-height: 12px;"
+                                                data-model="{{ model_no }}"
+                                                data-color="{{ color }}">
+                                          </span>
+                                      {% else %}
+                                          <span class="model-circle"
+                                                style="background-color: #6c757d;
+                                                       border: 2px solid #6c757d;
+                                                       color: white;
+                                                       font-size: 8px;
+                                                       font-weight: bold;
+                                                       text-align: center;
+                                                       line-height: 12px;"
+                                                data-model="{{ model_no }}"
+                                                data-color="default">
+                                              {{ model_no|slice:":2" }}
+                                          </span>
+                                      {% endif %}
+                                  {% endwith %}
+                              {% endfor %}
+                              
+                              <span class="model-gallery-icon"
+                                    style="display:inline-block;
+                                           margin-left:8px;
+                                           cursor:pointer;
+                                           color:#0277bd;
+                                           font-size:14px;
+                                           font-weight:bold;
+                                           vertical-align:middle;
+                                           transition:all 0.3s ease;"
+                                    title="View model images and details"
+                                    data-toggle="gallery">
+                                  <img src="{% static 'assets/icons/view.png' %}" alt="View" style="width:14px; height:14px; vertical-align:middle;" />
+                              </span>
+                              
+                              <div class="model-hover-list">
+                                {% for model_no in jig_detail.no_of_model_cases %}
+                                  {% with color=jig_detail.model_colors|get_item:model_no %}
+                                    <div>
+                                      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{% if color and color != 'NOT_FOUND' and color != '#cccccc' %}{{ color }}{% else %}#6c757d{% endif %};margin-right:5px;vertical-align:middle;"></span>
+                                      {{ model_no }}
+                                    </div>
+                                  {% endwith %}
+                                {% endfor %}
+                              </div>
+
+                              <span class="expand-model-remark" 
+                                    style="display:inline-block;
+                                           width:18px;
+                                           height:18px;
+                                           vertical-align:middle;
+                                           cursor:pointer;
+                                           margin-left: 5px;" 
+                                    title="Expand">
+                                  <svg width="18" height="18" viewBox="0 0 18 18">
+                                      
+                                      <polygon points="6,7 12,7 9,12" fill="#fff"/>
+                                  </svg>
+                              </span>
+                          </span>
+                    </td>
+                    
+                    <!-- Bath No -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur" {% endif %}>{% firstof jig_detail.bath_numbers.bath_number jig_detail.bath_number "N/A" %}</td>
+
+                    <!-- Process Status -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      {% if jig_detail.jig_unload_draft %}
+                        <div title="Draft (Halfway Unloaded)" style="
+                          background: linear-gradient(to right, #0c8249 0 50%, #ccc 50% 100%);
+                          color: #fff;
+                          border-radius: 50%;
+                          width: 24px;
+                          height: 24px;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          font-weight: 500;
+                          font-size: 11px;
+                          line-height: 24px;
+                          text-align: center;
+                          padding: 0;
+                        ">UL</div>
+                      {% else %}
+                        <div style="background:#ccc;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;padding:0;">UL</div>
+                      {% endif %}
+                    </td>
+
+                    <!-- Lot Status -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      {% if jig_detail.is_already_loaded_z1 %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="border: 2px solid #8e24aa; background-color: #f3e5f5; color: #4a148c; font-size: 12px; white-space: nowrap; padding: 6px;">
+                          Already Loaded
+                        </div>
+                      {% elif jig_detail.jig_unload_draft %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="border: 2px solid #4997ac; background-color: #d1f2f3; color: #03425d; font-size: 12px; white-space: nowrap; padding: 6px;">
+                          Draft
+                        </div>
+                      {% elif not jig_detail.remarks and not jig_detail.bath_numbers %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="border: 2px solid #b3b3b3; background-color: #f5f5f5; color: #888; font-size: 12px; white-space: nowrap; padding: 6px;">
+                          Pending
+                        </div>
+                      {% elif jig_detail.unload_hold_lot %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="border: 1px solid #dc3545; background-color: #f8d7da; color: #721c24; font-size: 12px; white-space: nowrap; padding: 5px;">
+                          On Hold
+                        </div>
+                      {% elif jig_detail.batch_status == "Completed" %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="border: 2px solid #007bff; background-color: #e3f2fd; color: #0d47a1; font-size: 12px; white-space: nowrap; padding: 6px;">
+                          Released
+                        </div>
+                      {% else %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="border: 1px solid #f9a825; background-color: #fff8e1; color: #b26a00; font-size: 13px; white-space: nowrap; padding: 6px;">
+                          Yet To Start
+                        </div>
+                      {% endif %}
+                    </td>
+                    
+                    <!-- Current Stage -->
+                    <td>
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="border: 1px solid #9adeed; background-color: #d1edf3; color: #033b5d; font-size: 12px; white-space: nowrap; padding: 6px;">
+                          {% if jig_detail.electroplating_only %}Electroplating{% else %}Jig Unloading{% endif %}
+                        </div>
+                    </td>
+                    
+                    <!-- Polish Finish -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur"  {% endif %}>{{ jig_detail.polish_finish_name|default:"N/A" }}</td>
+
+                    <!-- Type of Input -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur"  {% endif %}>{% include 'partials/_type_of_input_cell.html' with type_of_input=jig_detail.type_of_input %}</td>
+
+                    <!-- Remarks -->
+                    <td {% if jig_detail.unload_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      <a href="#" title="Add Audio Remark" class="remark-tooltip-trigger" style="display: inline-flex; align-items: center; height: 28px; margin-left: 0; position: relative; cursor: pointer;">
+                        <img src="{% static 'assets/icons/rec.png' %}" alt="VoiceRec" style="width: 20px; height: 20px"/>
+                        <div class="remark-tooltip" style="position: absolute; top: 110%; left: 50%; transform: translateX(-50%); width: 265px; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 10px; z-index: 1000;">
+                          <div style="display: flex; align-items: center; gap: 10px;">
+                            <button type="button" style="background: #28a745; color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; display: flex; align-items: center; justify-content: center;">
+                              <i class="fa fa-microphone"></i>
+                            </button>
+                            <span style="font-size: 14px; color: #333;">Hold to record audio</span>
+                            <div style="text-align: right; margin-top: 10px;">
+                              <button type="button" style="background-color: #007bff; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                                <i class="fa fa-send"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                      <a href="#" title="Add Remark" class="remark-tooltip-trigger" data-jig-lot-id="{{ jig_detail.jig_lot_id }}" style="display: inline-flex; align-items: center; height: 20px; margin-left: 5px; position: relative; cursor: pointer;">
+                        <img src="{% static 'assets/icons/chat_icon.png' %}" alt="Chat" style="width: 20px; height: 20px; {% if jig_detail.unloading_remarks %}filter: grayscale(0) brightness(1.1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2); opacity: 1;{% endif %}" />
+                        <div class="remark-tooltip" style="position: absolute; top: 110%; left: 50%; transform: translateX(-50%); width: 300px; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 15px; z-index: 1000;">
+                          <textarea placeholder="Type your remark..." style="width: 85%; height: 40px; resize: vertical; border: 1px solid #ccc; padding: 5px; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px;" {% if jig_detail.unloading_remarks %}readonly{% endif %}>{{ jig_detail.unloading_remarks|default_if_none:"" }}</textarea>
+                          <div style="text-align: right; margin-top: -35px">
+                            {% if not jig_detail.unloading_remarks %}
+                            <button type="button" class="remark-send-btn" style="background-color: #007bff; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                              <i class="fa fa-send"></i>
+                            </button>
+                            {% else %}
+                            <div style="margin-top: 40px; color: #31708f; background: #d9edf7; border: 1px solid #bce8f1; border-radius: 4px; padding: 8px 12px; font-size: 10px; text-align: left;">
+                              <i class="fa fa-info-circle" style="margin-right: 6px;"></i>
+                              Remark already saved and cannot be edited.
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </a>
+                      {% if jig_detail.remarks or jig_detail.pick_remarks %}
+                      <a href="#" title="Previous Module Remark" class="remark-tooltip-trigger" style="display: inline-flex; align-items: center; height: 20px; margin-left: 5px; position: relative; cursor: pointer;">
+                        <img src="{% static 'assets/icons/chat_icon.png' %}" alt="Previous Remark" style="width: 20px; height: 20px; filter: grayscale(0) brightness(1.1) sepia(1) hue-rotate(190deg) saturate(3) contrast(1.2); opacity: 1;" />
+                        <div class="remark-tooltip" style="position: absolute; top: 110%; left: 50%; transform: translateX(-50%); width: 300px; background: #fff; border: 1px solid #a0c4e8; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 15px; z-index: 1000;">
+                          <div style="font-size: 11px; font-weight: 700; color: #0d47a1; margin-bottom: 6px;">
+                            <i class="fa fa-history" style="margin-right: 4px;"></i> Previous Module Remark
+                          </div>
+                          {% if jig_detail.pick_remarks %}
+                          <div style="font-size: 12px; color: #333; margin-bottom: 4px;">
+                            <strong>Pick Remark:</strong> {{ jig_detail.pick_remarks }}
+                          </div>
+                          {% endif %}
+                          {% if jig_detail.remarks %}
+                          <div style="font-size: 12px; color: #333;">
+                            <strong>Remark:</strong> {{ jig_detail.remarks }}
+                          </div>
+                          {% endif %}
+                        </div>
+                      </a>
+                      {% endif %}
+                    </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="13" style="text-align: center; padding: 20px; color: #888;">
+                        No jig details found for unloading.
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+
+              <!-- Tray Scan Modal (LEGACY - hidden) -->
+                <div id="trayScanModal_DayPlanning" class="tray-scan-modal-DayPlanning" style="display:none"></div>
+               </div>
+              
+              <!-- Z1 Unload Modal — Two-Layer: Model List → Tray Scan -->
+              <div id="z1UnloadModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15,23,42,0.45); z-index:19000; align-items:center; justify-content:center; backdrop-filter:blur(2px);">
+                <div id="z1UnloadModalInner" style="background:#ffffff; border-radius:12px; padding:0; min-width:700px; max-width:980px; width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,0.18),0 0 0 1px rgba(0,0,0,0.06); position:relative; border-top:3px solid #00897B;">
+                  <!-- Close button -->
+                  <span id="z1ModalClose" style="position:absolute; top:11px; right:16px; font-size:20px; color:#9e9e9e; cursor:pointer; line-height:1; z-index:2;" title="Close">&times;</span>
+
+                  <!-- LAYER 1: Model List -->
+                  <div id="z1LayerModelList" style="padding:20px 24px 18px; max-height:70vh; overflow-y:auto;">
+                    <!-- Header -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                      <div>
+                        <div style="font-size:13px; font-weight:600; color:#1a2e3b; letter-spacing:0.2px;">
+                          <i class="fa fa-cubes" style="color:#00897B; margin-right:6px;"></i>Jig Unloading &mdash; Zone 1
+                        </div>
+                        <div style="font-size:11px; color:#78909c; margin-top:3px;">
+                          JIG ID: <span id="z1ModalJigId" style="color:#00897B; font-weight:500;"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <hr style="border:none; border-top:1px solid #eceff1; margin:12px 0 14px;">
+                    <!-- Model Table -->
+                    <div style="border:1px solid #eceff1; border-radius:8px; overflow:hidden;">
+                      <table id="z1ModelTable" style="width:100%; border-collapse:collapse; font-size:12px;">
+                        <thead>
+                          <tr style="background:#f8fafc; border-bottom:2px solid #eceff1;">
+                            <th style="padding:9px 12px; font-weight:600; color:#546e7a; font-size:11px; text-align:left; letter-spacing:0.4px; text-transform:uppercase;">Model</th>
+                            <th style="padding:9px 12px; font-weight:600; color:#546e7a; font-size:11px; text-align:left; letter-spacing:0.4px; text-transform:uppercase;">Plating Color</th>
+                            <th style="padding:9px 12px; font-weight:600; color:#546e7a; font-size:11px; text-align:left; letter-spacing:0.4px; text-transform:uppercase;">JIG ID</th>
+                            <th style="padding:9px 12px; font-weight:600; color:#546e7a; font-size:11px; text-align:center; letter-spacing:0.4px; text-transform:uppercase;">Qty</th>
+                            <th style="padding:9px 12px; font-weight:600; color:#546e7a; font-size:11px; text-align:center; letter-spacing:0.4px; text-transform:uppercase;">Tray</th>
+                            <th style="padding:9px 12px; font-weight:600; color:#546e7a; font-size:11px; text-align:center; letter-spacing:0.4px; text-transform:uppercase;">Status</th>
+                            <th style="padding:9px 12px; font-weight:600; color:#546e7a; font-size:11px; text-align:center; letter-spacing:0.4px; text-transform:uppercase;">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody id="z1ModelTableBody">
+                          <!-- Populated by JS -->
+                        </tbody>
+                      </table>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; margin-top:14px;">
+                      <button id="z1SubmitAllBtn" type="button" disabled style="background:#00897B; color:#fff; border:none; border-radius:20px; padding:8px 22px; font-size:12px; font-weight:500; cursor:pointer; opacity:0.45; transition:opacity 0.2s; letter-spacing:0.3px;">
+                        <i class="fa fa-check-circle" style="margin-right:5px;"></i>Submit All
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- LAYER 2: Tray Scan (per model) -->
+                  <div id="z1LayerTrayScan" style="display:none; padding:20px 24px 18px;">
+                    <!-- Sub-header -->
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+                      <button id="z1BackToModels" type="button" style="background:none; border:1px solid #b0bec5; color:#546e7a; border-radius:50%; width:28px; height:28px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;" title="Back to model list">
+                        <i class="fa fa-arrow-left"></i>
+                      </button>
+                      <div style="flex:1; min-width:0;">
+                        <div style="font-size:13px; font-weight:600; color:#1a2e3b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                          <i class="fa fa-barcode" style="color:#00897B; margin-right:5px;"></i>Tray Scan &mdash; <span id="z1TrayModelNo" style="color:#00695c;"></span>
+                        </div>
+                      </div>
+                      <button id="z1InScanAddModelBtn" type="button" style="background:#f1f8f7; border:1px solid #80cbc4; color:#00695c; border-radius:20px; padding:4px 12px; font-size:10px; cursor:pointer; font-weight:500; letter-spacing:0.2px; flex-shrink:0;" title="Add same model from another jig to combine quantities">
+                        <i class="fa fa-plus" style="margin-right:3px;"></i>Add Model
+                      </button>
+                    </div>
+                    <!-- Info strip -->
+                    <div style="background:#f1f8f7; border:1px solid #b2dfdb; border-radius:7px; padding:8px 12px; margin:10px 0 12px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
+                      <span style="font-size:11px; color:#546e7a;">JIG: <strong id="z1TrayJigId" style="color:#00695c; font-weight:600;"></strong></span>
+                      <span style="font-size:11px; color:#546e7a; display:flex; align-items:center; gap:6px;">
+                        LOT Qty: 
+                        <input type="number" id="z1TrayQty" min="0" 
+                          style="width:65px; padding:3px 7px; border:1px solid #ffcc80; border-radius:5px; text-align:center; font-size:12px; font-weight:600; background:#fff; color:#e65100; outline:none;" 
+                          title="Edit LOT Qty to redistribute trays" />
+                        <button id="z1RevertQtyBtn" type="button" 
+                          style="display:none; background:#ff9800; color:#fff; border:none; border-radius:4px; padding:3px 8px; font-size:10px; font-weight:600; cursor:pointer; letter-spacing:0.2px;" 
+                          title="Revert to original LOT Qty">
+                          <i class="fa fa-undo"></i> Revert
+                        </button>
+                        <span id="z1LotQtyError" style="color:#dc3545; font-size:10px; display:none;"></span>
+                      </span>
+                      <span style="font-size:11px; color:#546e7a;">Tray: <strong id="z1TrayCode" style="color:#00695c; font-weight:600;"></strong></span>
+                      <span style="font-size:11px; color:#546e7a;">No. of Trays: <strong id="z1TrayCount" style="color:#1a2e3b; font-weight:600;"></strong></span>
+                    </div>
+                    <!-- Newly added (via Add Model) chip strip, with remove icon -->
+                    <div id="z1TrayNewModelChips" style="display:none; flex-wrap:wrap; gap:6px; margin:-2px 0 10px;"></div>
+                    <!-- Alert banner -->
+                    <div id="z1TrayError" style="display:none; padding:8px 12px; border-radius:6px; margin-bottom:10px; font-size:11px; border-left:3px solid;"></div>
+                    <!-- Tray slots -->
+                    <div id="z1TraySlotsContainer" style="max-height:320px; overflow-y:auto; border:1px solid #eceff1; border-radius:8px; background:#fff;">
+                      <!-- Populated by JS -->
+                    </div>
+                    <!-- Top tray remark -->
+                    <div id="z1TopTrayRemarkRow" style="display:none; margin-top:10px;">
+                      <label style="font-size:11px; font-weight:600; color:#546e7a; display:block; margin-bottom:4px;">
+                        <i class="fa fa-pencil" style="margin-right:3px; color:#e65100;"></i>
+                        Top Tray Remark <span style="color:#c62828;">*</span>
+                      </label>
+                      <textarea id="z1TopTrayRemark" maxlength="200" placeholder="Enter remark for top tray qty change…" style="width:100%; height:44px; border:1px solid #cfd8dc; border-radius:6px; padding:7px 10px; font-size:11px; resize:none; outline:none; color:#37474f; box-sizing:border-box;"></textarea>
+                    </div>
+                    <!-- Action buttons -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:14px;">
+                      <button id="z1ClearTrayIdsBtn" type="button" title="Clear all tray ID input boxes (qty and other fields are left untouched)" style="background:#fff; color:#c62828; border:1px solid #ef9a9a; border-radius:20px; padding:7px 16px; font-size:11px; font-weight:500; cursor:pointer; letter-spacing:0.3px;">
+                        <i class="fa fa-eraser" style="margin-right:3px;"></i>Clear
+                      </button>
+                      <div style="display:flex; gap:8px;">
+                        <button id="z1DraftSaveBtn" type="button" style="background:#fff; color:#00897B; border:1px solid #80cbc4; border-radius:20px; padding:7px 18px; font-size:11px; font-weight:500; cursor:pointer; letter-spacing:0.3px;">
+                          <i class="fa fa-floppy-o" style="margin-right:3px;"></i>Draft
+                        </button>
+                        <button id="z1SaveModelBtn" type="button" style="background:#00897B; color:#fff; border:none; border-radius:20px; padding:7px 20px; font-size:11px; font-weight:500; cursor:pointer; letter-spacing:0.3px;">
+                          <i class="fa fa-save" style="margin-right:3px;"></i>Save &amp; Back
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- LAYER 3: View Mode (read-only) -->
+                  <div id="z1LayerView" style="display:none; padding:20px 24px 18px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+                      <button id="z1ViewBackBtn" type="button" style="background:none; border:1px solid #b0bec5; color:#546e7a; border-radius:50%; width:28px; height:28px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;" title="Back">
+                        <i class="fa fa-arrow-left"></i>
+                      </button>
+                      <div style="font-size:13px; font-weight:600; color:#1a2e3b;">
+                        <i class="fa fa-eye" style="color:#00897B; margin-right:5px;"></i>
+                        View &mdash; <span id="z1ViewModelNo" style="color:#00695c;"></span>
+                      </div>
+                    </div>
+                    <hr style="border:none; border-top:1px solid #eceff1; margin:12px 0 14px;">
+                    <div id="z1ViewContent" style="border:1px solid #eceff1; border-radius:8px; overflow:hidden;">
+                      <!-- Populated by JS -->
+                    </div>
+                    <div style="text-align:right; margin-top:12px;">
+                      <button id="z1ViewCloseBtn" type="button" style="background:#eceff1; color:#546e7a; border:none; border-radius:20px; padding:7px 20px; font-size:11px; font-weight:500; cursor:pointer;">Close</button>
+                    </div>
+                  </div>
+
+                  <!-- LAYER 4: Add Model Selection (from inside Tray Scan) -->
+                  <div id="z1LayerAddModel" style="display:none; padding:20px 24px 18px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+                      <button id="z1AddModelBackBtn" type="button" style="background:none; border:1px solid #b0bec5; color:#546e7a; border-radius:50%; width:28px; height:28px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;" title="Back to tray scan">
+                        <i class="fa fa-arrow-left"></i>
+                      </button>
+                      <div style="flex:1; min-width:0;">
+                        <div style="font-size:13px; font-weight:600; color:#1a2e3b;">
+                          <i class="fa fa-plus-circle" style="color:#00897B; margin-right:5px;"></i>Add Model &mdash; <span id="z1AddModelCurrentModel" style="color:#00695c;"></span>
+                        </div>
+                        <div style="font-size:11px; color:#78909c; margin-top:2px;">Select same-model jigs to combine quantities for scanning</div>
+                      </div>
+                    </div>
+                    <hr style="border:none; border-top:1px solid #eceff1; margin:12px 0 10px;">
+                    <div id="z1AddModelListContainer" style="max-height:300px; overflow-y:auto; border:1px solid #eceff1; border-radius:8px; background:#fff;">
+                      <!-- Populated by JS -->
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:14px;">
+                      <button id="z1AddModelCancelBtn" type="button" style="background:#eceff1; color:#546e7a; border:none; border-radius:20px; padding:7px 18px; font-size:11px; font-weight:500; cursor:pointer;">Cancel</button>
+                      <button id="z1AddModelConfirmBtn" type="button" style="background:#00897B; color:#fff; border:none; border-radius:20px; padding:7px 20px; font-size:11px; font-weight:500; cursor:pointer;">
+                        <i class="fa fa-check" style="margin-right:4px;"></i>Confirm Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+           <!-- Pagination Section -->
+            <div class="pagination-wrapper">
+               <nav aria-label="Page navigation">
+                  <ul class="pagination justify-content-end mb-0">
+                     {# Previous button #}
+                     {% if jig_details.has_previous %}
+                     <li>
+                        <a href="?page={{ jig_details.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true"><i class="fa fa-chevron-left"></i></span>
+                        </a>
+                     </li>
+                     {% else %}
+                     <li class="disabled">
+                        <span aria-hidden="true"><i class="fa fa-chevron-left"></i></span>
+                     </li>
+                     {% endif %}
+                     {# Always show first page #}
+                     {% if jig_details.number > 3 %}
+                     <li><a href="?page=1">1</a></li>
+                     {% if jig_details.number > 4 %}
+                     <li class="disabled"><span>…</span></li>
+                     {% endif %}
+                     {% endif %}
+                     {# Show pages around current page #}
+                     {% for num in jig_details.paginator.page_range %}
+                     {% if num >= jig_details.number|add:'-2' and num <= jig_details.number|add:'2' %}
+                     {% if num == jig_details.number %}
+                     <li class="active"><span>{{ num }}</span></li>
+                     {% else %}
+                     <li><a href="?page={{ num }}">{{ num }}</a></li>
+                     {% endif %}
+                     {% endif %}
+                     {% endfor %}
+                     {# Show ellipsis and last page if needed #}
+                     {% if jig_details.number < jig_details.paginator.num_pages|add:'-2' %}
+                     {% if jig_details.number < jig_details.paginator.num_pages|add:'-3' %}
+                     <li class="disabled"><span>…</span></li>
+                     {% endif %}
+                     <li><a href="?page={{ jig_details.paginator.num_pages }}">{{ jig_details.paginator.num_pages }}</a></li>
+                     {% endif %}
+                     {# Next button #}
+                     {% if jig_details.has_next %}
+                     <li>
+                        <a href="?page={{ jig_details.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true"><i class="fa fa-chevron-right"></i></span>
+                        </a>
+                     </li>
+                     {% else %}
+                     <li class="disabled">
+                        <span aria-hidden="true"><i class="fa fa-chevron-right"></i></span>
+                     </li>
+                     {% endif %}
+                  </ul>
+               </nav>
+            </div>
+   
+        </div>
+      </div>
+</div>
+
+<!-- Hold Remark Modal -->
+<div id="holdRemarkModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.18); z-index:20000; align-items:center; justify-content:center;">
+   <div style="background:#fff; border-radius:10px; padding:28px 32px 18px 32px; min-width:320px; max-width:90vw; box-shadow:0 4px 24px rgba(0,0,0,0.18); position:relative;">
+      <span id="closeHoldRemarkModal" style="position:absolute; top:8px; right:16px; font-size:22px; font-weight:bold; color:#d9534f; cursor:pointer;">&times;</span>
+      <h5 style="margin-bottom:16px; color:#028084;">Row Hold Remark</h5>
+      <textarea id="holdRemarkInput" maxlength="50" style="width:100%; height:60px; border:1px solid #ccc; border-radius:6px; padding:8px; font-size:15px; resize:none;" placeholder="Enter remark (max 50 chars)"></textarea>
+      <div style="text-align:right; margin-top:10px;">
+         <button id="saveHoldRemarkBtn" style="background:#007bff; color:#fff; border:none; border-radius:20px; padding:6px 18px; font-size:15px; cursor:pointer;">Save</button>
+      </div>
+      <div id="holdRemarkError" style="color:red; font-size:13px; min-height:18px; margin-top:6px;"></div>
+   </div>
+</div>
+
+{% block script %}
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function() {
+  // ===================================================================
+  // Z1 UNLOAD MODAL — Pure fetch + render (backend decides everything)
+  // ===================================================================
+  const API_BASE = '/jig_unloading/api';
+  const modal = document.getElementById('z1UnloadModal');
+  const layerModelList = document.getElementById('z1LayerModelList');
+  const layerTrayScan  = document.getElementById('z1LayerTrayScan');
+  const layerView      = document.getElementById('z1LayerView');
+  const layerAddModel  = document.getElementById('z1LayerAddModel');
+  let currentJigCompletedId = null;
+  let currentModelsData     = null;
+  let currentModelIndex     = null;
+  let topTrayQtyEdited      = false;
+  let lotQtyEdited          = false;
+  let originalLotQty        = 0;
+
+  function getCsrfToken() {
+    const el = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (el) return el.value;
+    const c = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='));
+    return c ? c.split('=')[1] : '';
+  }
+
+  function showLayer(layer) {
+    layerModelList.style.display = 'none';
+    layerTrayScan.style.display  = 'none';
+    layerView.style.display      = 'none';
+    layerAddModel.style.display  = 'none';
+    layer.style.display = 'block';
+  }
+
+  // --- OPEN MODAL ---
+  function openUnloadModal(jigCompletedId) {
+    currentJigCompletedId = jigCompletedId;
+    modal.style.display = 'flex';
+    showLayer(layerModelList);
+    document.getElementById('z1ModelTableBody').innerHTML =
+      '<tr><td colspan="7" style="text-align:center;padding:20px;color:#888;font-size:13px;">Loading...</td></tr>';
+    const submitBtn = document.getElementById('z1SubmitAllBtn');
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.5';
+
+    fetch(`${API_BASE}/get_unload_models_z1/?jig_completed_id=${jigCompletedId}`)
+      .then(r => r.json())
+      .then(data => {
+        currentModelsData = data;
+        document.getElementById('z1ModalJigId').textContent = data.jig_qr_id || '-';
+        renderModelTable(data.models, data.all_unloaded);
+      })
+      .catch(err => {
+        document.getElementById('z1ModelTableBody').innerHTML =
+          '<tr><td colspan="7" style="text-align:center;color:#c62828;padding:20px;">Error loading data</td></tr>';
+        console.error('Z1 API error:', err);
+      });
+  }
+
+  // Combined "JIG: X, Y" label for a model. The backend intentionally leaves
+  // m.jig_id as just the base jig(s) when a lot is merged in via Add Model
+  // (STEP 5) — the newly-added jig lives only in merged_lots — so this
+  // combined display self-reverts to the correct value the moment that merge
+  // is undone via Remove, with no separate "un-concatenate" step needed.
+  function getDisplayJigId(m) {
+    var base = m.jig_id || '';
+    var addedJigIds = (m.merged_lots || [])
+      .filter(function(ml) { return ml.is_newly_added && ml.jig_id; })
+      .map(function(ml) { return ml.jig_id; })
+      .filter(function(jid) { return !base.split(',').map(function(s) { return s.trim(); }).includes(jid); });
+    return addedJigIds.length ? (base ? base + ', ' : '') + addedJigIds.join(', ') : base;
+  }
+
+  // --- LAYER 1: Model Table ---
+  function renderModelTable(models, allUnloaded) {
+    const tbody = document.getElementById('z1ModelTableBody');
+    tbody.innerHTML = '';
+    models.forEach(function(m, idx) {
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid #f0f4f5';
+      tr.style.background = idx % 2 === 0 ? '#ffffff' : '#fafcfc';
+      tr.style.height = '46px';
+
+      // Status: Already Loaded > Done > Draft > Pending
+      let statusHtml, actionHtml;
+      if (m.is_already_loaded) {
+        statusHtml = '<span style="color:#6a1b9a;font-size:11px;font-weight:500;"><i class="fa fa-link"></i> Already Loaded</span>';
+        actionHtml = '<span style="color:#b0bec5;font-size:10px;">&mdash;</span>';
+      } else if (m.is_unloaded) {
+        statusHtml = '<span style="color:#2e7d32;font-size:11px;font-weight:500;"><i class="fa fa-check-circle"></i> Done</span>';
+        var viewBtn = '<button class="z1-model-view-btn" data-idx="' + idx + '" style="background:#f8fafc;border:1px solid #b0bec5;color:#546e7a;border-radius:16px;padding:4px 12px;font-size:10px;cursor:pointer;font-weight:500;"><i class="fa fa-eye"></i> View</button>';
+        var submitLotBtn = m.is_submitted_lot
+          ? '<button disabled style="background:#e8f5e9;color:#388e3c;border:1px solid #a5d6a7;border-radius:16px;padding:4px 10px;font-size:10px;font-weight:500;cursor:default;"><i class="fa fa-check"></i> Submitted</button>'
+          : '<button class="z1-model-submit-btn" data-idx="' + idx + '" style="background:#1b5e20;color:#fff;border:none;border-radius:16px;padding:4px 10px;font-size:10px;font-weight:500;cursor:pointer;"><i class="fa fa-paper-plane"></i> Submit</button>';
+        actionHtml = '<div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;">' + viewBtn + submitLotBtn + '</div>';
+      } else if (m.is_draft) {
+        statusHtml = '<span style="color:#1565c0;font-size:11px;font-weight:500;"><i class="fa fa-pencil-square-o"></i> Draft</span>';
+        actionHtml = '<button class="z1-model-unload-btn" data-idx="' + idx + '" style="background:#1565c0;color:#fff;border:none;border-radius:16px;padding:4px 14px;font-size:10px;font-weight:500;cursor:pointer;letter-spacing:0.2px;"><i class="fa fa-play"></i> Resume</button>';
+      } else {
+        statusHtml = '<span style="color:#bf6900;font-size:11px;font-weight:500;"><i class="fa fa-clock-o"></i> Pending</span>';
+        actionHtml = '<button class="z1-model-unload-btn" data-idx="' + idx + '" style="background:#00897B;color:#fff;border:none;border-radius:16px;padding:4px 14px;font-size:10px;font-weight:500;cursor:pointer;letter-spacing:0.2px;"><i class="fa fa-download"></i> Unload</button>';
+      }
+
+      // Newly added via Add Model this session — allow removing any time before
+      // this model is finally submitted (it may already be auto-saved as a
+      // draft — draft is still fully editable, so that must not hide the icon).
+      var removeMode = '';
+      if (m.added_jig_completed_id && !m.is_unloaded) {
+        removeMode = 'row';
+      } else if ((m.merged_lots || []).some(function(ml) { return ml.is_newly_added; }) && !m.is_unloaded) {
+        removeMode = 'merge';
+      }
+      var removeBtnHtml = removeMode
+        ? '<button type="button" class="z1-model-remove-btn" data-idx="' + idx + '" data-mode="' + removeMode + '" title="Remove this newly added model" style="background:none;border:none;color:#c62828;font-size:15px;font-weight:700;cursor:pointer;margin-left:6px;line-height:1;vertical-align:middle;">&times;</button>'
+        : '';
+
+      // Newly added models (via Add Model, this session) get a light highlight
+      // on the Model column so they visually stand out from pre-existing rows.
+      var modelColBg = removeMode ? '#fff8e1' : 'transparent';
+
+      tr.innerHTML =
+        '<td style="padding:9px 12px;font-size:12px;color:#1a2e3b;font-weight:500;background:' + modelColBg + ';vertical-align:middle;">' +
+          '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + trayColorBg(m.tray_color) + ';margin-right:6px;vertical-align:middle;border:1px solid rgba(0,0,0,0.12);"></span>' +
+          escHtml(m.model_no) + removeBtnHtml +
+          (m.merged_info ? '<div style="font-size:9px;color:#1565c0;margin-top:2px;font-style:italic;"><i class="fa fa-info-circle" style="margin-right:2px;"></i>' + escHtml(m.merged_info) + '</div>' : '') +
+        '</td>' +
+        '<td style="padding:9px 12px;font-size:11px;color:#455a64;vertical-align:middle;">' + escHtml(m.plating_color_name || '\u2014') + '</td>' +
+        '<td style="padding:9px 12px;font-size:11px;color:#78909c;vertical-align:middle;">' + escHtml(getDisplayJigId(m) || '\u2014') + '</td>' +
+        '<td style="padding:9px 12px;text-align:center;font-size:13px;color:#e65100;font-weight:600;vertical-align:middle;">' + m.qty + '</td>' +
+        '<td style="padding:9px 12px;text-align:center;vertical-align:middle;">' +
+          '<span style="background:' + trayColorBg(m.tray_color) + ';color:#fff;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:0.3px;">' +
+          escHtml(m.tray_code) + ' &bull; ' + m.tray_capacity + '</span>' +
+        '</td>' +
+        '<td style="padding:9px 12px;text-align:center;vertical-align:middle;">' + statusHtml + '</td>' +
+        '<td style="padding:9px 12px;text-align:center;vertical-align:middle;">' + actionHtml + '</td>';
+      tbody.appendChild(tr);
+    });
+
+    // Submit All button
+    const submitBtn = document.getElementById('z1SubmitAllBtn');
+    if (allUnloaded && models.length > 0) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.background = '#00897B';
+      submitBtn.style.color = '#fff';
+      submitBtn.style.border = 'none';
+      submitBtn.innerHTML = '<i class="fa fa-check-circle" style="margin-right:5px;"></i>Submit All';
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.45';
+    }
+
+    // Auto-close if ALL models have been individually submitted
+    var allIndividuallySubmitted = models.length > 0 && models.every(function(m) { return m.is_submitted_lot; });
+    if (allIndividuallySubmitted) {
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.background = '#e8f5e9';
+      submitBtn.style.color = '#2e7d32';
+      submitBtn.style.border = '1px solid #a5d6a7';
+      submitBtn.innerHTML = '<i class="fa fa-check-circle" style="margin-right:5px;"></i>Submitted';
+      showZ1Notify(
+        'All models submitted successfully!',
+        'success',
+        function() {
+          modal.style.display = 'none';
+          window.location.reload();
+        }
+      );
+    }
+
+    // Bind per-model buttons
+    tbody.querySelectorAll('.z1-model-unload-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { openTrayScan(parseInt(this.dataset.idx)); });
+    });
+    tbody.querySelectorAll('.z1-model-view-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { openView(parseInt(this.dataset.idx)); });
+    });
+    tbody.querySelectorAll('.z1-model-submit-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { submitSingleModel(parseInt(this.dataset.idx)); });
+    });
+    tbody.querySelectorAll('.z1-model-remove-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var removeIdx = parseInt(this.dataset.idx);
+        var removeModeVal = this.dataset.mode;
+        showZ1Confirm('Remove this newly added model?', function() {
+          removeNewlyAddedModel(removeIdx, removeModeVal);
+        }, 'Remove', 'fa-trash');
+      });
+    });
+  }
+
+  // --- Undo an Add Model action before it has been saved ---
+  function removeNewlyAddedModel(idx, mode) {
+    var models = currentModelsData && currentModelsData.models;
+    if (!models || !models[idx]) return;
+    var m = models[idx];
+    if (mode === 'row') {
+      models.splice(idx, 1);
+    } else if (mode === 'merge') {
+      var keep = [];
+      var removed = [];
+      var removedQty = 0;
+      (m.merged_lots || []).forEach(function(ml) {
+        if (ml.is_newly_added) { removed.push(ml); removedQty += (ml.qty || 0); } else { keep.push(ml); }
+      });
+      // Best-effort: delete the merged-in lot's own record so it stops showing
+      // as "Already Loaded" and is available again as an Add Model candidate.
+      removed.forEach(function(ml) {
+        fetch(`${API_BASE}/remove_merged_model_z1/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+          body: JSON.stringify({
+            removed_jig_completed_id: ml.jig_completed_id,
+            removed_lot_id: ml.lot_id,
+          }),
+        }).catch(function(err) { console.error('remove_merged_model_z1 failed:', err); });
+      });
+      m.merged_lots = keep;
+      m.qty = Math.max((m.qty || 0) - removedQty, 0);
+      var cap = m.tray_capacity > 0 ? m.tray_capacity : 20;
+      var numTrays = m.qty > 0 ? Math.ceil(m.qty / cap) : 1;
+      var remainder = m.qty > 0 ? (m.qty % cap === 0 ? cap : m.qty % cap) : 0;
+      // Add Model prepends the newly-merged lot's blank slots to the FRONT and
+      // pushes the surviving lot's real (already-scanned) slots to the TAIL
+      // (see _jul_prepend_new_lot_tray_slots_z1 backend mirror). Reading old
+      // slots by front index here was pulling the just-removed lot's blank
+      // slots back in and discarding the surviving lot's real tray IDs —
+      // e.g. lot A=52 (3 slots) + lot B=142 merged (8 blank slots prepended,
+      // 11 total) → removing B must restore A's original 3 slots, which now
+      // sit at indices 8-10, not 0-2. Read from the tail instead.
+      var oldSlots = m.tray_slots || [];
+      var tailStart = Math.max(oldSlots.length - numTrays, 0);
+      var newSlots = [];
+      for (var i = 0; i < numTrays; i++) {
+        var oldIdx = tailStart + i;
+        var isPreExisting = oldIdx < oldSlots.length;
+        newSlots.push({
+          slot: i + 1,
+          tray_id: isPreExisting ? (oldSlots[oldIdx].tray_id || '') : '',
+          qty: i === 0 ? remainder : cap,
+          is_top_tray: i === 0,
+          editable_qty: i === 0
+        });
+      }
+      m.tray_slots = newSlots;
+      m.num_trays = newSlots.length;
+      m.merged_info = keep.length > 0
+        ? keep.map(function(ml) { return '+' + ml.qty + ' from ' + ml.lot_id; }).join('; ')
+        : '';
+
+      // Persist the corrected total_qty/tray_data/merged_lots immediately —
+      // without this, the model's JUSubmittedZ1 record still holds the old
+      // combined qty and stale source_metadata, so the removal silently
+      // reverts the next time this list is reloaded from the server.
+      fetch(`${API_BASE}/save_model_unload_z1/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+        body: JSON.stringify({
+          jig_completed_id: currentJigCompletedId,
+          lot_id: m.lot_id,
+          model_no: m.model_no,
+          tray_data: m.tray_slots,
+          total_qty: m.qty,
+          missing_qty: 0,
+          top_tray_remark: m.top_tray_remark || '',
+          tray_type: m.tray_type,
+          tray_capacity: m.tray_capacity,
+          tray_code: m.tray_code,
+          tray_color: m.tray_color,
+          is_draft: true,
+          merged_lots: m.merged_lots,
+          lot_qty_edited: !!m.lot_qty_edited,
+        }),
+      })
+        .then(function(r) { return r.json().catch(function() { return {}; }); })
+        .then(function(result) {
+          if (!result || result.success !== true) {
+            console.error('save_model_unload_z1 (remove-merge sync) rejected:', result);
+            showTrayError((result && result.error) || 'Could not save the updated LOT Qty after removing the model. Please try again.');
+          }
+        })
+        .catch(function(err) { console.error('save_model_unload_z1 (remove-merge sync) failed:', err); });
+    }
+    renderModelTable(models, currentModelsData.all_unloaded);
+  }
+
+  // --- PER-MODEL SUBMIT ---
+  // ---------- Custom Notify / Confirm (no browser alert/confirm) ----------
+  function showZ1Notify(msg, type, onOk) {
+    var overlay = document.getElementById('z1NotifyOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'z1NotifyOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);z-index:20000;display:none;align-items:center;justify-content:center;';
+      document.body.appendChild(overlay);
+    }
+    var color = type === 'success' ? '#2e7d32' : type === 'error' ? '#c62828' : '#1565c0';
+    var icon  = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle';
+    overlay.innerHTML =
+      '<div style="background:#fff;border-radius:14px;padding:30px 34px;max-width:400px;width:92vw;box-shadow:0 10px 36px rgba(0,0,0,0.22);text-align:center;">' +
+        '<div style="font-size:38px;color:' + color + ';margin-bottom:14px;"><i class="fa ' + icon + '"></i></div>' +
+        '<div style="font-size:13.5px;color:#263238;line-height:1.65;margin-bottom:22px;white-space:pre-line;">' + msg + '</div>' +
+        '<button id="z1NotifyOkBtn" style="background:' + color + ';color:#fff;border:none;border-radius:22px;padding:9px 36px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.3px;">OK</button>' +
+      '</div>';
+    overlay.style.display = 'flex';
+    document.getElementById('z1NotifyOkBtn').onclick = function() {
+      overlay.style.display = 'none';
+      if (onOk) onOk();
+    };
+  }
+
+  function showZ1Confirm(msg, onConfirm, okLabel, okIconClass) {
+    var label = okLabel || 'Submit';
+    var iconClass = okIconClass || 'fa-paper-plane';
+    var overlay = document.getElementById('z1ConfirmOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'z1ConfirmOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);z-index:20001;display:none;align-items:center;justify-content:center;';
+      document.body.appendChild(overlay);
+    }
+    overlay.innerHTML =
+      '<div style="background:#fff;border-radius:14px;padding:28px 32px;max-width:380px;width:92vw;box-shadow:0 10px 36px rgba(0,0,0,0.22);text-align:center;">' +
+        '<div style="font-size:13.5px;color:#263238;line-height:1.65;margin-bottom:22px;white-space:pre-line;">' + msg + '</div>' +
+        '<div style="display:flex;gap:12px;justify-content:center;">' +
+          '<button id="z1ConfirmCancel" style="background:#fff;border:1px solid #b0bec5;color:#546e7a;border-radius:20px;padding:8px 22px;font-size:13px;cursor:pointer;">Cancel</button>' +
+          '<button id="z1ConfirmOkBtn" style="background:#1b5e20;color:#fff;border:none;border-radius:20px;padding:8px 22px;font-size:13px;font-weight:600;cursor:pointer;"><i class="fa ' + iconClass + '"></i> ' + label + '</button>' +
+        '</div>' +
+      '</div>';
+    overlay.style.display = 'flex';
+    document.getElementById('z1ConfirmCancel').onclick = function() { overlay.style.display = 'none'; };
+    document.getElementById('z1ConfirmOkBtn').onclick = function() {
+      overlay.style.display = 'none';
+      onConfirm();
+    };
+  }
+
+  // --- PER-MODEL SUBMIT ---
+  function submitSingleModel(idx) {
+    var m = currentModelsData && currentModelsData.models && currentModelsData.models[idx];
+    if (!m || !m.is_unloaded) {
+      showZ1Notify('This model has not been unloaded yet.\nComplete tray scan first.', 'error');
+      return;
+    }
+    showZ1Confirm(
+      'Submit model "' + m.model_no + '" as a separate lot?\nThis will create an independent lot record for this model.',
+      function() {
+        var btn = document.querySelector('.z1-model-submit-btn[data-idx="' + idx + '"]');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; }
+
+        fetch(API_BASE + '/submit_single_model_z1/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+          body: JSON.stringify({ jig_completed_id: currentJigCompletedId, lot_id: m.lot_id }),
+        })
+        .then(function(r) {
+          return r.json().catch(function() {
+            return { success: false, error: 'Server error (HTTP ' + r.status + ')' };
+          });
+        })
+        .then(function(data) {
+          if (data.success) {
+            var lotLabel = data.unload_lot_id || data.lot_id || '';
+            var msg = data.already_submitted
+              ? 'Already submitted.\nLot ID: ' + lotLabel
+              : 'Submitted successfully!\nModel: ' + m.model_no + '\nLot ID: ' + lotLabel;
+            showZ1Notify(msg, 'success', function() {
+              openUnloadModal(currentJigCompletedId);
+            });
+          } else {
+            showZ1Notify(
+              'Could not submit model "' + m.model_no + '".\n' + (data.error || 'Please try again.'),
+              'error',
+              function() { openUnloadModal(currentJigCompletedId); }
+            );
+          }
+        })
+        .catch(function(err) {
+          console.error('submitSingleModel error:', err);
+          showZ1Notify('Network error. Please check connection and try again.', 'error', function() {
+            openUnloadModal(currentJigCompletedId);
+          });
+        });
+      }
+    );
+  }
+
+  // --- LAYER 2: Tray Scan ---
+  function openTrayScan(idx) {
+    currentModelIndex = idx;
+    topTrayQtyEdited = false;
+    lotQtyEdited = false;
+    const m = currentModelsData.models[idx];
+    originalLotQty = m.qty;
+    document.getElementById('z1TrayModelNo').textContent = m.model_no;
+    document.getElementById('z1TrayJigId').textContent   = getDisplayJigId(m) || '-';
+    document.getElementById('z1TrayQty').value           = m.qty;
+    document.getElementById('z1TrayQty').max             = m.qty; // Max = original qty
+    document.getElementById('z1TrayCode').textContent    = m.tray_code + ' (' + m.tray_type + '-' + m.tray_capacity + ')';
+    document.getElementById('z1TrayCount').textContent   = m.num_trays;
+    document.getElementById('z1TrayError').style.display = 'none';
+    document.getElementById('z1LotQtyError').style.display = 'none';
+    document.getElementById('z1TopTrayRemark').value     = '';
+    document.getElementById('z1TopTrayRemarkRow').style.display = 'none';
+
+    // Pre-fill tray IDs from draft/submitted data if available. submitted_data
+    // is the RAW, previously-persisted tray_data — its slot numbers reflect
+    // whatever order was in effect the last time it was saved. Once an Add
+    // Model merge has reordered this model's slots this session (new lot's
+    // trays first, old lot's trays pushed down — flagged via
+    // is_newly_added_slot), the backend has ALREADY resolved every slot's
+    // correct tray_id itself (blank for genuinely new slots, carried forward
+    // for pre-existing ones). Matching stale submitted_data by slot NUMBER
+    // at that point would restamp an old tray_id onto the wrong, renumbered
+    // slot, so this resync only applies when no reorder happened this session.
+    const wasReorderedThisSession = (m.tray_slots || []).some(function(slot) { return slot.is_newly_added_slot; });
+    if (m.submitted_data && m.submitted_data.tray_data) {
+      if (!wasReorderedThisSession) {
+        const savedTrays = m.submitted_data.tray_data;
+        m.tray_slots.forEach(function(slot) {
+          if (slot.tray_id) return;
+          const saved = savedTrays.find(function(t) { return t.slot === slot.slot; });
+          if (saved && saved.tray_id) slot.tray_id = saved.tray_id;
+        });
+      }
+      if (m.submitted_data.top_tray_remark) {
+        document.getElementById('z1TopTrayRemark').value = m.submitted_data.top_tray_remark;
+      }
+    }
+
+    renderTrayNewModelChips(m, idx);
+    showLayer(layerTrayScan);
+    renderTraySlots(m, true);
+    setupLotQtyListener();
+  }
+
+  // Header chip: shows the model number of anything just brought in via Add
+  // Model (whole new row, or qty merged into this model), with a close icon
+  // to remove it without leaving the tray-scan screen. Reuses the same
+  // removeNewlyAddedModel()/removeMode logic already used by the outer model
+  // list, so removal behaviour stays identical in both places.
+  function renderTrayNewModelChips(m, idx) {
+    const container = document.getElementById('z1TrayNewModelChips');
+    if (!container) return;
+    let removeMode = '';
+    if (m.added_jig_completed_id && !m.is_unloaded) {
+      removeMode = 'row';
+    } else if ((m.merged_lots || []).some(function(ml) { return ml.is_newly_added; }) && !m.is_unloaded) {
+      removeMode = 'merge';
+    }
+    if (!removeMode) {
+      container.style.display = 'none';
+      container.innerHTML = '';
+      return;
+    }
+    container.style.display = 'flex';
+    container.innerHTML =
+      '<span style="display:inline-flex;align-items:center;gap:6px;background:#fff8e1;border:1px solid #ffe082;color:#6a4a00;border-radius:14px;padding:3px 6px 3px 10px;font-size:11px;font-weight:500;">' +
+        escHtml(m.model_no) +
+        '<button type="button" id="z1TrayChipRemoveBtn" title="Remove newly added model" ' +
+        'style="background:none;border:none;color:#c62828;font-size:14px;font-weight:700;cursor:pointer;line-height:1;padding:0 2px;">&times;</button>' +
+      '</span>';
+    document.getElementById('z1TrayChipRemoveBtn').addEventListener('click', function() {
+      showZ1Confirm('Remove this newly added model?', function() {
+        removeNewlyAddedModel(idx, removeMode);
+        if (removeMode === 'row') {
+          // The whole model row being viewed was just removed — nothing left
+          // here to show, so go back to the model list.
+          showLayer(layerModelList);
+        } else {
+          // Merge undone: this model still exists, now reverted to its
+          // original qty/trays — stay on this screen and refresh it in place.
+          openTrayScan(idx);
+        }
+      }, 'Remove', 'fa-trash');
+    });
+  }
+
+  function normalizeTrayForScan(value) {
+    return String(value || '').replace(/\s+/g, '').toUpperCase();
+  }
+
+  function modelHasGlobalTray(modelData, trayId) {
+    const normalizedTray = normalizeTrayForScan(trayId);
+    if (!normalizedTray) return false;
+
+    const trayGroups = [];
+    if (modelData.submitted_data && Array.isArray(modelData.submitted_data.tray_data)) {
+      trayGroups.push(modelData.submitted_data.tray_data);
+    }
+    if (Array.isArray(modelData.tray_slots)) {
+      trayGroups.push(modelData.tray_slots);
+    }
+
+    return trayGroups.some(function(group) {
+      return group.some(function(item) {
+        return normalizeTrayForScan(item && item.tray_id) === normalizedTray;
+      });
+    });
+  }
+
+  function modelMatchesGlobalSourceLot(modelData, responseData) {
+    const sourceLotId = String((responseData && (responseData.stock_lot_id || responseData.source_lot_id)) || '');
+    return !!sourceLotId && String(modelData.lot_id || '') === sourceLotId;
+  }
+
+  function focusMatchedGlobalTrayInput(trayId) {
+    const normalizedTray = normalizeTrayForScan(trayId);
+    const inputs = document.querySelectorAll('#z1TraySlotsContainer .z1-tray-input');
+    inputs.forEach(function(input) {
+      if (normalizeTrayForScan(input.value) !== normalizedTray) return;
+      input.focus();
+      input.select();
+      const row = input.closest('tr');
+      if (row) row.style.background = '#e8f5e9';
+    });
+  }
+
+  window.openJigUnloadTrayScanFromGlobalScan = function(payload) {
+    payload = payload || {};
+    const row = payload.row;
+    const responseData = payload.response_data || payload;
+    const trayId = payload.tray_id || responseData.tray_id || '';
+    const jigCompletedId = payload.jig_completed_id ||
+      (responseData && responseData.jig_completed_id) ||
+      (row && row.getAttribute('data-jig-completed-id'));
+
+    if (!jigCompletedId) return false;
+
+    if (row) {
+      document.querySelectorAll('#order-listing tbody tr.z1-row-open').forEach(function(r) { r.classList.remove('z1-row-open'); });
+      row.classList.add('z1-row-open');
+    }
+
+    currentJigCompletedId = jigCompletedId;
+    modal.style.display = 'flex';
+    showLayer(layerModelList);
+    document.getElementById('z1ModelTableBody').innerHTML =
+      '<tr><td colspan="7" style="text-align:center;padding:20px;color:#888;font-size:13px;">Loading...</td></tr>';
+
+    fetch(API_BASE + '/get_unload_models_z1/?jig_completed_id=' + encodeURIComponent(jigCompletedId))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        currentModelsData = data;
+        document.getElementById('z1ModalJigId').textContent = data.jig_qr_id || '-';
+        renderModelTable(data.models || [], data.all_unloaded);
+
+        const models = data.models || [];
+        let targetIndex = models.findIndex(function(modelData) {
+          return modelHasGlobalTray(modelData, trayId);
+        });
+        if (targetIndex < 0) {
+          targetIndex = models.findIndex(function(modelData) {
+            return modelMatchesGlobalSourceLot(modelData, responseData);
+          });
+        }
+        if (targetIndex < 0 && models.length === 1) targetIndex = 0;
+
+        if (targetIndex >= 0) {
+          const targetModel = models[targetIndex];
+          if (targetModel.is_unloaded || targetModel.is_submitted_lot) {
+            openView(targetIndex, trayId);
+          } else {
+            openTrayScan(targetIndex);
+            window.setTimeout(function() { focusMatchedGlobalTrayInput(trayId); }, 80);
+          }
+        } else {
+          showZ1Notify('Tray found in this JIG, but the matching model row could not be resolved.', 'error');
+        }
+      })
+      .catch(function(err) {
+        console.error('Global scan Jig Unloading open error:', err);
+        document.getElementById('z1ModelTableBody').innerHTML =
+          '<tr><td colspan="7" style="text-align:center;color:#c62828;padding:20px;">Error loading data</td></tr>';
+      });
+
+    return true;
+  };
+
+  function renderTraySlots(modelData, shouldAutoFocus) {
+    if (shouldAutoFocus === undefined) shouldAutoFocus = false;
+    const container = document.getElementById('z1TraySlotsContainer');
+    // Purely visual: when this model combines quantity from more than one lot
+    // (via ditto/Add Model merge), tint every row so it's obvious at a glance
+    // that this scan spans multiple lots. The tray-to-lot split isn't tracked
+    // (trays are redistributed by capacity, not by original lot), so this is
+    // a grouping indicator only, not a per-row lot assignment.
+    const isMergedModel = Array.isArray(modelData.merged_lots) && modelData.merged_lots.length > 0;
+    let html = '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+    if (isMergedModel) {
+      html += '<caption style="caption-side:top;text-align:left;padding:0 0 6px;font-size:10px;color:#6a4a00;">' +
+        '<i class="fa fa-object-group" style="margin-right:4px;"></i>Combined from multiple lots &mdash; trays below are shared across them.</caption>';
+    }
+    html += '<thead><tr style="background:#f8fafc;border-bottom:2px solid #eceff1;">';
+    html += '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;letter-spacing:0.4px;width:38px;text-align:center;">#</th>';
+    html += '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;letter-spacing:0.4px;">Model</th>';
+    html += '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;letter-spacing:0.4px;">Tray ID</th>';
+    html += '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;letter-spacing:0.4px;width:60px;text-align:center;">Qty</th>';
+    html += '</tr></thead><tbody>';
+    modelData.tray_slots.forEach(function(slot) {
+      const isTop = slot.is_top_tray;
+      const isNewSlot = !!slot.is_newly_added_slot;
+      const rowBg = isTop ? '#fff8f1' : (isMergedModel ? '#f3f8ff' : (slot.slot % 2 === 0 ? '#fafcfc' : '#ffffff'));
+      // Model column gets its own tint so it's obvious which trays belong to the
+      // newly-added portion of an Add Model merge vs. the pre-existing model rows.
+      const modelColBg = isNewSlot ? '#fff8e1' : 'transparent';
+      html += '<tr style="border-bottom:1px solid #f0f4f5;background:' + rowBg + ';">';
+      html += '<td style="padding:7px 10px;text-align:center;font-size:11px;color:#90a4ae;">' +
+        slot.slot + (isTop ? '<span style="color:#e65100;margin-left:2px;">&#x2605;</span>' : '') + '</td>';
+      html += '<td style="padding:7px 10px;font-size:11px;color:#00695c;font-weight:500;background:' + modelColBg + ';">' + escHtml(modelData.model_no) + '</td>';
+      html += '<td style="padding:7px 10px;">' +
+        '<input type="text" class="z1-tray-input" data-slot="' + slot.slot +
+        '" value="' + escHtml(slot.tray_id) +
+        '" maxlength="9" autocomplete="off" placeholder="Scan tray ID" ' +
+        'style="width:100%;padding:5px 9px;border:1px solid #cfd8dc;border-radius:6px;font-size:12px;outline:none;color:#263238;background:#fff;transition:border-color 0.15s,box-shadow 0.15s;box-sizing:border-box;" /></td>';
+      html += '<td style="padding:7px 10px;text-align:center;">';
+      // Top tray qty is no longer editable - LOT Qty field handles that
+      html += '<span style="font-size:12px;color:' + (isTop ? '#e65100' : '#37474f') + ';font-weight:' + (isTop ? '700' : '500') + ';">' + slot.qty + (isTop ? ' <span style="font-size:10px;color:#e65100;">★ TOP</span>' : '') + '</span>';
+      html += '</td></tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+
+    // Bind tray ID inputs (auto-advance after 9 chars, validation)
+    const inputs = container.querySelectorAll('.z1-tray-input');
+    // Auto-advance skips over rows that already have a tray ID (e.g. old-model
+    // rows already scanned before an Add Model merge pushed them down), so
+    // scanning continues at the next genuinely empty slot instead of stopping
+    // on an already-filled one.
+    function focusNextEmptyTrayInput(fromIndex) {
+      for (let j = fromIndex + 1; j < inputs.length; j++) {
+        if (!inputs[j].value.trim()) { inputs[j].focus(); inputs[j].select(); return; }
+      }
+    }
+    inputs.forEach(function(inp, i) {
+      if (inp.value.length >= 4) { inp.style.borderColor = '#66bb6a'; inp.style.boxShadow = '0 0 0 2px rgba(102,187,106,0.15)'; }
+
+      inp.addEventListener('focus', function() {
+        if (!this.style.borderColor || this.style.borderColor === 'rgb(207, 216, 220)') {
+          this.style.boxShadow = '0 0 0 2px rgba(0,137,123,0.15)';
+          this.style.borderColor = '#80cbc4';
+        }
+      });
+      inp.addEventListener('blur', function() {
+        this.style.boxShadow = '';
+        if (!this.value.trim()) this.style.borderColor = '#cfd8dc';
+      });
+      inp.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+        const val = this.value.trim();
+        if (val.length >= 9) {
+          this.value = val.substring(0, 9);
+          const isValid = /^[A-Za-z0-9\-]{4,9}$/.test(this.value);
+          if (!isValid) {
+            this.style.borderColor = '#ef5350';
+            this.style.boxShadow = '0 0 0 2px rgba(239,83,80,0.15)';
+            showTrayError('Invalid tray ID: ' + this.value);
+            this.select();
+            return;
+          }
+          // Tray code prefix validation: must match expected tray_code from model data
+          const expectedTrayCode = (currentModelsData && currentModelsData.models && currentModelsData.models[currentModelIndex])
+            ? (currentModelsData.models[currentModelIndex].tray_code || '') : '';
+          if (expectedTrayCode) {
+            const expectedPrefix = expectedTrayCode.toUpperCase() + '-';
+            if (!this.value.toUpperCase().startsWith(expectedPrefix)) {
+              this.style.borderColor = '#ef5350';
+              this.style.boxShadow = '0 0 0 2px rgba(239,83,80,0.15)';
+              showTrayError('Tray ID "' + this.value + '" does not match expected tray code "' + expectedTrayCode + '". Expected prefix: ' + expectedPrefix);
+              this.value = '';
+              this.style.borderColor = '#cfd8dc';
+              this.style.boxShadow = '';
+              this.focus();
+              return;
+            }
+          }
+          // Check for duplicates across all tray inputs
+          const currentVal = this.value;
+          let isDupe = false;
+          inputs.forEach(function(other) {
+            if (other !== inp && other.value.trim() === currentVal) { isDupe = true; }
+          });
+          if (isDupe) {
+            this.style.borderColor = '#ef5350';
+            this.style.boxShadow = '0 0 0 2px rgba(239,83,80,0.15)';
+            showTrayError('Duplicate tray ID: ' + currentVal + ' — each tray must be unique');
+            this.value = '';
+            this.style.borderColor = '#cfd8dc';
+            this.style.boxShadow = '';
+            this.focus();
+            return;
+          }
+          // Backend occupancy check: verify tray is free and not assigned to another lot
+          const trayInput = this;
+          const currentLotId = (currentModelsData && currentModelsData.models && currentModelsData.models[currentModelIndex])
+            ? (currentModelsData.models[currentModelIndex].lot_id || '') : '';
+          fetch('/jig_unloading/api/validate_tray_occupancy_z1/?tray_id=' + encodeURIComponent(currentVal) + '&lot_id=' + encodeURIComponent(currentLotId))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (!data.success) {
+                trayInput.style.borderColor = '#ef5350';
+                trayInput.style.boxShadow = '0 0 0 2px rgba(239,83,80,0.15)';
+                showTrayError(data.error || 'Tray is not available');
+                trayInput.value = '';
+                trayInput.style.borderColor = '#cfd8dc';
+                trayInput.style.boxShadow = '';
+                trayInput.focus();
+              } else {
+                trayInput.style.borderColor = '#66bb6a';
+                trayInput.style.boxShadow = '0 0 0 2px rgba(102,187,106,0.15)';
+                showTrayError('\u2705 Tray ' + currentVal + ' accepted', 'success');
+                focusNextEmptyTrayInput(i);
+              }
+            })
+            .catch(function(err) {
+              console.error('Tray validation error:', err);
+              trayInput.style.borderColor = '#66bb6a';
+              trayInput.style.boxShadow = '0 0 0 2px rgba(102,187,106,0.15)';
+              showTrayError('\u2705 Tray ' + currentVal + ' accepted', 'success');
+              focusNextEmptyTrayInput(i);
+            });
+        } else if (val.length > 0) {
+          this.style.borderColor = '#80cbc4';
+          this.style.boxShadow = '';
+        } else {
+          this.style.borderColor = '#cfd8dc';
+          this.style.boxShadow = '';
+        }
+      });
+      inp.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (this.value.trim().length >= 4) {
+            focusNextEmptyTrayInput(i);
+          }
+        }
+      });
+    });
+    if (shouldAutoFocus && inputs.length > 0) inputs[0].focus();
+
+    // Top tray qty is no longer editable - LOT Qty field handles quantity changes
+  }
+
+  // --- LOT Qty Edit Listener & Redistribution ---
+  function setupLotQtyListener() {
+    const lotQtyInput = document.getElementById('z1TrayQty');
+    const revertBtn = document.getElementById('z1RevertQtyBtn');
+    if (!lotQtyInput) return;
+
+    lotQtyInput.addEventListener('input', function() {
+      const newQty = parseInt(this.value) || 0;
+      const errSpan = document.getElementById('z1LotQtyError');
+      
+      // Validation: cannot exceed original qty
+      if (newQty > originalLotQty) {
+        errSpan.textContent = 'Cannot exceed original qty (' + originalLotQty + ')';
+        errSpan.style.display = 'inline';
+        return;
+      }
+      // Validation: cannot be negative
+      if (newQty < 0) {
+        errSpan.textContent = 'Cannot be negative';
+        errSpan.style.display = 'inline';
+        return;
+      } else {
+        errSpan.style.display = 'none';
+      }
+
+      // Show/hide revert button
+      if (newQty !== originalLotQty) {
+        lotQtyEdited = true;
+        if (revertBtn) revertBtn.style.display = 'inline-block';
+        redistributeTrays(newQty);
+      } else {
+        lotQtyEdited = false;
+        if (revertBtn) revertBtn.style.display = 'none';
+        redistributeTrays(newQty); // ✅ FIX: Redistribute even when reverting to original
+      }
+    });
+
+    // ✅ NEW: Revert button click handler
+    if (revertBtn) {
+      revertBtn.addEventListener('click', function() {
+        lotQtyInput.value = originalLotQty;
+        lotQtyInput.dispatchEvent(new Event('input')); // Trigger redistribution
+      });
+    }
+  }
+
+  // --- Redistribute Trays Based on New LOT Qty ---
+  function redistributeTrays(newLotQty) {
+    const m = currentModelsData.models[currentModelIndex];
+    const trayCapacity = m.tray_capacity || 20;
+    
+    // Calculate new tray distribution
+    const numFullTrays = Math.floor(newLotQty / trayCapacity);
+    const remainderQty = newLotQty % trayCapacity;
+    const totalTrays = remainderQty > 0 ? numFullTrays + 1 : numFullTrays;
+
+    // Update tray slots data
+    const newTraySlots = [];
+    for (let i = 0; i < totalTrays; i++) {
+      const slotNum = i + 1;
+      const isTop = slotNum === 1; // Top tray is always slot 1 (first position)
+      const qty = isTop && remainderQty > 0 ? remainderQty : trayCapacity;
+      
+      // Preserve existing tray_id if available
+      const existingSlot = m.tray_slots[i];
+      newTraySlots.push({
+        slot: slotNum,
+        qty: qty,
+        is_top_tray: isTop,
+        tray_id: existingSlot ? existingSlot.tray_id : ''
+      });
+    }
+
+    // Update model data
+    m.tray_slots = newTraySlots;
+    m.qty = newLotQty;
+    m.num_trays = totalTrays;
+
+    // Update UI
+    document.getElementById('z1TrayCount').textContent = totalTrays;
+    renderTraySlots(m, false); // Don't auto-focus - keep cursor in LOT Qty field
+    // ✅ DON'T re-attach listener here - causes infinite listener multiplication
+  }
+
+  // --- Collect tray data from form ---
+  function collectTrayData() {
+    const m = currentModelsData.models[currentModelIndex];
+    const container = document.getElementById('z1TraySlotsContainer');
+    const inputs    = container.querySelectorAll('.z1-tray-input');
+    const topQtyInput = container.querySelector('.z1-tray-qty');
+    const trayData  = [];
+    let hasError    = false;
+
+    inputs.forEach(function(inp) {
+      const slotNum = parseInt(inp.dataset.slot);
+      const trayId  = inp.value.trim();
+      const isTop   = slotNum === 1;
+      let qty = m.tray_slots[slotNum - 1].qty; // Use qty from model data
+      trayData.push({
+        slot: slotNum,
+        tray_id: trayId,
+        qty: qty,
+        is_top_tray: isTop,
+        qty_edited: false, // No longer editable
+      });
+      if (!trayId) hasError = true;  // will be flagged only for final save
+    });
+    return { trayData, hasError };
+  }
+
+  // --- CLEAR TRAY ID INPUTS (only the tray ID boxes — qty/model/etc untouched) ---
+  document.getElementById('z1ClearTrayIdsBtn').addEventListener('click', function() {
+    const container = document.getElementById('z1TraySlotsContainer');
+    const inputs = container.querySelectorAll('.z1-tray-input');
+    if (!inputs.length) return;
+    showZ1Confirm('Clear all scanned tray IDs in this list?\nQty and other details will not be affected.', function() {
+      const m = currentModelsData && currentModelsData.models && currentModelsData.models[currentModelIndex];
+      inputs.forEach(function(inp) {
+        inp.value = '';
+        inp.style.borderColor = '#cfd8dc';
+        inp.style.boxShadow = '';
+      });
+      if (m && Array.isArray(m.tray_slots)) {
+        m.tray_slots.forEach(function(slot) { slot.tray_id = ''; });
+      }
+      if (inputs[0]) inputs[0].focus();
+    }, 'Clear', 'fa-eraser');
+  });
+
+  // --- DRAFT SAVE ---
+  document.getElementById('z1DraftSaveBtn').addEventListener('click', function() {
+    const m = currentModelsData.models[currentModelIndex];
+    const { trayData } = collectTrayData();
+    const topTrayRemark = document.getElementById('z1TopTrayRemark').value.trim();
+    // m.qty is the authoritative total the tray table was built from (kept in sync
+    // by the backend on every merge); only trust the raw input when the user has
+    // actually typed into it this session, so a stale/unsynced DOM value from a
+    // prior Add-Model merge can never override the true combined total.
+    const currentLotQty = lotQtyEdited ? (parseInt(document.getElementById('z1TrayQty').value) || m.qty) : m.qty;
+
+    const payload = {
+      jig_completed_id: currentJigCompletedId,
+      lot_id: m.lot_id,
+      model_no: m.model_no,
+      tray_data: trayData,
+      total_qty: currentLotQty,
+      missing_qty: 0,
+      top_tray_remark: topTrayRemark,
+      tray_type: m.tray_type,
+      tray_capacity: m.tray_capacity,
+      tray_code: m.tray_code,
+      tray_color: m.tray_color,
+      is_draft: true,
+      merged_lots: m.merged_lots || [],
+      lot_qty_edited: lotQtyEdited,
+    };
+
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+
+    fetch(`${API_BASE}/save_model_unload_z1/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+      body: JSON.stringify(payload),
+    })
+      .then(function(r) {
+        if (!r.ok) return r.text().then(function(t) { throw new Error('Server ' + r.status + ': ' + t.substring(0, 120)); });
+        return r.json();
+      })
+      .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-floppy-o"></i> Draft';
+        if (data.success) {
+          // Return to model list with refreshed data (shows Draft status)
+          openUnloadModal(currentJigCompletedId);
+        } else {
+          showTrayError(data.error || 'Draft save failed');
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-floppy-o"></i> Draft';
+        showTrayError('Draft save error: ' + err.message);
+        console.error(err);
+      });
+  });
+
+  // --- FINAL SAVE MODEL ---
+  document.getElementById('z1SaveModelBtn').addEventListener('click', function() {
+    const m = currentModelsData.models[currentModelIndex];
+    const { trayData, hasError: anyEmpty } = collectTrayData();
+    const container = document.getElementById('z1TraySlotsContainer');
+    const inputs    = container.querySelectorAll('.z1-tray-input');
+
+    let hasError = false;
+    inputs.forEach(function(inp) {
+      const trayId = inp.value.trim();
+      if (!trayId) { inp.style.borderColor = '#dc3545'; hasError = true; }
+    });
+    if (hasError) { showTrayError('All tray IDs must be filled before saving'); return; }
+
+    const ids = trayData.map(t => t.tray_id);
+    const dupes = ids.filter((v, i) => ids.indexOf(v) !== i);
+    if (dupes.length > 0) { showTrayError('Duplicate tray IDs: ' + dupes.join(', ')); return; }
+
+    // Top tray remark validation removed - top tray qty is no longer editable
+
+    const topTrayRemark = document.getElementById('z1TopTrayRemark').value.trim();
+    // m.qty is the authoritative total the tray table was built from; only trust
+    // the raw input when the user actually edited it this session (see Draft Save
+    // above for the same reasoning).
+    const currentLotQty = lotQtyEdited ? (parseInt(document.getElementById('z1TrayQty').value) || m.qty) : m.qty;
+
+    // Validate LOT Qty
+    if (currentLotQty < 0) {
+      showTrayError('LOT Qty cannot be negative');
+      return;
+    }
+    
+    // Validate total tray qty matches LOT Qty
+    const totalTrayQty = trayData.reduce(function(sum, t) { return sum + t.qty; }, 0);
+    if (totalTrayQty !== currentLotQty) {
+      showTrayError('Total tray quantity (' + totalTrayQty + ') does not match LOT Qty (' + currentLotQty + ')');
+      return;
+    }
+
+    const payload = {
+      jig_completed_id: currentJigCompletedId,
+      lot_id: m.lot_id,
+      model_no: m.model_no,
+      tray_data: trayData,
+      total_qty: currentLotQty,
+      missing_qty: 0,
+      top_tray_remark: topTrayRemark,
+      tray_type: m.tray_type,
+      tray_capacity: m.tray_capacity,
+      tray_code: m.tray_code,
+      tray_color: m.tray_color,
+      is_draft: false,
+      merged_lots: m.merged_lots || [],
+      lot_qty_edited: lotQtyEdited,
+    };
+
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+
+    fetch(`${API_BASE}/save_model_unload_z1/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+      body: JSON.stringify(payload),
+    })
+      .then(r => r.json())
+      .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-save"></i> Save & Back';
+        if (data.success) {
+          openUnloadModal(currentJigCompletedId);  // refresh model list
+        } else {
+          showTrayError(data.error || 'Save failed');
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-save"></i> Save & Back';
+        showTrayError('Network error');
+        console.error(err);
+      });
+  });
+
+  function showTrayError(msg, type) {
+    const el = document.getElementById('z1TrayError');
+    if (type === 'success') {
+      el.style.background = '#e8f5e9';
+      el.style.borderColor = '#43a047';
+      el.style.color = '#1b5e20';
+      el.style.borderLeftColor = '#43a047';
+    } else {
+      el.style.background = '#fff3e0';
+      el.style.borderColor = '#ff9800';
+      el.style.color = '#e65100';
+      el.style.borderLeftColor = '#ff9800';
+    }
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4500);
+  }
+
+  // --- SUBMIT ALL ---
+  document.getElementById('z1SubmitAllBtn').addEventListener('click', function() {
+    if (this.disabled) return;
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting...';
+
+    // Collect all merged jig IDs so backend can free them if now fully unloaded
+    const mergedJigIds = new Set();
+    ((currentModelsData && currentModelsData.models) || []).forEach(function(m) {
+      (m.merged_lots || []).forEach(function(ml) {
+        if (ml.jig_completed_id) mergedJigIds.add(String(ml.jig_completed_id));
+      });
+    });
+
+    fetch(`${API_BASE}/submit_all_unload_z1/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+      body: JSON.stringify({
+        jig_completed_id: currentJigCompletedId,
+        merged_jig_completed_ids: Array.from(mergedJigIds),
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          modal.style.display = 'none';
+          window.location.reload();
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-check-circle"></i> Submit All';
+          alert(data.error || 'Submit failed');
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-check-circle"></i> Submit All';
+        alert('Network error');
+        console.error(err);
+      });
+  });
+
+  // --- VIEW MODE ---
+  function openView(idx, highlightTrayId) {
+    const m = currentModelsData.models[idx];
+    document.getElementById('z1ViewModelNo').textContent = m.model_no;
+    const content = document.getElementById('z1ViewContent');
+    if (m.submitted_data && m.submitted_data.tray_data) {
+      const normalizedHighlightTray = normalizeTrayForScan(highlightTrayId);
+      let html = '';
+      if (m.is_submitted_lot) {
+        html += '<div style="padding:9px 12px;background:#e8f5e9;border-bottom:1px solid #c8e6c9;font-size:11px;color:#1b5e20;font-weight:600;">Model submitted - read only tray view</div>';
+      } else if (m.is_unloaded) {
+        html += '<div style="padding:9px 12px;background:#e3f2fd;border-bottom:1px solid #bbdefb;font-size:11px;color:#1565c0;font-weight:600;">Unload saved - read only tray view</div>';
+      }
+      html += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+      html += '<thead><tr style="background:#f8fafc;border-bottom:2px solid #eceff1;">' +
+        '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;letter-spacing:0.4px;text-align:center;">#</th>' +
+        '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;letter-spacing:0.4px;">Model</th>' +
+        '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;letter-spacing:0.4px;">Tray ID</th>' +
+        '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;letter-spacing:0.4px;text-align:center;">Qty</th>' +
+        '</tr></thead><tbody>';
+      m.submitted_data.tray_data.forEach(function(t, i) {
+        const isTop = t.is_top_tray;
+        const isMatchedTray = normalizedHighlightTray && normalizeTrayForScan(t.tray_id) === normalizedHighlightTray;
+        html += '<tr style="border-bottom:1px solid #f0f4f5;background:' + (isMatchedTray ? '#e8f5e9' : (isTop ? '#fff8f1' : (i % 2 === 0 ? '#fff' : '#fafcfc'))) + ';">';
+        html += '<td style="padding:7px 10px;text-align:center;font-size:11px;color:#90a4ae;">' + (i + 1) + (isTop ? '<span style="color:#e65100;margin-left:2px;">&#x2605;</span>' : '') + '</td>';
+        html += '<td style="padding:7px 10px;font-size:11px;color:#00695c;font-weight:500;">' + escHtml(m.model_no) + '</td>';
+        html += '<td style="padding:7px 10px;font-size:12px;font-weight:600;color:' + (isMatchedTray ? '#1b5e20' : '#1a2e3b') + ';">' + escHtml(t.tray_id) + (isMatchedTray ? ' <span style="font-size:10px;color:#1b5e20;">MATCHED</span>' : '') + '</td>';
+        html += '<td style="padding:7px 10px;text-align:center;font-size:12px;color:#37474f;">' + t.qty + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      if (m.submitted_data.top_tray_remark) {
+        html += '<div style="padding:9px 12px;background:#fff8f1;border-top:1px solid #ffe0b2;font-size:11px;color:#7c4700;">' +
+          '<i class="fa fa-pencil" style="margin-right:4px;color:#e65100;"></i><strong>Remark:</strong> ' + escHtml(m.submitted_data.top_tray_remark) + '</div>';
+      }
+      content.innerHTML = html;
+    } else {
+      content.innerHTML = '<p style="color:#90a4ae;text-align:center;padding:24px;font-size:12px;"><i class="fa fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>No data available</p>';
+    }
+    showLayer(layerView);
+  }
+
+  // --- NAVIGATION ---
+  document.getElementById('z1ModalClose').addEventListener('click', function() { modal.style.display = 'none'; window.location.reload(); });
+  document.getElementById('z1BackToModels').addEventListener('click', function() { showLayer(layerModelList); });
+  document.getElementById('z1ViewBackBtn').addEventListener('click', function() { showLayer(layerModelList); });
+  document.getElementById('z1ViewCloseBtn').addEventListener('click', function() { modal.style.display = 'none'; window.location.reload(); });
+  // Prevent modal from closing when clicking outside (backdrop click disabled)
+
+  // --- LAYER 4: Add Model (in-scan, same-model merge) ---
+  document.getElementById('z1InScanAddModelBtn').addEventListener('click', function() {
+    openAddModelLayer();
+  });
+
+  function openAddModelLayer() {
+    const m = currentModelsData.models[currentModelIndex];
+    const currentModel = m.model_no;
+    document.getElementById('z1AddModelCurrentModel').textContent = currentModel;
+
+    // Collect already-merged jig IDs so we don't list them again
+    const alreadyMergedIds = new Set(
+      (m.merged_lots || []).map(function(ml) { return String(ml.jig_completed_id); })
+    );
+
+    // Scan main table rows for same-model jigs
+    const rows = document.querySelectorAll('#order-listing tbody tr[data-jig-completed-id]');
+    const candidates = [];
+    rows.forEach(function(row) {
+      const jcId = row.dataset.jigCompletedId;
+      if (!jcId) return;
+      if (jcId === String(currentJigCompletedId)) return;  // skip current jig
+      if (alreadyMergedIds.has(jcId)) return;              // skip already-merged
+      if (row.dataset.alreadyLoaded === 'true') return;    // skip lots already consumed via Add Model elsewhere
+      const modelCell = row.querySelector('.model-stock-no-cell');
+      if (!modelCell) return;
+      const rowPlatingStk = (modelCell.dataset.platingStockNo || '').trim();
+      let modelList = [];
+      try { modelList = JSON.parse(modelCell.dataset.modelList || '[]'); } catch(e) {}
+      // Only show same-model jigs — check comma-separated plating stock and model list
+      const platingMatch = rowPlatingStk === currentModel ||
+        rowPlatingStk.split(',').some(function(p) { return p.trim() === currentModel; });
+      const isSameModel = platingMatch || modelList.indexOf(currentModel) >= 0;
+      if (!isSameModel) return;
+      // Qty for THIS model only — a candidate jig may hold multiple models,
+      // so summing every lot_id_quantities entry on the row (regardless of
+      // model) overstates the qty this Add Model action will actually merge
+      // in (the backend only merges the lot(s) matching currentModel). Use
+      // lot_id_model_map (lot_id -> model_no) to filter to matching lots only,
+      // so the preview here always matches what get_unload_models_z1 merges.
+      let totalQty = 0;
+      try {
+        const lotQtys = JSON.parse(row.dataset.lotIdQuantities || '{}');
+        const lotModelMap = JSON.parse(row.dataset.lotIdModelMap || '{}');
+        const hasModelMap = Object.keys(lotModelMap).length > 0;
+        Object.keys(lotQtys).forEach(function(lotId) {
+          if (hasModelMap && lotModelMap[lotId] !== currentModel) return;
+          totalQty += (parseInt(lotQtys[lotId]) || 0);
+        });
+      } catch(e) {}
+      const jigQrId = (row.dataset.jigQrId || row.dataset.jigLotId || jcId).trim();
+      const hasDraft = row.dataset.hasDraft === 'true';
+      candidates.push({ jig_completed_id: jcId, jig_id: jigQrId, qty: totalQty, model_no: currentModel, has_draft: hasDraft });
+    });
+
+    // Sort: Draft jigs first, then Pending
+    candidates.sort(function(a, b) { return (b.has_draft ? 1 : 0) - (a.has_draft ? 1 : 0); });
+
+    const container = document.getElementById('z1AddModelListContainer');
+    const confirmBtn = document.getElementById('z1AddModelConfirmBtn');
+    if (candidates.length === 0) {
+      container.innerHTML =
+        '<div style="text-align:center;padding:20px;color:#78909c;font-size:12px;">' +
+        '<i class="fa fa-info-circle" style="margin-right:5px;"></i>' +
+        'No other jigs with model <strong>' + escHtml(currentModel) + '</strong> available to combine.</div>';
+      confirmBtn.style.display = 'none';
+    } else {
+      let html = '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+      html += '<thead><tr style="background:#f8fafc;border-bottom:2px solid #eceff1;">';
+      html += '<th style="padding:8px 10px;text-align:center;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;width:40px;">Add</th>';
+      html += '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;">JIG ID</th>';
+      html += '<th style="padding:8px 10px;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;">Model</th>';
+      html += '<th style="padding:8px 10px;text-align:center;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;">Qty</th>';
+      html += '<th style="padding:8px 10px;text-align:center;font-size:10px;font-weight:600;color:#546e7a;text-transform:uppercase;">Status</th>';
+      html += '</tr></thead><tbody>';
+      candidates.forEach(function(c, idx) {
+        const statusHtml = c.has_draft
+          ? '<span style="color:#1565c0;font-size:10px;font-weight:500;"><i class="fa fa-pencil-square-o"></i> Draft</span>'
+          : '<span style="color:#bf6900;font-size:10px;font-weight:500;"><i class="fa fa-clock-o"></i> Pending</span>';
+        html += '<tr style="border-bottom:1px solid #f0f4f5;background:' + (c.has_draft ? '#e3f2fd' : (idx % 2 === 0 ? '#fff' : '#fafcfc')) + ';">';
+        html += '<td style="padding:8px 10px;text-align:center;">' +
+          '<input type="checkbox" class="z1-add-model-cb" data-jig-id="' + escHtml(c.jig_completed_id) + '" /></td>';
+        html += '<td style="padding:8px 10px;font-size:11px;color:#78909c;">' + escHtml(c.jig_id) + '</td>';
+        html += '<td style="padding:8px 10px;font-size:11px;color:#00695c;font-weight:500;">' + escHtml(c.model_no) + '</td>';
+        html += '<td style="padding:8px 10px;text-align:center;font-size:13px;color:#e65100;font-weight:600;">' +
+          (c.qty > 0 ? c.qty : '&mdash;') + '</td>';
+        html += '<td style="padding:8px 10px;text-align:center;">' + statusHtml + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+      confirmBtn.style.display = '';
+    }
+    showLayer(layerAddModel);
+  }
+
+  // Layer 4 — back/cancel: return to tray scan
+  document.getElementById('z1AddModelBackBtn').addEventListener('click', function() { showLayer(layerTrayScan); });
+  document.getElementById('z1AddModelCancelBtn').addEventListener('click', function() { showLayer(layerTrayScan); });
+
+  // Carry forward whatever tray IDs are currently typed (even partially filled)
+  // across the Add Model merge, entirely client-side — Add Model must never
+  // write to the submitted table on its own; only an explicit Draft/Save/Submit
+  // action may create or update a JUSubmittedZ1 row (see Jig Unloading admin
+  // "auto processing" fix). Add Model replaces currentModelsData with a fresh
+  // server response, so any unsaved tray IDs are captured here first and
+  // reapplied after the merge via _z1ReapplyPendingTrayIds.
+  function collectPendingTrayIds() {
+    const m = currentModelsData && currentModelsData.models && currentModelsData.models[currentModelIndex];
+    if (!m) return [];
+    return collectTrayData().trayData.map(function(t) { return t.tray_id; }).filter(Boolean);
+  }
+
+  // Add Model prepends the newly-merged lot's fresh blank slots to the FRONT
+  // and pushes this lot's own (in-progress) slots to the TAIL — mirrors
+  // _jul_prepend_new_lot_tray_slots_z1 / the Remove-merge tail logic above —
+  // so unsaved tray IDs typed before the merge land back on the same slots.
+  function _z1ReapplyPendingTrayIds(m, pendingTrayIds) {
+    if (!pendingTrayIds || !pendingTrayIds.length || !m || !Array.isArray(m.tray_slots)) return;
+    const slots = m.tray_slots;
+    const tailStart = Math.max(slots.length - pendingTrayIds.length, 0);
+    for (let i = 0; i < pendingTrayIds.length && (tailStart + i) < slots.length; i++) {
+      slots[tailStart + i].tray_id = pendingTrayIds[i];
+    }
+  }
+
+  // Layer 4 — confirm: call backend with selected jig IDs, then auto-open tray scan with merged qty
+  document.getElementById('z1AddModelConfirmBtn').addEventListener('click', function() {
+    const checked = document.querySelectorAll('.z1-add-model-cb:checked');
+    if (checked.length === 0) {
+      showTrayError('Please select at least one jig to combine.');
+      showLayer(layerTrayScan);
+      return;
+    }
+    const additionalIds = Array.from(checked).map(function(cb) { return cb.dataset.jigId; });
+    const savedModelNo = currentModelsData.models[currentModelIndex].model_no;
+    const pendingTrayIds = collectPendingTrayIds();
+    openUnloadModalWithAdditional(currentJigCompletedId, additionalIds, savedModelNo, pendingTrayIds);
+  });
+
+  // --- Open modal with additional jig IDs — merges same plating_stk_no models ---
+  // autoOpenModelNo: if provided, auto-navigates to tray scan for that model after loading
+  // pendingTrayIds: unsaved tray IDs typed before the merge, reapplied client-side only
+  function openUnloadModalWithAdditional(jigCompletedId, additionalJigIds, autoOpenModelNo, pendingTrayIds) {
+    currentJigCompletedId = jigCompletedId;
+    modal.style.display = 'flex';
+    showLayer(layerModelList);
+    document.getElementById('z1ModelTableBody').innerHTML =
+      '<tr><td colspan="7" style="text-align:center;padding:20px;color:#888;font-size:13px;">Loading...</td></tr>';
+    const submitBtn = document.getElementById('z1SubmitAllBtn');
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.5';
+
+    const params = new URLSearchParams({ jig_completed_id: jigCompletedId });
+    additionalJigIds.forEach(function(id) { params.append('additional_jig_ids', id); });
+
+    fetch(`${API_BASE}/get_unload_models_z1/?${params.toString()}`)
+      .then(r => r.json())
+      .then(data => {
+        currentModelsData = data;
+        document.getElementById('z1ModalJigId').textContent = data.jig_qr_id || '-';
+        renderModelTable(data.models, data.all_unloaded);
+        // Auto-navigate to tray scan for the merged model (combined qty, fresh slots)
+        if (autoOpenModelNo) {
+          const idx = data.models.findIndex(function(m) { return m.model_no === autoOpenModelNo && !m.is_unloaded; });
+          if (idx >= 0) {
+            _z1ReapplyPendingTrayIds(data.models[idx], pendingTrayIds);
+            openTrayScan(idx);
+          }
+        }
+      })
+      .catch(err => {
+        document.getElementById('z1ModelTableBody').innerHTML =
+          '<tr><td colspan="7" style="text-align:center;color:#c62828;padding:20px;">Error loading data</td></tr>';
+        console.error('Z1 API error:', err);
+      });
+  }
+
+  // --- BIND TABLE BUTTONS (event delegation - resilient to errors & re-renders) ---
+  document.addEventListener('click', function(e) {
+    const unloadBtn = e.target.closest('.z1-unload-btn');
+    if (unloadBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const jigId = unloadBtn.dataset.jigCompletedId;
+      console.log('[Z1] Unload clicked, jigCompletedId =', jigId);
+      // Highlight only the clicked row
+      document.querySelectorAll('#order-listing tbody tr.z1-row-open').forEach(function(r) { r.classList.remove('z1-row-open'); });
+      var clickedRow = unloadBtn.closest('tr');
+      if (clickedRow) clickedRow.classList.add('z1-row-open');
+      if (jigId) openUnloadModal(jigId);
+      return;
+    }
+    const viewBtn = e.target.closest('.z1-view-btn');
+    if (viewBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const jigId = viewBtn.dataset.jigCompletedId;
+      console.log('[Z1] View clicked, jigCompletedId =', jigId);
+      // Highlight only the clicked row
+      document.querySelectorAll('#order-listing tbody tr.z1-row-open').forEach(function(r) { r.classList.remove('z1-row-open'); });
+      var clickedRow = viewBtn.closest('tr');
+      if (clickedRow) clickedRow.classList.add('z1-row-open');
+      if (jigId) openUnloadModal(jigId);
+      return;
+    }
+  });
+
+  // --- HELPERS ---
+  function escHtml(s) {
+    if (!s) return '';
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(String(s)));
+    return div.innerHTML;
+  }
+
+  const jigGalleryPreviewImageCache = {};
+
+  function normalizeJigGalleryImageUrl(rawUrl) {
+    const value = String(rawUrl || '').trim();
+    if (!value) return '';
+    try {
+      const parsed = new URL(value, window.location.origin);
+      const host = parsed.hostname.toLowerCase();
+      const currentHost = window.location.hostname.toLowerCase();
+      if (host === currentHost || host === 'localhost' || host === '127.0.0.1' || host === '::1') {
+        return parsed.pathname + parsed.search + parsed.hash;
+      }
+      return parsed.href;
+    } catch (error) {
+      if (value.startsWith('/media/') || value.startsWith('/static/')) return value;
+      return value;
+    }
+  }
+
+  function getJigPreviewEntryUrl(entry) {
+    if (!entry) return '';
+    if (typeof entry === 'string') return normalizeJigGalleryImageUrl(entry);
+    return normalizeJigGalleryImageUrl(entry.preview_image || entry.image_url || entry.url || entry.src || entry.image || '');
+  }
+
+  function resolveJigPreviewImage(payload) {
+    const previewImage = normalizeJigGalleryImageUrl(payload && payload.preview_image);
+    if (previewImage) return previewImage;
+    const images = Array.isArray(payload && payload.images) ? payload.images : [];
+    const ivEntry = images.find(function(entry) {
+      return String(entry && entry.view_code || '').toUpperCase() === 'IV';
+    });
+    return getJigPreviewEntryUrl(ivEntry) || normalizeJigGalleryImageUrl(payload && payload.no_image_url) || '';
+  }
+
+  function fetchJigGalleryPreviewImage(modelNo) {
+    const cacheKey = String(modelNo || '').trim().toUpperCase();
+    if (!cacheKey) return Promise.resolve('');
+    if (Object.prototype.hasOwnProperty.call(jigGalleryPreviewImageCache, cacheKey)) {
+      return Promise.resolve(jigGalleryPreviewImageCache[cacheKey]);
+    }
+    return fetch('/adminportal/api/model-hover-preview/?stock_no=' + encodeURIComponent(modelNo) + '&_ts=' + Date.now(), {
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+    })
+      .then(function(resp) {
+        if (!resp.ok) return null;
+        return resp.json();
+      })
+      .then(function(payload) {
+        const imageUrl = resolveJigPreviewImage(payload);
+        jigGalleryPreviewImageCache[cacheKey] = imageUrl || '';
+        return imageUrl || '';
+      })
+      .catch(function() {
+        jigGalleryPreviewImageCache[cacheKey] = '';
+        return '';
+      });
+  }
+
+  function hydrateJigGalleryPreviewImages(root) {
+    if (!root) return;
+    root.querySelectorAll('.jig-gallery-preview-img[data-model-no]').forEach(function(img) {
+      const modelNo = img.getAttribute('data-model-no') || '';
+      fetchJigGalleryPreviewImage(modelNo).then(function(previewUrl) {
+        if (!previewUrl) return;
+        img.src = previewUrl;
+        img.onclick = function() {
+          displayEnlargedImage(previewUrl, modelNo);
+        };
+      });
+    });
+  }
+
+  function trayColorBg(color) {
+    const map = {
+      'Red':'#dc3545','D.Green':'#28a745','Blue':'#007bff','L.Green':'#5cb85c',
+      'red':'#dc3545','d.green':'#28a745','blue':'#007bff','l.green':'#5cb85c',
+    };
+    return map[color] || '#6c757d';
+  }
+
+  console.log('Z1 Unload JS loaded. Found',
+    document.querySelectorAll('.z1-unload-btn').length, 'unload buttons,',
+    document.querySelectorAll('.z1-view-btn').length, 'view buttons');
+
+  // ========== ERR2: Remark send button handler ==========
+  function showRemarkSavedModal() {
+    if (window.Swal && typeof Swal.fire === 'function') {
+      return Swal.fire({
+        icon: 'success',
+        title: 'Remark saved!',
+        timer: 1200,
+        showConfirmButton: false
+      });
+    }
+    alert('Remark saved!');
+    return Promise.resolve();
+  }
+
+  function closeRemarkTooltip(trigger) {
+    const tooltip = trigger ? trigger.querySelector('.remark-tooltip') : null;
+    if (!tooltip) return;
+    tooltip.classList.remove('pinned');
+    tooltip.style.opacity = '0';
+    tooltip.style.pointerEvents = 'none';
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.display = 'none';
+  }
+
+  document.addEventListener('click', function(e) {
+    const sendBtn = e.target.closest('.remark-send-btn');
+    if (!sendBtn) return;
+
+    const trigger = sendBtn.closest('.remark-tooltip-trigger[data-jig-lot-id]');
+    if (!trigger) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    if (sendBtn.disabled || sendBtn.dataset.saving === 'true') return;
+
+    const textarea = trigger.querySelector('textarea');
+    const remark = textarea ? textarea.value.trim() : '';
+    if (!remark) { alert('Please enter a remark before sending.'); return; }
+
+    const row = trigger.closest('tr');
+    const jigCompletedId = row ? row.getAttribute('data-jig-completed-id') : null;
+    if (!jigCompletedId) { alert('Could not identify the jig record.'); return; }
+
+    sendBtn.disabled = true;
+    sendBtn.dataset.saving = 'true';
+
+    fetch('/jig_unloading/api/save_jig_pick_remark_z1/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+      body: JSON.stringify({ jig_completed_id: jigCompletedId, unloading_remarks: remark })
+    })
+    .then(function(r) {
+      const contentType = r.headers.get('content-type') || '';
+      if (contentType.indexOf('application/json') !== -1) {
+        return r.json().then(function(data) {
+          if (!r.ok) {
+            throw new Error(data.error || ('HTTP ' + r.status + ' while saving remark.'));
+          }
+          return data;
+        });
+      }
+      return r.text().then(function(text) {
+        console.error('Unexpected non-JSON remark response:', text);
+        throw new Error('HTTP ' + r.status + ' while saving remark. The server returned a non-JSON response.');
+      });
+    })
+    .then(function(data) {
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to save remark.');
+      }
+      if (textarea) textarea.readOnly = true;
+      const img = trigger.querySelector('img');
+      if (img) img.style.filter = 'grayscale(0) brightness(1.1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2)';
+      if (sendBtn.parentElement) {
+        sendBtn.parentElement.innerHTML = '<div style="margin-top:40px;color:#31708f;background:#d9edf7;border:1px solid #bce8f1;border-radius:4px;padding:8px 12px;font-size:10px;text-align:left;"><i class="fa fa-info-circle" style="margin-right:6px;"></i>Remark already saved and cannot be edited.</div>';
+      }
+      return showRemarkSavedModal().then(function() {
+        closeRemarkTooltip(trigger);
+      });
+    })
+    .catch(function(err) {
+      sendBtn.disabled = false;
+      sendBtn.dataset.saving = 'false';
+      alert('Failed to save remark: ' + err.message);
+    });
+  });
+
+  // ========== ERR3: Scan button handler ==========
+  (function() {
+    const scanBtn = document.getElementById('scanButton');
+    const scanInput = document.getElementById('scanHiddenInput');
+    const scanStatus = document.getElementById('scanStatusMessage');
+    const scanMsg = document.getElementById('scanMessage');
+    if (!scanInput) return;
+
+    let scanActive = false;
+
+    if (scanBtn) {
+      scanBtn.addEventListener('click', function() {
+        scanActive = !scanActive;
+        if (scanActive) {
+          scanStatus.style.display = 'inline';
+          scanInput.style.position = 'absolute';
+          scanInput.style.left = '-9999px';
+          scanInput.value = '';
+          scanInput.focus();
+          scanBtn.style.backgroundColor = '#dc3545';
+          scanBtn.style.borderColor = '#dc3545';
+          scanBtn.innerHTML = '<i class="fa fa-times" style="margin-right:6px;"></i>Cancel Scan';
+        } else {
+          scanStatus.style.display = 'none';
+          scanBtn.style.backgroundColor = '#028084';
+          scanBtn.style.borderColor = '#028084';
+          scanBtn.innerHTML = '<i class="fa fa-qrcode" style="margin-right:6px;"></i>Scan';
+          scanMsg.style.display = 'none';
+        }
+      });
+    }
+
+    scanInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const trayId = this.value.trim();
+        this.value = '';
+        if (!trayId) return;
+
+        // Show searching message
+        scanMsg.style.display = 'block';
+        scanMsg.style.background = '#fff3cd';
+        scanMsg.style.color = '#856404';
+        scanMsg.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Searching for tray: ' + trayId;
+
+        fetch('/jig_unloading/api/get_jig_for_tray_z1/?tray_id=' + encodeURIComponent(trayId))
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.success) {
+              const jigId = data.jig_id || data.lot_id;
+              // Try to find the row on the current page
+              const rows = document.querySelectorAll('#order-listing tbody tr[data-jig-completed-id]');
+              let found = false;
+              rows.forEach(function(row) {
+                if (row.getAttribute('data-jig-completed-id') === String(data.jig_completed_id)) {
+                  found = true;
+                  // Highlight and scroll to row
+                  row.style.transition = 'background-color 0.3s';
+                  row.style.backgroundColor = '#d4edda';
+                  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  setTimeout(function() { row.style.backgroundColor = ''; }, 5000);
+                  scanMsg.style.display = 'block';
+                  scanMsg.style.background = '#d4edda';
+                  scanMsg.style.color = '#155724';
+                  scanMsg.innerHTML = '<i class="fa fa-check-circle"></i> Tray ' + trayId + ' found in JIG: ' + jigId;
+                }
+              });
+              if (!found) {
+                // Tray found but on a different page — search across pages
+                scanMsg.style.display = 'block';
+                scanMsg.style.background = '#cce5ff';
+                scanMsg.style.color = '#004085';
+                scanMsg.innerHTML = '<i class="fa fa-info-circle"></i> Tray ' + trayId + ' found in JIG: ' + jigId + '. Navigating to the correct page...';
+                // Try to navigate to the page containing this record
+                z1ScanSearchAcrossPages(data.jig_completed_id, trayId, jigId);
+              }
+            } else {
+              scanMsg.style.display = 'block';
+              scanMsg.style.background = '#f8d7da';
+              scanMsg.style.color = '#721c24';
+              scanMsg.innerHTML = '<i class="fa fa-times-circle"></i> ' + (data.error || 'Tray not found');
+            }
+          })
+          .catch(function(err) {
+            scanMsg.style.display = 'block';
+            scanMsg.style.background = '#f8d7da';
+            scanMsg.style.color = '#721c24';
+            scanMsg.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Network error: ' + err.message;
+          });
+
+        // Re-focus for next scan
+        setTimeout(function() { scanInput.focus(); }, 100);
+      }
+    });
+
+    function z1ScanSearchAcrossPages(jigCompletedId, trayId, jigId) {
+      // Navigate through pagination pages to find the row
+      const paginationLinks = document.querySelectorAll('.pagination a.page-link, .pagination a');
+      let pageLinks = [];
+      paginationLinks.forEach(function(link) {
+        const href = link.getAttribute('href');
+        if (href && href.includes('page=')) {
+          const match = href.match(/page=(\d+)/);
+          if (match) pageLinks.push({ page: parseInt(match[1]), href: href });
+        }
+      });
+      // Navigate to each page URL with a highlight parameter
+      if (pageLinks.length > 0) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('highlight_jig', jigCompletedId);
+        currentUrl.searchParams.set('scan_tray', trayId);
+        // Try pages sequentially
+        for (let i = 0; i < pageLinks.length; i++) {
+          const pageUrl = new URL(pageLinks[i].href, window.location.origin);
+          pageUrl.searchParams.set('highlight_jig', jigCompletedId);
+          pageUrl.searchParams.set('scan_tray', trayId);
+          window.location.href = pageUrl.toString();
+          return;
+        }
+      }
+    }
+
+    // On page load, check if we need to highlight a row from cross-page scan
+    const urlParams = new URLSearchParams(window.location.search);
+    const highlightJig = urlParams.get('highlight_jig');
+    const scanTray = urlParams.get('scan_tray');
+    if (highlightJig) {
+      const rows = document.querySelectorAll('#order-listing tbody tr[data-jig-completed-id]');
+      let found = false;
+      rows.forEach(function(row) {
+        if (row.getAttribute('data-jig-completed-id') === highlightJig) {
+          found = true;
+          row.style.transition = 'background-color 0.3s';
+          row.style.backgroundColor = '#d4edda';
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(function() { row.style.backgroundColor = ''; }, 5000);
+          if (scanMsg) {
+            scanMsg.style.display = 'block';
+            scanMsg.style.background = '#d4edda';
+            scanMsg.style.color = '#155724';
+            scanMsg.innerHTML = '<i class="fa fa-check-circle"></i> Tray ' + (scanTray || '') + ' found and highlighted.';
+          }
+        }
+      });
+      if (!found && scanMsg) {
+        // Not on this page either — try next page
+        const currentPage = parseInt(urlParams.get('page') || '1');
+        const nextPageLink = document.querySelector('.pagination a[href*="page=' + (currentPage + 1) + '"]');
+        if (nextPageLink) {
+          const nextUrl = new URL(nextPageLink.getAttribute('href'), window.location.origin);
+          nextUrl.searchParams.set('highlight_jig', highlightJig);
+          nextUrl.searchParams.set('scan_tray', scanTray || '');
+          window.location.href = nextUrl.toString();
+        } else {
+          scanMsg.style.display = 'block';
+          scanMsg.style.background = '#f8d7da';
+          scanMsg.style.color = '#721c24';
+          scanMsg.innerHTML = '<i class="fa fa-times-circle"></i> Tray record not found on any page.';
+        }
+      }
+      // Clean URL params
+      if (found) {
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete('highlight_jig');
+        cleanUrl.searchParams.delete('scan_tray');
+        window.history.replaceState({}, '', cleanUrl.toString());
+      }
+    }
+    
+    // ===================================================================
+    // MODEL GALLERY CLICK HANDLER — Display images and model details
+    // ===================================================================
+    document.addEventListener('click', function(e) {
+      const galleryIcon = e.target.closest('.model-gallery-icon');
+      if (!galleryIcon) return;
+      
+      console.log('[Z1 Gallery] Click detected on gallery icon');
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Get the model cell container
+      const modelCell = galleryIcon.closest('.model-stock-no-text');
+      if (!modelCell) {
+        console.error('[Z1 Gallery] Could not find .model-stock-no-text parent');
+        return;
+      }
+      
+      // Get data attributes
+      const tdElement = modelCell.closest('td');
+      if (!tdElement) {
+        console.error('[Z1 Gallery] Could not find td parent');
+        return;
+      }
+      
+      const modelList = JSON.parse(tdElement.getAttribute('data-model-list') || '[]');
+      const modelImages = JSON.parse(tdElement.getAttribute('data-images') || '{}');
+      const modelColors = JSON.parse(tdElement.getAttribute('data-model-colors') || '{}');
+      const platingStockNo = tdElement.getAttribute('data-plating-stock-no') || 'Unknown';
+
+      console.log('[Z1 Gallery] Models:', modelList, 'Images:', modelImages, 'Colors:', modelColors, 'Plating Stock:', platingStockNo);
+
+      // Build gallery HTML — one card per model, laid out in a responsive grid
+      let galleryHTML = '';
+
+      modelList.forEach(function(modelNo) {
+        const images = modelImages[modelNo] || [];
+        const rawColor = modelColors[modelNo];
+        const color = (rawColor && /^#[0-9a-f]{3,8}$/i.test(rawColor)) ? rawColor : '#6c757d';
+
+        galleryHTML += '<div class="gallery-card">';
+        galleryHTML += '<div class="gallery-card-header"><span class="gallery-card-color" style="background:' + color + ';"></span>Model: ' + escHtml(modelNo) + '</div>';
+
+        const fallbackImageUrl = normalizeJigGalleryImageUrl(images && images.length ? images[0] : '') || '/static/assets/images/imagePlaceholder.jpg';
+        if (fallbackImageUrl) {
+          galleryHTML += '<div class="gallery-card-body">';
+          galleryHTML += '<img src="' + escHtml(fallbackImageUrl) + '" ';
+          galleryHTML += 'class="jig-gallery-preview-img" data-model-no="' + escHtml(modelNo) + '" ';
+          galleryHTML += 'alt="Model ' + escHtml(modelNo) + ' - IV image" ';
+          galleryHTML += 'title="Click to enlarge" ';
+          galleryHTML += 'onclick="displayEnlargedImage(\'' + escHtml(fallbackImageUrl) + '\', \'' + escHtml(modelNo) + '\')" />';
+          galleryHTML += '</div>';
+        } else {
+          galleryHTML += '<div class="gallery-empty">';
+          galleryHTML += '<i class="fa fa-image" style="font-size:24px; margin-bottom:8px;"></i>';
+          galleryHTML += '<p style="margin:0;">No images available</p>';
+          galleryHTML += '</div>';
+        }
+
+        galleryHTML += '</div>';
+      });
+
+      // Display in modal
+      const modal = document.getElementById('modelRemarkModal');
+      const content = document.getElementById('modelRemarkModalContent');
+      if (modal && content) {
+        console.log('[Z1 Gallery] Opening modal with gallery HTML');
+        content.innerHTML = galleryHTML;
+        hydrateJigGalleryPreviewImages(content);
+        modal.style.display = 'flex';
+      } else {
+        console.error('[Z1 Gallery] Modal elements not found:', { modal: !!modal, content: !!content });
+      }
+    });
+    
+    // Gallery modal close handler
+    const closeModelRemarkModal = document.getElementById('closeModelRemarkModal');
+    if (closeModelRemarkModal) {
+      closeModelRemarkModal.addEventListener('click', function() {
+        const modal = document.getElementById('modelRemarkModal');
+        if (modal) modal.style.display = 'none';
+      });
+    }
+    
+    // Click outside modal to close
+    const modelRemarkModal = document.getElementById('modelRemarkModal');
+    if (modelRemarkModal) {
+      modelRemarkModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.style.display = 'none';
+        }
+      });
+    }
+    
+    // Helper function to display enlarged image
+    window.displayEnlargedImage = function(imgUrl, modelNo) {
+      console.log('[Gallery] Enlarged image:', imgUrl, 'Model:', modelNo);
+      // You can add additional zoom/lightbox functionality here if needed
+    };
+  })();
+
+  // ── Hold/Unhold view icon click handler ──
+  document.querySelectorAll('.hold-remark-icon').forEach(function(icon) {
+    icon.addEventListener('click', function() {
+      const title = this.getAttribute('title') || '';
+      if (title && window.Swal && typeof Swal.fire === 'function') {
+        Swal.fire({ icon: 'info', title: 'Hold / Release Remark', html: '<div style="text-align:left;">' + title.replace(/&#10;/g, '<br>') + '</div>', confirmButtonColor: '#028084' });
+      }
+    });
+  });
+
+  // ── Hold / Unhold Toggle with Remark ──
+  (function initHoldToggle() {
+    const holdModal = document.getElementById('holdRemarkModal');
+    const holdInput = document.getElementById('holdRemarkInput');
+    const holdError = document.getElementById('holdRemarkError');
+    const holdTitle = holdModal ? holdModal.querySelector('h5') : null;
+    const saveBtn = document.getElementById('saveHoldRemarkBtn');
+    const closeBtn = document.getElementById('closeHoldRemarkModal');
+
+    if (!holdModal || !holdInput || !saveBtn) return;
+
+    window.holdToggleState = null;
+
+    function attachHoldToggleListeners() {
+      document.querySelectorAll('.hold-toggle-btn').forEach(function(toggle) {
+        toggle.addEventListener('change', function(e) {
+          e.preventDefault();
+          const row = this.closest('tr');
+          const lotId = row ? row.getAttribute('data-lot-id') : null;
+          if (!lotId) return;
+
+          const intendedHold = !this.checked;
+          const action = intendedHold ? 'hold' : 'unhold';
+
+          window.holdToggleState = {
+            toggle: this,
+            row: row,
+            lotId: lotId,
+            action: action,
+            originalChecked: !intendedHold
+          };
+          this.checked = !intendedHold;
+
+          if (holdTitle) holdTitle.textContent = action === 'hold' ? 'Hold Reason' : 'Release Reason';
+          holdInput.value = '';
+          if (holdError) holdError.textContent = '';
+          holdModal.style.display = 'flex';
+          holdInput.focus();
+        });
+      });
+    }
+
+    saveBtn.addEventListener('click', function() {
+      const state = window.holdToggleState;
+      if (!state) return;
+
+      const remark = holdInput.value.trim();
+      if (!remark) {
+        if (holdError) holdError.textContent = 'Remark is required.';
+        return;
+      }
+      if (remark.length > 50) {
+        if (holdError) holdError.textContent = 'Max 50 characters allowed.';
+        return;
+      }
+
+      saveBtn.disabled = true;
+      fetch(API_BASE + '/hold_unhold_z1/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({
+          lot_id: state.lotId,
+          action: state.action,
+          remark: remark
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        saveBtn.disabled = false;
+        if (data.success) {
+          holdModal.style.display = 'none';
+          if (window.Swal && typeof Swal.fire === 'function') {
+            Swal.fire({
+              icon: 'success',
+              title: state.action === 'hold' ? 'Lot Held' : 'Lot Released',
+              text: data.message,
+              timer: 1500,
+              showConfirmButton: false
+            });
+          }
+          setTimeout(function() { location.reload(); }, 1500);
+        } else {
+          if (holdError) holdError.textContent = data.error || 'Failed to save.';
+        }
+      })
+      .catch(function(err) {
+        saveBtn.disabled = false;
+        if (holdError) holdError.textContent = 'Network error.';
+        console.error('[Jig Unloading Z1] Hold/Unhold error:', err);
+      });
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        holdModal.style.display = 'none';
+        window.holdToggleState = null;
+      });
+    }
+
+    holdModal.addEventListener('click', function(e) {
+      if (e.target === holdModal) {
+        holdModal.style.display = 'none';
+        window.holdToggleState = null;
+      }
+    });
+
+    attachHoldToggleListeners();
+  })();
+});
+function positionModelPresentsTooltip(trigger) {
+    const tooltip = trigger.querySelector('.model-hover-list');
+
+    if (!tooltip) return;
+
+    const triggerRect = trigger.getBoundingClientRect();
+
+    tooltip.style.left = '0px';
+    tooltip.style.top = '0px';
+
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    const gap = 8;
+    const padding = 10;
+
+    let left = triggerRect.left;
+    let top = triggerRect.bottom + gap;
+
+    if (left + tooltipRect.width > window.innerWidth - padding) {
+        left = window.innerWidth - tooltipRect.width - padding;
+    }
+
+    if (left < padding) {
+        left = padding;
+    }
+
+    if (top + tooltipRect.height > window.innerHeight - padding) {
+        top = triggerRect.top - tooltipRect.height - gap;
+    }
+
+    if (top < padding) {
+        top = padding;
+    }
+
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+}
+
+
+document.addEventListener('mouseover', function (event) {
+
+    const trigger = event.target.closest('.model-stock-no-text');
+
+    if (!trigger) return;
+
+    positionModelPresentsTooltip(trigger);
+
+});
+
+
+window.addEventListener('scroll', function () {
+
+    const visibleTooltip = document.querySelector(
+        '.model-stock-no-text:hover .model-hover-list'
+    );
+
+    if (!visibleTooltip) return;
+
+    const trigger = visibleTooltip.closest('.model-stock-no-text');
+
+    if (trigger) {
+        positionModelPresentsTooltip(trigger);
+    }
+
+}, true);
+
+
+window.addEventListener('resize', function () {
+
+    const visibleTooltip = document.querySelector(
+        '.model-stock-no-text:hover .model-hover-list'
+    );
+
+    if (!visibleTooltip) return;
+
+    const trigger = visibleTooltip.closest('.model-stock-no-text');
+
+    if (trigger) {
+        positionModelPresentsTooltip(trigger);
+    }
+
+});
+
+</script>
+<script src="{% static 'js/model_image_tooltip.js' %}"></script>
+<script src="{% static 'js/row_lock_guard.js' %}"></script>
+
+{% endblock %}
+{% endblock content %}
+

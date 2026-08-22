@@ -1,0 +1,1396 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<style nonce="{{ csp_nonce }}">
+/* Table styles */
+#order-listing {
+  --ss-sticky-col-1: 64px;
+  --ss-sticky-col-2: 132px;
+  --ss-sticky-col-3: 156px;
+  position: relative;
+  border-collapse: separate !important;
+  border-spacing: 0;
+}
+#order-listing thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #028084 !important;
+  color: #e5fcff !important;
+  vertical-align: middle !important;
+  border-bottom: 2.5px solid #bdbdbd !important;
+  padding: 8px 12px !important;
+  white-space: normal !important;
+  line-height: 1.3 !important;
+  font-weight: 600;
+}
+#order-listing th,
+#order-listing td {
+  border-right: 1.5px solid #bababa !important;
+  border-bottom: 1.5px solid #121413 !important;
+  background-clip: padding-box;
+}
+#order-listing tr,
+#order-listing td,
+#order-listing th {
+  height: 20px !important;
+  padding: 4px 8px !important;
+}
+
+/* Freeze first 3 columns */
+#order-listing th:nth-child(1),
+#order-listing td:nth-child(1) {
+  position: sticky; left: 0 !important; z-index: 14;
+  background: #f7fafd;
+  width: var(--ss-sticky-col-1); min-width: var(--ss-sticky-col-1); max-width: var(--ss-sticky-col-1);
+}
+#order-listing th:nth-child(2),
+#order-listing td:nth-child(2) {
+  position: sticky; left: var(--ss-sticky-col-1) !important; z-index: 14;
+  background: #f7fafd;
+  width: var(--ss-sticky-col-2); min-width: var(--ss-sticky-col-2); max-width: var(--ss-sticky-col-2);
+}
+#order-listing th:nth-child(3),
+#order-listing td:nth-child(3) {
+  position: sticky; left: calc(var(--ss-sticky-col-1) + var(--ss-sticky-col-2)) !important; z-index: 14;
+  background: #f7fafd;
+  width: var(--ss-sticky-col-3); min-width: var(--ss-sticky-col-3); max-width: var(--ss-sticky-col-3);
+  box-shadow: 1px 0 0 #bababa;
+}
+#order-listing thead th:nth-child(-n + 3) {
+  z-index: 18;
+  background: #028084 !important;
+  color: #e5fcff !important;
+}
+#order-listing th:nth-child(-n + 3),
+#order-listing td:nth-child(-n + 3) {
+  white-space: nowrap !important;
+}
+
+/* Add Spider Modal */
+.ss-modal-overlay {
+  display: none; position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh; background: rgba(15,23,42,0.32);
+  z-index: 10000; align-items: center; justify-content: center; padding: 16px;
+  backdrop-filter: blur(2px);
+}
+.ss-modal-overlay.open { display: flex; }
+.ss-modal-box {
+  background: #fff; border-radius: 8px; padding: 0; overflow: hidden;
+  box-shadow: 0 18px 44px rgba(15,23,42,0.18); border: 1px solid #dce4e8;
+  width: min(560px, calc(100vw - 32px)); min-width: 0; max-width: 560px;
+}
+.ss-modal-box h5 { margin: 0; padding: 14px 18px; font-weight: 700; color: #025254; background: #f7fbfb; border-bottom: 1px solid #dce4e8; display: flex; align-items: center; gap: 8px; }
+.ss-modal-body { padding: 16px 18px 14px; }
+.ss-modal-footer { padding: 14px 18px; border-top: 1px solid #e6ecef; background: #fbfcfd; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.ss-modal-note { background: #eef8f8; border: 1px solid #c7e6e7; color: #025254; border-radius: 6px; padding: 8px 10px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+.ss-modal-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.ss-summary-card { background: #f8fbfc; border: 1px solid #dce7eb; border-radius: 8px; padding: 10px 12px; }
+.ss-summary-label { display: block; color: #62727b; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.ss-summary-value { display: block; color: #102a33; font-size: 14px; font-weight: 700; margin-top: 2px; word-break: break-word; }
+.ss-tray-panel { border: 1px solid #dce7eb; border-radius: 8px; overflow: hidden; background: #fff; }
+.ss-tray-panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 12px; background: #f7fbfb; border-bottom: 1px solid #e3ecef; color: #025254; font-size: 12px; font-weight: 700; }
+.ss-tray-count { color: #5f6f7a; font-weight: 600; }
+.ss-tray-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(126px, 1fr)); gap: 8px; padding: 12px; }
+.ss-tray-chip { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 34px; padding: 7px 9px; border: 1px solid #d6e1e5; background: #fbfcfd; border-radius: 6px; color: #17333d; font-size: 12px; font-weight: 700; }
+.ss-tray-chip.is-linked { background: #eef8f1; border-color: #b9dfc8; }
+.ss-tray-index { color: #6b7b84; font-size: 11px; font-weight: 600; }
+.ss-tray-status { border-radius: 999px; padding: 2px 7px; background: #e8edf0; color: #53636d; font-size: 10px; font-weight: 700; }
+.ss-tray-chip.is-linked .ss-tray-status { background: #d8f0df; color: #17633a; }
+.ss-tray-empty { grid-column: 1 / -1; text-align: center; color: #6b7b84; padding: 12px; font-size: 12px; font-weight: 600; }
+.ss-btn-primary {
+  background: #028084; color: #fff; border: none; padding: 8px 18px;
+  border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px;
+}
+.ss-btn-primary:hover { background: #016668; }
+.ss-btn-danger {
+  background: #dc3545; color: #fff; border: none; padding: 8px 16px;
+  border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;
+}
+.ss-btn-danger:hover { background: #b02a37; }
+.ss-btn-success {
+  background: #198754; color: #fff; border: none; padding: 6px 16px;
+  border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;
+}
+.ss-btn-success:hover { background: #146c43; }
+.ss-btn-secondary {
+  background: #6c757d; color: #fff; border: none; padding: 8px 18px;
+  border-radius: 6px; font-weight: 600; cursor: pointer;
+}
+
+/* Model image tooltip */
+.model-hover-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  word-break: break-all;
+}
+.spider-model-preview-btn {
+  background: transparent;
+  border: none;
+  color: #028084;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+.model-image-tooltip {
+  display: none; position: absolute; left: 80%; top: 110%; transform: translateX(-50%); z-index: 10010;
+  background: #fff; border: 1px solid #ccc; border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 48px 18px 18px;
+  justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; box-sizing: border-box;
+}
+.model-image-tooltip.is-visible {
+  display: flex;
+  opacity: 1;
+  pointer-events: auto;
+}
+.model-image-tooltip img,
+.model-image-tooltip .spider-preview-img,
+.model-image-tooltip .model-preview-image {
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 240px !important;
+  max-height: 190px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  margin: auto !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  outline: none !important;
+  filter: none !important;
+  clip-path: none !important;
+}
+.dp-row-action-highlight td {
+  background: #fff8d8 !important;
+  transition: background-color 0.25s ease;
+}
+
+/* Hold row styling */
+tr.hold-row td {
+  background: #fff3cd !important;
+  filter: blur(1px) opacity(0.7);
+}
+tr.hold-row td:first-child,
+tr.hold-row td:nth-child(2),
+tr.hold-row td:nth-child(3) {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Tablet */
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+  #order-listing {
+    --ss-sticky-col-1: 90px;
+    --ss-sticky-col-2: 150px;
+    --ss-sticky-col-3: 180px;
+  }
+  * { font-size: var(--ttt-font-size-tablet) !important; }
+}
+
+/* Remark tooltip */
+.remark-tooltip-trigger { position: relative; display: inline-block; }
+.remark-tooltip {
+  position: absolute; top: 110%; left: 50%; transform: translateX(-50%);
+  width: 270px; background: #fff; border: 1px solid #ccc; border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease; padding: 15px; z-index: 1000;
+}
+.remark-close-btn {
+  position: absolute; top: 8px; right: 8px; background: #dc3545; color: white;
+  border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 16px;
+  font-weight: bold; cursor: pointer; display: none; line-height: 1; padding: 0;
+  transition: all 0.2s ease; z-index: 1001;
+}
+.remark-close-btn:hover { background: #c82333; transform: scale(1.05); }
+
+/* Spider Spindle model hover interaction fix */
+.model-hover-trigger { cursor: default !important; }
+.model-image-tooltip {
+  z-index: 10010 !important;
+  pointer-events: auto;
+}
+.model-image-tooltip.is-visible {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+.model-image-tooltip .info-btn,
+.model-image-tooltip .close-btn {
+  z-index: 10011;
+  pointer-events: auto !important;
+}
+.dp-row-action-highlight td {
+  background: #fff3b0 !important;
+}
+
+
+.model-image-tooltip {
+  pointer-events: none;
+}
+.model-image-tooltip.is-visible,
+.model-image-tooltip.pinned {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+/* Keep the model popup reachable while moving from stock text to Info/Close. */
+.model-hover-trigger {
+  position: relative !important;
+}
+
+.model-image-tooltip {
+  pointer-events: none !important;
+}
+
+.model-image-tooltip::before {
+  content: "";
+  position: absolute;
+  left: -24px;
+  top: -14px;
+  width: calc(100% + 48px);
+  height: calc(100% + 28px);
+  background: transparent;
+  pointer-events: auto;
+  z-index: -1;
+}
+
+.model-image-tooltip.is-visible,
+.model-image-tooltip.pinned {
+  pointer-events: auto !important;
+}
+
+.model-image-tooltip .info-btn,
+.model-image-tooltip .close-btn {
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+
+/* ================================================================
+   SPIDER SPINDLE — DYNAMIC MODEL PREVIEW FINAL OVERRIDE
+   Compact tooltip, uncropped image, tablet-safe sizing.
+   ================================================================ */
+.model-image-tooltip .img-gallery {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 260px;
+  height: 210px;
+  min-height: 210px;
+  box-sizing: border-box;
+}
+
+</style>
+
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body" style="padding-bottom:12px;">
+          <h5 class="text-left mt-0 mb-4" style="font-weight:700;">
+            Spider Spindle Z1 - Pick Table (IPS)
+          </h5>
+
+          <div class="table-responsive">
+            <table id="order-listing" class="table table-bordered" data-lock-module="SPIDER_SPINDLE_Z1">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Date & Time</th>
+                  <th>Plating Stk No</th>
+                  <th>Action</th>
+                  <th>Polishing Stk No</th>
+                  <th>Plating Color</th>
+                  <th>Category</th>
+                  <th>Polish Finish</th>
+                  <th>Version</th>
+                  <th>Tray Type</th>
+                  <th>Source</th>
+                  <th>Type of Input</th>
+                  <th>Input Qty</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in master_data %}
+                <tr class="{% if item.spider_hold_lot %}hold-row{% endif %}"
+                    data-lot-id="{{ item.lot_id }}">
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ item.date_time|date:"d M Y H:i" }}</td>
+                  <td>
+                    <span class="model-hover-trigger" data-plating-stk-no="{{ item.plating_stk_no }}">
+                      {{ item.plating_stk_no }}
+                      <div class="model-image-tooltip">
+                        <button type="button" class="close-btn" style="position:absolute;top:14px;right:16px;z-index:2;">Close</button>
+                        <button type="button" class="info-btn" style="position:absolute;top:14px;left:16px;z-index:2;">Info</button>
+                        <button type="button" class="img-scroll-left" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8592;</button>
+                        <div class="img-gallery" style="display:flex;justify-content:center;align-items:center;width:260px;height:210px;min-height:210px;overflow:hidden;box-sizing:border-box;">
+                          <span class="model-preview-loading" style="font-size:12px;color:#777;text-align:center;">Loading...</span>
+                        </div>
+                        <button type="button" class="img-scroll-right" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8594;</button>
+                      </div>
+                    </span>
+                  </td>
+                  <td>
+                    <button type="button" class="ss-btn-success btn-add-spider"
+                            data-lot-id="{{ item.lot_id }}">
+                      Add Spider
+                    </button>
+                  </td>
+                  <td>{{ item.polishing_stk_no }}</td>
+                  <td>{{ item.plating_color }}</td>
+                  <td>{{ item.category }}</td>
+                  <td>{{ item.polish_finish }}</td>
+                  <td>{{ item.version }}</td>
+                  <td>{{ item.tray_type }}</td>
+                  <td>{{ item.location }}</td>
+                  <td>{% include 'partials/_type_of_input_cell.html' with type_of_input=item.type_of_input %}</td>
+                  <td>{{ item.total_case_qty }}</td>
+                  <td style="position:relative;">
+                    <a href="#" title="{% if item.spider_pick_remarks %}{% else %}Add Remark{% endif %}" class="remark-tooltip-trigger">
+                      <img src="{% static 'assets/icons/chat_icon.png' %}" alt="Chat"
+                        style="width:20px;height:20px;{% if item.spider_pick_remarks %}filter:grayscale(0) brightness(1.1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2);opacity:1;{% else %}filter:grayscale(1) brightness(0.8);opacity:0.7;{% endif %}" />
+                      <div class="remark-tooltip">
+                        <button type="button" class="remark-close-btn">&times;</button>
+                        <textarea placeholder="Type your remark..." style="width:75%;height:40px;resize:vertical;border:1px solid #ccc;padding:5px;border-radius:4px;font-size:14px;"{% if item.spider_pick_remarks %} readonly{% endif %}>{{ item.spider_pick_remarks|default_if_none:"" }}</textarea>
+                        <div style="text-align:right;margin-top:-35px">
+                          {% if not item.spider_pick_remarks %}
+                          <button type="button" class="remark-send-btn" data-lot-id="{{ item.lot_id }}" data-spider-remark-zone="z1" data-submit-url="{% url 'ss_z1_save_remarks' %}"
+                            style="background-color:#007bff;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:14px;">
+                            <i class="fa fa-send"></i>
+                          </button>
+                          {% else %}
+                          <div style="margin-top:40px;color:#31708f;background:#d9edf7;border:1px solid #bce8f1;border-radius:4px;padding:8px 12px;font-size:10px;text-align:left;">
+                            <i class="fa fa-info-circle"></i> Remark already saved and cannot be edited.
+                          </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </a>
+                    <a href="#"
+                      class="prev-remark-tooltip-trigger"
+                      title="{{ item.previous_module_remark|default:'No previous remark available.' }}"
+                      style="margin-left: 5px; color: #007bff; font-size: 16px; display: inline-flex; align-items: center; vertical-align: middle;">
+                      <i class="fa fa-info-circle"></i>
+                    </a>
+                    <a href="#" class="remark-history-btn" data-lot-id="{{ item.lot_id }}" title="View full remark history" style="margin-left: 5px; color: #6c757d; font-size: 15px; display: inline-flex; align-items: center; vertical-align: middle;">
+                      <i class="fa fa-history"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="14" class="text-center text-muted py-4">
+                    No lots pending for Spider Spindle Z1.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          {% if page_obj.has_other_pages %}
+          <div class="pagination-wrapper mt-3 d-flex justify-content-center">
+            <nav>
+              <ul class="pagination pagination-sm">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+                </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                  <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+                </li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Spider Modal -->
+<div class="ss-modal-overlay" id="addSpiderModal">
+  <div class="ss-modal-box">
+    <h5><i class="fa fa-plus-circle"></i> Add Spider - Z1</h5>
+    <div class="ss-modal-body">
+      <div class="ss-modal-note">Ready for backend tray release.</div>
+      <input type="hidden" id="modalLotId" />
+      <div class="ss-modal-summary">
+        <div class="ss-summary-card">
+          <span class="ss-summary-label">Plating Stk No</span>
+          <span class="ss-summary-value" id="modalPlatingStkNoText">-</span>
+        </div>
+        <div class="ss-summary-card">
+          <span class="ss-summary-label">Lot Qty</span>
+          <span class="ss-summary-value" id="modalTotalQtyText">-</span>
+        </div>
+      </div>
+      <div class="ss-tray-panel">
+        <div class="ss-tray-panel-header">
+          <span>Tray IDs</span>
+          <span class="ss-tray-count" id="modalTrayCount">0 trays</span>
+        </div>
+        <div class="ss-tray-list" id="modalTrayList">
+          <div class="ss-tray-empty">Loading...</div>
+        </div>
+      </div>
+    </div>
+    <div class="ss-modal-footer">
+      <button type="button" class="ss-btn-secondary" id="cancelSpiderBtn">Cancel</button>
+      <button type="button" class="ss-btn-danger" id="delinkAllBtn" style="display:none;">
+        <i class="fa fa-unlink"></i> Delink All
+      </button>
+      <button type="button" class="ss-btn-primary" id="confirmSpiderBtn">
+        <i class="fa fa-check"></i> Proceed
+      </button>
+    </div>
+  </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function() {
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value
+    || '{{ csrf_token }}';
+  const previewCache = window.SpiderModelPreviewCache || new Map();
+  window.SpiderModelPreviewCache = previewCache;
+  let activePreviewTrigger = null;
+  let activePreviewStockNo = '';
+  let modelPreviewCloseTimer = null;
+  let movedRow = null;
+  let movedRowParent = null;
+  let movedRowNextSibling = null;
+
+  function restoreRowPosition() {
+    if (movedRow && movedRowParent) {
+      movedRow.classList.remove('dp-row-action-highlight');
+      movedRowParent.insertBefore(movedRow, movedRowNextSibling);
+    }
+    document.querySelectorAll('#order-listing tbody tr.dp-row-action-highlight').forEach(function(row) {
+      row.classList.remove('dp-row-action-highlight');
+    });
+    movedRow = null;
+    movedRowParent = null;
+    movedRowNextSibling = null;
+  }
+
+  function highlightRow(row) {
+    if (!row || !row.parentNode) return;
+    restoreRowPosition();
+    movedRow = row;
+    movedRowParent = row.parentNode;
+    movedRowNextSibling = row.nextElementSibling;
+    row.classList.add('dp-row-action-highlight');
+    if (movedRowParent.firstElementChild !== row) {
+      movedRowParent.insertBefore(row, movedRowParent.firstElementChild);
+    }
+  }
+
+
+  // Shared dynamic model hover behaviour.
+  const previewRequestCache = new Map();
+
+  function normalizeModelImageUrl(rawUrl) {
+    const value = String(rawUrl || '').trim();
+    if (!value) return '';
+
+    try {
+      const parsed = new URL(value, window.location.origin);
+      const hostname = String(parsed.hostname || '').toLowerCase();
+      const isLoopbackHost =
+        hostname === '127.0.0.1' ||
+        hostname === 'localhost' ||
+        hostname === '::1' ||
+        hostname === '[::1]';
+      const isApplicationAsset =
+        parsed.pathname.startsWith('/media/') ||
+        parsed.pathname.startsWith('/static/');
+
+      if (
+        parsed.origin === window.location.origin ||
+        (isLoopbackHost && isApplicationAsset)
+      ) {
+        return parsed.pathname + parsed.search + parsed.hash;
+      }
+
+      return parsed.href;
+    } catch (error) {
+      return value;
+    }
+  }
+
+  window.normalizeStockImageUrl = window.normalizeStockImageUrl || normalizeModelImageUrl;
+
+  function getStockCacheKey(stockNo) {
+    return String(stockNo || '').trim().toUpperCase();
+  }
+
+  function getDefaultVisualAidUrl(stockNo) {
+    return '/adminportal/dp_visualaid/?plating_stk_no=' + encodeURIComponent(stockNo);
+  }
+
+  function setTriggerVisualAidUrl(trigger, stockNo, payload) {
+    if (!trigger || !stockNo) return;
+    trigger.dataset.visualAidUrl =
+      payload && payload.visual_aid_url ? payload.visual_aid_url : getDefaultVisualAidUrl(stockNo);
+  }
+
+  function getModelImageUrlFromEntry(entry) {
+    if (!entry) return '';
+    return normalizeModelImageUrl(entry.preview_image || entry.image_url || entry.url || entry.src || entry.image || '');
+  }
+
+  function resolveModelPreviewImage(payload) {
+    const previewImage = normalizeModelImageUrl(payload && payload.preview_image);
+    if (previewImage) {
+      return {
+        url: previewImage,
+        view: payload && payload.preview_view ? payload.preview_view : 'Inside View',
+        isPlaceholder: payload && (payload.is_placeholder || payload.is_fallback)
+      };
+    }
+
+    const images = Array.isArray(payload && payload.images) ? payload.images : [];
+    const insideView = images.find(function(entry) {
+      return String(entry && entry.view_code || '').toUpperCase() === 'IV';
+    });
+    const insideViewUrl = getModelImageUrlFromEntry(insideView);
+    if (insideViewUrl) {
+      return { url: insideViewUrl, view: 'Inside View', isPlaceholder: false };
+    }
+
+    const noImage = images.find(function(entry) {
+      const viewCode = String(entry && entry.view_code || '').toUpperCase();
+      return viewCode === 'NO_IMAGE' || entry && entry.is_placeholder === true;
+    });
+    const noImageUrl = getModelImageUrlFromEntry(noImage);
+    if (noImageUrl) {
+      return { url: noImageUrl, view: 'No Image', isPlaceholder: true };
+    }
+
+    return null;
+  }
+
+  function fetchModelPreview(stockNo) {
+    if (!stockNo) return Promise.resolve(null);
+    const cacheKey = getStockCacheKey(stockNo);
+
+    if (previewCache.has(cacheKey)) {
+      return Promise.resolve(previewCache.get(cacheKey));
+    }
+
+    if (previewRequestCache.has(cacheKey)) {
+      return previewRequestCache.get(cacheKey);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(function() {
+      controller.abort();
+    }, 10000);
+
+    const request = fetch(
+      '/adminportal/api/model-hover-preview/?stock_no=' +
+      encodeURIComponent(stockNo) +
+      '&_ts=' +
+      Date.now(),
+      {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        signal: controller.signal
+      }
+    )
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error('Preview API returned HTTP ' + response.status);
+        }
+        return response.json();
+      })
+      .then(function(payload) {
+        const resolvedImage = resolveModelPreviewImage(payload);
+        if (payload) {
+          payload.preview_image = resolvedImage ? resolvedImage.url : '';
+          payload.preview_view = resolvedImage ? resolvedImage.view : payload.preview_view;
+          payload.is_placeholder = resolvedImage ? resolvedImage.isPlaceholder : payload.is_placeholder;
+        }
+        previewCache.set(cacheKey, payload || null);
+        return payload || null;
+      })
+      .finally(function() {
+        window.clearTimeout(timeoutId);
+        previewRequestCache.delete(cacheKey);
+      });
+
+    previewRequestCache.set(cacheKey, request);
+    return request;
+  }
+
+  function prepareModelTooltip(tooltip) {
+    if (!tooltip || tooltip.dataset.previewReady === '1') return;
+
+    tooltip.dataset.previewReady = '1';
+    tooltip.innerHTML =
+      '<button type="button" class="close-btn" style="position:absolute;top:14px;right:16px;z-index:2;">Close</button>' +
+      '<button type="button" class="info-btn" style="position:absolute;top:14px;left:16px;z-index:2;">Info</button>' +
+      '<button type="button" class="img-scroll-left" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8592;</button>' +
+      '<div class="img-gallery" style="display:flex;justify-content:center;align-items:center;width:260px;height:210px;min-height:210px;overflow:hidden;box-sizing:border-box;">' +
+        '<span class="model-preview-loading" style="font-size:12px;color:#777;text-align:center;">Loading...</span>' +
+      '</div>' +
+      '<button type="button" class="img-scroll-right" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8594;</button>';
+  }
+
+  function setModelPreviewMessage(trigger, message) {
+    const tooltip = trigger
+      ? trigger.querySelector('.model-image-tooltip')
+      : null;
+    const container = tooltip
+      ? tooltip.querySelector('.img-gallery')
+      : null;
+
+    if (!container) return;
+
+    container.textContent = '';
+
+    const messageElement = document.createElement('span');
+    messageElement.className = 'model-preview-loading';
+    messageElement.textContent = message;
+    messageElement.style.cssText =
+      'font-size:12px;color:#777;text-align:center;';
+    container.appendChild(messageElement);
+  }
+
+  function cancelModelPreviewClose() {
+    if (modelPreviewCloseTimer) {
+      window.clearTimeout(modelPreviewCloseTimer);
+      modelPreviewCloseTimer = null;
+    }
+  }
+
+  function scheduleModelPreviewClose(trigger) {
+    cancelModelPreviewClose();
+
+    modelPreviewCloseTimer = window.setTimeout(function() {
+      const tooltip = trigger
+        ? trigger.querySelector('.model-image-tooltip')
+        : null;
+
+      if (!trigger || !tooltip) return;
+
+      const pointerStillInside =
+        trigger.matches(':hover') || tooltip.matches(':hover');
+
+      if (
+        !pointerStillInside &&
+        !tooltip.classList.contains('pinned')
+      ) {
+        closeModelPreview(trigger);
+      }
+    }, 180);
+  }
+
+  function closeModelPreview(trigger) {
+    const tooltip = trigger
+      ? trigger.querySelector('.model-image-tooltip')
+      : null;
+
+    if (!tooltip) return;
+
+    tooltip.classList.remove('is-visible', 'pinned');
+    tooltip.style.opacity = '0';
+    tooltip.style.pointerEvents = 'none';
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.display = 'none';
+
+    trigger.style.backgroundColor = '';
+    trigger.style.borderRadius = '';
+
+    if (activePreviewTrigger === trigger) {
+      activePreviewTrigger = null;
+      activePreviewStockNo = '';
+    }
+  }
+
+  function renderModelPreview(trigger, stockNo, payload) {
+    const tooltip = trigger
+      ? trigger.querySelector('.model-image-tooltip')
+      : null;
+    const container = tooltip
+      ? tooltip.querySelector('.img-gallery')
+      : null;
+
+    if (!container) return;
+
+    const resolvedImage = resolveModelPreviewImage(payload);
+    const rawUrl = resolvedImage && resolvedImage.url;
+    const imageUrl = normalizeModelImageUrl(rawUrl);
+
+    if (!imageUrl) {
+      setModelPreviewMessage(trigger, 'Coming Soon');
+      return;
+    }
+
+    container.textContent = '';
+
+    const image = document.createElement('img');
+    image.className = 'spider-preview-img model-preview-image';
+    image.alt = resolvedImage && resolvedImage.isPlaceholder
+      ? 'No image available'
+      : 'Model IV preview';
+    image.loading = 'eager';
+    image.decoding = 'async';
+    image.style.cssText =
+      'display:block;width:auto;height:auto;max-width:240px;max-height:190px;' +
+      'object-fit:contain;object-position:center;margin:auto;' +
+      'border-radius:6px;background:#fff;';
+
+    image.addEventListener('error', function() {
+      console.error(
+        '[Spider Spindle] Preview image failed',
+        { stockNo: stockNo, rawUrl: rawUrl, normalizedUrl: imageUrl }
+      );
+      setModelPreviewMessage(trigger, 'Image could not be loaded');
+    }, { once: true });
+
+    container.appendChild(image);
+    image.src = imageUrl;
+  }
+
+  function openModelPreview(trigger, pinned) {
+    if (!trigger) return;
+
+    cancelModelPreviewClose();
+
+    const stockNo = String(
+      trigger.dataset.platingStkNo || ''
+    ).trim();
+    const cacheKey = getStockCacheKey(stockNo);
+    const tooltip = trigger.querySelector('.model-image-tooltip');
+
+    if (!stockNo || !tooltip) return;
+    setTriggerVisualAidUrl(trigger, stockNo);
+
+    document
+      .querySelectorAll('.model-image-tooltip.is-visible')
+      .forEach(function(openTooltip) {
+        const openTrigger = openTooltip.closest('.model-hover-trigger');
+        if (openTrigger !== trigger) {
+          closeModelPreview(openTrigger);
+        }
+      });
+
+    prepareModelTooltip(tooltip);
+
+    activePreviewTrigger = trigger;
+    activePreviewStockNo = stockNo;
+
+    tooltip.classList.add('is-visible');
+    tooltip.style.display = 'flex';
+    tooltip.style.visibility = 'visible';
+    tooltip.style.opacity = '1';
+    tooltip.style.pointerEvents = 'auto';
+
+    if (pinned) {
+      tooltip.classList.add('pinned');
+      trigger.style.backgroundColor = '#e3f2fd';
+      trigger.style.borderRadius = '4px';
+    }
+
+    if (previewCache.has(cacheKey)) {
+      const cachedPayload = previewCache.get(cacheKey);
+      setTriggerVisualAidUrl(trigger, stockNo, cachedPayload);
+      renderModelPreview(trigger, stockNo, cachedPayload);
+      return;
+    }
+
+    setModelPreviewMessage(trigger, 'Loading...');
+
+    fetchModelPreview(stockNo)
+      .then(function(payload) {
+        // Complete the originating tooltip even if the pointer briefly leaves.
+        // This prevents a valid request from leaving the popup on Loading.
+        setTriggerVisualAidUrl(trigger, stockNo, payload);
+        renderModelPreview(trigger, stockNo, payload);
+      })
+      .catch(function(error) {
+        console.error(
+          '[Spider Spindle] Model preview request failed',
+          stockNo,
+          error
+        );
+
+        if (error && error.name === 'AbortError') {
+          setModelPreviewMessage(trigger, 'Image request timed out');
+        } else {
+          setModelPreviewMessage(trigger, 'Coming Soon');
+        }
+      });
+  }
+
+  document
+    .querySelectorAll('.model-hover-trigger')
+    .forEach(function(trigger) {
+      const tooltip = trigger.querySelector('.model-image-tooltip');
+      if (!tooltip) return;
+
+      prepareModelTooltip(tooltip);
+
+      trigger.addEventListener('mouseenter', function() {
+        cancelModelPreviewClose();
+
+        if (!tooltip.classList.contains('pinned')) {
+          openModelPreview(trigger, false);
+        }
+      });
+
+      trigger.addEventListener('mouseleave', function(event) {
+        const destination = event.relatedTarget;
+
+        if (
+          destination &&
+          (
+            tooltip.contains(destination) ||
+            trigger.contains(destination)
+          )
+        ) {
+          return;
+        }
+
+        if (!tooltip.classList.contains('pinned')) {
+          scheduleModelPreviewClose(trigger);
+        }
+      });
+
+      tooltip.addEventListener('mouseenter', function() {
+        cancelModelPreviewClose();
+
+        if (activePreviewTrigger === trigger) {
+          tooltip.style.display = 'flex';
+          tooltip.style.visibility = 'visible';
+          tooltip.style.opacity = '1';
+          tooltip.style.pointerEvents = 'auto';
+        }
+      });
+
+      tooltip.addEventListener('mouseleave', function(event) {
+        const destination = event.relatedTarget;
+
+        if (
+          destination &&
+          (
+            trigger.contains(destination) ||
+            tooltip.contains(destination)
+          )
+        ) {
+          return;
+        }
+
+        if (!tooltip.classList.contains('pinned')) {
+          scheduleModelPreviewClose(trigger);
+        }
+      });
+
+      trigger.addEventListener('click', function(event) {
+        if (
+          event.target.closest('.info-btn') ||
+          event.target.closest('.close-btn')
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        openModelPreview(trigger, true);
+      });
+
+      const infoButton = tooltip.querySelector('.info-btn');
+      if (infoButton) {
+        infoButton.addEventListener('pointerdown', function(event) {
+          cancelModelPreviewClose();
+          tooltip.classList.add('pinned');
+          tooltip.style.display = 'flex';
+          tooltip.style.visibility = 'visible';
+          tooltip.style.opacity = '1';
+          tooltip.style.pointerEvents = 'auto';
+          event.stopPropagation();
+        });
+
+        infoButton.addEventListener('click', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const stockNo = String(
+            trigger.dataset.platingStkNo || ''
+          ).trim();
+
+          if (!stockNo) return;
+
+          window.location.href = trigger.dataset.visualAidUrl || getDefaultVisualAidUrl(stockNo);
+        });
+      }
+
+      const closeButton = tooltip.querySelector('.close-btn');
+      if (closeButton) {
+        closeButton.addEventListener('pointerdown', function(event) {
+          cancelModelPreviewClose();
+          event.stopPropagation();
+        });
+
+        closeButton.addEventListener('click', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeModelPreview(trigger);
+          restoreRowPosition();
+        });
+      }
+    });
+
+  document.addEventListener('click', function(event) {
+    const actionable = event.target.closest(
+      'button, a, input, select, textarea, [role="button"]'
+    );
+    if (actionable) {
+      const actionRow = actionable.closest('#order-listing tbody tr');
+      const isHoverOnlyTarget = actionable.closest('.model-hover-trigger')
+        && !actionable.closest('.model-image-tooltip .info-btn')
+        && !actionable.closest('.model-image-tooltip .close-btn');
+
+      if (actionRow && !isHoverOnlyTarget) {
+        highlightRow(actionRow);
+      }
+    }
+    const infoBtn = event.target.closest('.model-image-tooltip .info-btn');
+    if (infoBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const trigger = infoBtn.closest('.model-hover-trigger');
+      const stockNo = trigger ? trigger.dataset.platingStkNo : '';
+      if (stockNo) window.location.href = trigger.dataset.visualAidUrl || getDefaultVisualAidUrl(stockNo);
+      return;
+    }
+    const closeBtn = event.target.closest('.model-image-tooltip .close-btn');
+    if (closeBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeModelPreview(closeBtn.closest('.model-hover-trigger'));
+      restoreRowPosition();
+      return;
+    }
+    if (
+      !event.target.closest('.model-image-tooltip') &&
+      !event.target.closest('.model-hover-trigger')
+    ) {
+      document
+        .querySelectorAll('.model-image-tooltip.is-visible')
+        .forEach(function(openTooltip) {
+          closeModelPreview(
+            openTooltip.closest('.model-hover-trigger')
+          );
+        });
+      restoreRowPosition();
+    }
+  });
+
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      document
+        .querySelectorAll('.model-image-tooltip.is-visible')
+        .forEach(function(openTooltip) {
+          closeModelPreview(
+            openTooltip.closest('.model-hover-trigger')
+          );
+        });
+      restoreRowPosition();
+    }
+  });
+
+  document.querySelector('#order-listing')?.addEventListener('focusin', function(event) {
+    const actionable = event.target.closest(
+      'button, a, input, select, textarea, [role="button"]'
+    );
+    if (!actionable || actionable.closest('.model-hover-trigger')) return;
+    highlightRow(actionable.closest('tr'));
+  });
+
+  // --- Add Spider Modal: open and fetch tray list ---
+  document.querySelectorAll('.btn-add-spider').forEach(btn => {
+    btn.addEventListener('click', function() {
+      highlightRow(this.closest('tr'));
+      const lotId = this.dataset.lotId;
+      document.getElementById('modalLotId').value = lotId;
+      document.getElementById('modalPlatingStkNoText').textContent = '-';
+      document.getElementById('modalTotalQtyText').textContent = '-';
+      document.getElementById('modalTrayCount').textContent = '0 trays';
+      document.getElementById('modalTrayList').innerHTML = '<div class="ss-tray-empty">Loading...</div>';
+      document.getElementById('confirmSpiderBtn').style.display = '';
+      document.getElementById('delinkAllBtn').style.display = 'none';
+      document.getElementById('confirmSpiderBtn').disabled = false;
+      document.getElementById('delinkAllBtn').disabled = false;
+      document.getElementById('addSpiderModal').classList.add('open');
+
+      fetch(`{% url 'ss_z1_get_all_trays' %}?lot_id=${encodeURIComponent(lotId)}`)
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('modalPlatingStkNoText').textContent = data.plating_stk_no || '-';
+          document.getElementById('modalTotalQtyText').textContent = data.total_case_qty || '-';
+          const trayList = document.getElementById('modalTrayList');
+          if (!data.trays || data.trays.length === 0) {
+            trayList.innerHTML = '<div class="ss-tray-empty">No trays found.</div>';
+            document.getElementById('modalTrayCount').textContent = '0 trays';
+            document.getElementById('confirmSpiderBtn').style.display = 'none';
+            return;
+          }
+          const hasLinked = data.trays.some(t => t.linked);
+          trayList.innerHTML = '';
+          document.getElementById('modalTrayCount').textContent = data.trays.length + (data.trays.length === 1 ? ' tray' : ' trays');
+          data.trays.forEach((t, i) => {
+            const chip = document.createElement('div');
+            chip.className = 'ss-tray-chip' + (t.linked ? ' is-linked' : '');
+            const index = document.createElement('span');
+            index.className = 'ss-tray-index';
+            index.textContent = String(i + 1).padStart(2, '0');
+            const trayId = document.createElement('span');
+            trayId.textContent = t.tray_id || '-';
+            const status = document.createElement('span');
+            status.className = 'ss-tray-status';
+            status.textContent = t.linked ? 'Linked' : 'Ready';
+            chip.append(index, trayId, status);
+            trayList.appendChild(chip);
+          });
+          if (hasLinked) {
+            document.getElementById('delinkAllBtn').style.display = '';
+            document.getElementById('confirmSpiderBtn').style.display = 'none';
+          }
+        })
+        .catch(() => {
+          document.getElementById('modalTrayList').innerHTML = '<div class="ss-tray-empty text-danger">Error loading trays.</div>';
+          document.getElementById('modalTrayCount').textContent = '0 trays';
+        });
+    });
+  });
+
+  // --- Cancel Modal ---
+  document.getElementById('cancelSpiderBtn').addEventListener('click', function() {
+    document.getElementById('addSpiderModal').classList.remove('open');
+    restoreRowPosition();
+  });
+  // --- Confirm Add Spider ---
+  document.getElementById('confirmSpiderBtn').addEventListener('click', function() {
+    const lotId = document.getElementById('modalLotId').value;
+    if (!lotId) { Swal.fire('Error', 'Missing lot ID.', 'error'); return; }
+    const btn = this;
+    Swal.fire({
+      title: 'Proceed Add Spider',
+      text: 'This will delink this lot\'s tray IDs and release them for reuse.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#028084',
+      confirmButtonText: 'Proceed'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      btn.disabled = true;
+      fetch("{% url 'ss_z1_add_spider' %}", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+        body: JSON.stringify({ lot_id: lotId })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire({ title: 'Success', text: data.message || 'Spider added successfully!', icon: 'success', timer: 1500, showConfirmButton: false }).then(() => {
+            window.location.href = "{% url 'ss_z1_completed' %}";
+          });
+        } else {
+          Swal.fire('Error', data.error || 'Failed to add spider.', 'error');
+          btn.disabled = false;
+          restoreRowPosition();
+        }
+      })
+      .catch(() => { Swal.fire('Error', 'Network error.', 'error'); btn.disabled = false; restoreRowPosition(); });
+    });
+  });
+
+  // --- Delink All ---
+  document.getElementById('delinkAllBtn').addEventListener('click', function() {
+    const lotId = document.getElementById('modalLotId').value;
+    if (!lotId) { Swal.fire('Error', 'Missing lot ID.', 'error'); return; }
+    const btn = this;
+    Swal.fire({
+      title: 'Delink All Trays?',
+      text: 'This will release all linked trays for reuse.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      confirmButtonText: 'Yes, Delink All'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+      btn.disabled = true;
+      fetch("{% url 'ss_z1_delink' %}", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+        body: JSON.stringify({ lot_id: lotId })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire({ title: 'Delinked', text: 'All trays delinked successfully!', icon: 'success', timer: 1500, showConfirmButton: false }).then(() => location.reload());
+        } else {
+          Swal.fire('Error', data.error || 'Failed to delink.', 'error');
+          btn.disabled = false;
+          restoreRowPosition();
+        }
+      })
+      .catch(() => { Swal.fire('Error', 'Network error.', 'error'); btn.disabled = false; restoreRowPosition(); });
+    });
+  });
+
+  // --- Remark Tooltip ---
+  function hideRemarkTooltip(tooltip) {
+    if (!tooltip) return;
+    const closeBtn = tooltip.querySelector('.remark-close-btn');
+    tooltip.style.opacity = '0';
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.display = 'none';
+    tooltip.classList.remove('active');
+    if (closeBtn) closeBtn.style.display = 'none';
+    if (tooltip.__remarkTrigger) {
+      tooltip.__remarkTrigger.removeAttribute('data-remark-open');
+      tooltip.__remarkTrigger = null;
+    }
+    if (tooltip._placeholder && tooltip._placeholder.parentNode) {
+      tooltip._placeholder.parentNode.insertBefore(tooltip, tooltip._placeholder);
+      tooltip._placeholder.remove();
+      tooltip._placeholder = null;
+    }
+  }
+
+  function showRemarkSavedModal() {
+    return Swal.fire({
+      icon: 'success',
+      title: 'Remark saved!',
+      timer: 1200,
+      showConfirmButton: false
+    });
+  }
+
+  document.querySelectorAll('.remark-tooltip-trigger').forEach(trigger => {
+    const tooltip = trigger.querySelector('.remark-tooltip');
+    const closeBtn = tooltip ? tooltip.querySelector('.remark-close-btn') : null;
+
+    function positionTooltip() {
+      if (!tooltip) return;
+      const rect = trigger.getBoundingClientRect();
+      const tw = 300;
+      let top = rect.bottom + 8;
+      let left = rect.left + rect.width / 2 - tw / 2;
+      if (left + tw > window.innerWidth - 10) left = window.innerWidth - tw - 10;
+      if (left < 10) left = 10;
+      if (top + 150 > window.innerHeight - 10) top = rect.top - 150 - 8;
+      if (top < 10) top = 10;
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+      tooltip.style.right = 'auto';
+      tooltip.style.transform = 'none';
+    }
+
+    function showTooltip() {
+      if (!tooltip) return;
+      document.querySelectorAll('.remark-tooltip.active').forEach(function(openTooltip) {
+        if (openTooltip !== tooltip) {
+          hideRemarkTooltip(openTooltip);
+        }
+      });
+      if (tooltip.parentNode !== document.body) {
+        if (!tooltip._placeholder) {
+          const ph = document.createElement('span');
+          ph.style.display = 'none';
+          tooltip.parentNode.insertBefore(ph, tooltip);
+          tooltip._placeholder = ph;
+        }
+        document.body.appendChild(tooltip);
+      }
+      tooltip.__remarkTrigger = trigger;
+      trigger.setAttribute('data-remark-open', 'true');
+      tooltip.style.position = 'fixed';
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+      tooltip.style.visibility = 'visible';
+      tooltip.style.zIndex = '1000000';
+      tooltip.classList.add('active');
+      if (closeBtn) closeBtn.style.display = 'block';
+      positionTooltip();
+    }
+
+    function hideTooltip() {
+      hideRemarkTooltip(tooltip);
+    }
+
+    trigger.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      highlightRow(trigger.closest('tr'));
+      if (tooltip.style.visibility === 'visible') hideTooltip();
+      else showTooltip();
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      hideTooltip();
+      restoreRowPosition();
+    });
+
+    if (tooltip) tooltip.addEventListener('click', function(e) {
+      if (e.target.closest('.remark-send-btn')) return;
+      e.stopPropagation();
+    });
+  });
+
+  if (!window.__ssZ1RemarkOutsideClickBound) {
+    window.__ssZ1RemarkOutsideClickBound = true;
+    document.addEventListener('click', function(e) {
+      document.querySelectorAll('.remark-tooltip.active').forEach(function(tooltip) {
+        const trigger = tooltip.__remarkTrigger || document.querySelector('.remark-tooltip-trigger[data-remark-open="true"]');
+        const clickedInsideTooltip = tooltip.contains(e.target);
+        const clickedInsideTrigger = trigger && trigger.contains(e.target);
+        if (!clickedInsideTooltip && !clickedInsideTrigger) {
+          hideRemarkTooltip(tooltip);
+          restoreRowPosition();
+        }
+      });
+    });
+  }
+
+  if (!window.__ssZ1RemarkHandlerBound) {
+    window.__ssZ1RemarkHandlerBound = true;
+    document.addEventListener('click', function(e) {
+      const sendBtn = e.target.closest('.remark-send-btn[data-spider-remark-zone="z1"]');
+      if (!sendBtn) return;
+
+      const tooltip = sendBtn.closest('.remark-tooltip');
+      if (!tooltip) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      highlightRow(sendBtn.closest('tr'));
+      if (sendBtn.disabled || sendBtn.dataset.saving === 'true') return;
+
+      const textarea = tooltip.querySelector('textarea');
+      const remark = textarea ? textarea.value.trim() : '';
+      if (!remark) { Swal.fire('Error', 'Please enter a remark before sending.', 'error'); return; }
+
+      const row = sendBtn.closest('tr');
+      const lotId = sendBtn.dataset.lotId || (row ? (row.getAttribute('data-lot-id') || row.getAttribute('data-stock-lot-id') || '') : '');
+      if (!lotId) { Swal.fire('Error', 'Missing lot ID.', 'error'); return; }
+      const submitUrl = sendBtn.dataset.submitUrl || "{% url 'ss_z1_save_remarks' %}";
+
+      sendBtn.disabled = true;
+      sendBtn.dataset.saving = 'true';
+
+      fetch(submitUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+        body: JSON.stringify({ lot_id: lotId, remarks: remark })
+      })
+      .then(function(response) {
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.indexOf('application/json') !== -1) {
+          return response.json().then(function(data) {
+            if (!response.ok) {
+              throw new Error(data.error || data.message || ('Server returned HTTP ' + response.status));
+            }
+            return data;
+          });
+        }
+        return response.text().then(function(text) {
+          console.error('Spider remark non-JSON response:', text);
+          throw new Error('Server returned HTTP ' + response.status);
+        });
+      })
+      .then(function(data) {
+        if (!data.success) {
+          throw new Error(data.error || data.message || 'Unable to save remark.');
+        }
+        if (textarea) { textarea.value = remark; textarea.readOnly = true; }
+        const trigger = tooltip._placeholder ? tooltip._placeholder.closest('.remark-tooltip-trigger') : tooltip.closest('.remark-tooltip-trigger');
+        if (sendBtn.parentElement) {
+          sendBtn.outerHTML = '<div style="margin-top:40px;color:#31708f;background:#d9edf7;border:1px solid #bce8f1;border-radius:4px;padding:8px 12px;font-size:10px;text-align:left;"><i class="fa fa-info-circle"></i> Remark already saved and cannot be edited.</div>';
+        }
+        const img = trigger ? trigger.querySelector('img') : null;
+        if (img) { img.style.filter = 'grayscale(0) brightness(1.1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2)'; img.style.opacity = '1'; }
+        return showRemarkSavedModal().then(function() {
+          hideRemarkTooltip(tooltip);
+          restoreRowPosition();
+        });
+      })
+      .catch(function(error) {
+        sendBtn.disabled = false;
+        sendBtn.dataset.saving = 'false';
+        Swal.fire('Error', error.message || 'Failed to save remark.', 'error');
+        restoreRowPosition();
+      });
+    }, true);
+  }
+
+  function normalizeModule(value) {
+    return String(value || '').trim().toLowerCase().replace(/_/g, ' ');
+  }
+
+  function findRowByLot(lotId) {
+    if (!lotId) return null;
+    var normalizedLotId = String(lotId).trim();
+    return Array.from(document.querySelectorAll('#order-listing tbody tr[data-lot-id]')).find(function(row) {
+      return row.getAttribute('data-lot-id') === normalizedLotId || row.getAttribute('data-stock-lot-id') === normalizedLotId;
+    }) || null;
+  }
+
+  document.addEventListener('globalScan:success', function(event) {
+    var detail = (event && event.detail) || {};
+    if (normalizeModule(detail.module) !== 'spider spindle z1') return;
+
+    window.setTimeout(function() {
+      var row = document.querySelector('#order-listing tbody tr[data-global-scan-active="1"]') ||
+        findRowByLot(detail.lot_id) ||
+        document.querySelector('#order-listing tbody tr.dp-row-action-highlight, #order-listing tbody tr.gkb-row-focus, #order-listing tbody tr.gs-active-scan');
+      if (!row || row.classList.contains('hold-row')) return;
+
+      var addButton = row.querySelector('button.btn-add-spider');
+      if (!addButton || addButton.disabled || addButton.classList.contains('disabled')) return;
+
+      addButton.click();
+      document.dispatchEvent(new CustomEvent('spiderSpindle:autoOpenAddModal', {
+        detail: {
+          tray_id: detail.tray_id || '',
+          lot_id: row.getAttribute('data-lot-id') || detail.lot_id || '',
+          zone: 'Z1',
+          triggered_by: 'global_scan'
+        }
+      }));
+    }, 300);
+  });
+});
+</script>
+<script src="{% static 'js/row_lock_guard.js' %}"></script>
+
+{% endblock %}

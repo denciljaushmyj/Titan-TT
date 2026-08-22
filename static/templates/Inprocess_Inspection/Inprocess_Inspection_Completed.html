@@ -1,0 +1,2479 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% load stock_filters %}
+{% load custom_tags %}
+{% block content %}
+<style nonce="{{ csp_nonce }}">
+  /* Enhanced date input styling */
+  #from-date-simple, #to-date-simple {
+    transition: all 0.3s ease;
+    border: 1.5px solid #028084;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: #028084;
+    font-weight: 600;
+  }
+  
+  /* Error state for future dates */
+  #from-date-simple.error, #to-date-simple.error {
+    background-color: #ffebee !important;
+    border-color: #f44336 !important;
+    color: #d32f2f !important;
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  /* Success state for valid dates */
+  #from-date-simple.success, #to-date-simple.success {
+    background-color: #e8f5e8 !important;
+    border-color: #28a745 !important;
+    color: #155724 !important;
+  }
+  
+  /* Shake animation for invalid dates */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  
+  /* Disable future dates in calendar picker */
+  #from-date-simple::-webkit-calendar-picker-indicator,
+  #to-date-simple::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+  /* ========== Tablet override — paste at file end (after other table styles) ========== */
+/* --- Tablet: freeze first 3 columns consistently with desktop --- */
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+
+*{
+  font-size: var(--ttt-font-size-tablet) !important; /* Increase font size for better readability */
+}
+
+:root { --app-font-size: var(--ttt-font-size-tablet); }
+.rounded-circle{
+  padding: 17px !important;
+}
+.model-image-tooltip{
+  transform: translateX(-25%) !important;
+  top: 45% !important;
+  z-index: 500000 !important; /* high so it sits above table & scrollbar */
+
+}
+
+
+  /* Core layout blocks */
+  .content-wrapper,
+  .card, .card-body,
+  .table-responsive,
+  #order-listing,
+  #trayScanModal_DayPlanning,
+  .tray-scan-modal-DayPlanning,
+  .pagination-wrapper {
+    font-size: var(--app-font-size) !important;
+    line-height: 1.35 !important;
+  }
+
+  /* Table headings / cells / icons */
+  #order-listing th,
+  #order-listing td,
+  #order-listing thead th {
+    font-size: var(--app-font-size) !important;
+    vertical-align: middle !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  /* Ensure heading/title and date controls match */
+  h4.text-left.mt-0.mb-3,
+  .calendar-bar .date-input-group label,
+  .calendar-bar .date-input-group input,
+  #search-date-range-simple,
+  #clear-date-filter-simple,
+  .calendar-btn,
+  #trayScanModal_DayPlanning input.form-control,#trayValidateBtn,
+  #trayScanModal_DayPlanning table th, #trayScanModal_DayPlanning table td,
+  #modalModelNo_DayPlanning
+ {
+    font-size: var(--app-font-size) !important;
+  }  
+
+  /* Reserve space for filter icons in header cells */
+#order-listing th {
+  position: relative;
+  overflow: visible !important;
+  white-space: normal !important; /* allow wrapping */
+}
+
+/* Ensure filter icons always stay to the right */
+#order-listing th .fa-filter {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px !important;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+  /* Column 1 */
+  #order-listing th:nth-child(1),
+  #order-listing td:nth-child(1) {
+    position: sticky;
+    left: 0 !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+    background: #f7fafd;
+    z-index: 30;
+  }
+
+  /* Column 2 */
+  #order-listing th:nth-child(2),
+  #order-listing td:nth-child(2) {
+    position: sticky;
+    left: 90px !important;   /* = width of col1 */
+    min-width: 125px !important;
+    max-width: 125px !important;
+    background: #f7fafd;
+    z-index: 25;
+  }
+
+  /* Column 3 */
+  #order-listing th:nth-child(3),
+  #order-listing td:nth-child(3) {
+    position: sticky;
+    left: 215px !important;  /* 75 (col1) + 100 (col2 min) */
+    min-width: 140px !important;
+    max-width: 140px !important;
+    background: #f7fafd;
+    z-index: 20;
+  }
+
+  /* Sticky header */
+  #order-listing thead th {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: #028084 !important;
+    color: #e5fcff !important;
+  }
+}
+
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+  .table-container {
+    overflow-x: auto;
+  }
+
+  /* Other columns (fit remaining space) */
+  #order-listing th:nth-child(4)  { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(5)  { min-width: 120px !important; max-width: 120px !important; }
+  #order-listing th:nth-child(6)  { min-width: 135px !important; max-width: 135px !important; }
+  #order-listing th:nth-child(7)  { min-width: 120px !important; max-width: 120px !important; }
+  #order-listing th:nth-child(8)  { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(9)  { min-width: 140px !important; max-width: 145px !important; }
+  #order-listing th:nth-child(10) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(11) { min-width: 150px !important; max-width: 150px !important; }
+  #order-listing th:nth-child(12) { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(13) { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(14) { min-width: 120px !important; max-width: 120px !important; }
+  #order-listing th:nth-child(15) { min-width: 125px !important; max-width: 125px !important; }
+  #order-listing th:nth-child(16) { min-width: 130px !important; max-width: 150px !important; }
+  #order-listing th:nth-child(17) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(18) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(19) { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(20) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(21) { min-width: 130px !important; max-width: 130px !important; }
+
+
+  /* Prevent overlap */
+  #order-listing th:nth-child(-n+3),
+  #order-listing td:nth-child(-n+3) {
+    z-index: 45 !important;
+  }
+
+  /* Hide hidden columns */
+  #order-listing th[hidden],
+  #order-listing td[hidden] {
+    display: none !important;
+  }
+}
+      /* Add to your CSS file for Excel-like grid lines */
+.table-bordered th, .table-bordered td {
+  border: 1px solid #d9dedf !important;
+}
+  /* Make the table header sticky */
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: white; /* or your table header bg color */
+  z-index: 5; /* ensure it stays above the table rows */
+}
+
+#order-listing thead th {
+  height: 38px !important; /* Increase as needed */
+  background: #028084 !important;
+  color: #e5fcff !important;
+  vertical-align: middle !important;
+  border-bottom: 2.5px solid #bdbdbd !important; /* Thicker grey line below heading */
+}
+/* style for hol/unhold row - blurred bg */
+#order-listing tr:last-child td {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  /* background: #f4f3f3 !important; */
+}
+/* Gird line color combination */
+#order-listing th,
+#order-listing td {
+  border-right: 1.5px solid #bababa !important; /* Vertical lines: blue */
+  border-bottom: 1.5px solid #121413 !important; /* Horizontal lines: green */
+}
+
+  
+/* Default: Desktop/Laptop (wider columns for larger font) - server */
+/* #order-listing th:nth-child(1) {
+  min-width: 90px;
+  max-width: 90px;
+} */ /* S.No */
+/* #order-listing th:nth-child(2) {
+  min-width: 90px;
+  max-width: 100px;
+} */ /* Last Updated */
+/* #order-listing th:nth-child(3) {
+  min-width: 90px;
+  max-width: 120px;
+} */ /* Plating */
+#order-listing th:nth-child(4) {
+  min-width: 110px;
+  max-width: 120px;
+} /* Polishing Stk No */
+#order-listing th:nth-child(5) {
+  min-width: 90px;
+  max-width: 100px;
+} /* Plating Color */
+#order-listing th:nth-child(6) {
+  min-width: 105px;
+  max-width: 110px;
+} /* Category */
+#order-listing th:nth-child(7) {
+  min-width: 85px;
+  max-width: 95px;
+} /* Polish Finish */
+#order-listing th:nth-child(8) {
+  min-width: 110px;
+  max-width: 110px;
+} /* Version */
+#order-listing th:nth-child(9) {
+  min-width: 105px;
+  max-width: 105px;
+} /* Tray Cate-Capacity */
+#order-listing th:nth-child(10) {
+  min-width: 115px;
+  max-width: 120px;
+} /* Source */
+#order-listing th:nth-child(11) {
+  min-width: 115px;
+  max-width: 115px;
+} /* No of Trays */
+#order-listing th:nth-child(12) {
+  min-width: 105px;
+  max-width: 105px;
+} /* Input Qty */
+#order-listing th:nth-child(13) {
+  min-width: 95px;
+  max-width: 100px;
+} /* Process Status */
+#order-listing th:nth-child(14) {
+  min-width: 95px;
+  max-width: 100px;
+} /*  Action */
+#order-listing th:nth-child(15) {
+  min-width: 90px;
+  max-width: 100px;
+} /* Lot Status */
+#order-listing th:nth-child(16) {
+  min-width: 100px;
+  max-width: 100px;
+} /* Current Stage */
+#order-listing th:nth-child(17) {
+  min-width: 110px;
+  max-width: 100px;
+} /* Remarks */
+#order-listing th:nth-child(18) {
+  min-width: 100px;
+  max-width: 110px;
+}
+
+@media (min-width: 600px) and (max-width: 900px) {
+  #order-listing {
+    table-layout: auto !important; /* Let columns auto-fit content */
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: 100vw !important;
+  }
+  /* Adjust width for all headings (th) and cells (td) */
+  #order-listing th,
+  #order-listing td {
+    min-width: 160px !important;
+    max-width: 260px !important;
+    width: 180px !important;
+  }
+  #order-listing th {
+    position: relative;
+    padding-right: 48px !important; /* More space for filter icon */
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: ellipsis;
+  }
+  #order-listing th .fa-filter {
+    position: absolute;
+    right: 18px !important;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: transparent;
+    pointer-events: auto;
+  }
+}
+/* Right-align filter icons */
+#order-listing th .fa-filter {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+#order-listing th .fa-filter:hover {
+  opacity: 1;
+}
+
+
+  
+#order-listing th:last-child,
+#order-listing td:last-child {
+  border-right: none;
+  max-width: 95px;
+  min-width: 100px;
+}
+/* Overall Table Shrink */
+#order-listing tr,
+#order-listing td,
+#order-listing th {
+  height: 20px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+/* Table heading font size */
+/* Add this at the end of your <style> block in DP_PickTable.html */
+
+/* Professional table header styling with proper text wrapping */
+#order-listing th {
+  position: relative;
+  padding: 8px 12px 8px 16px !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  white-space: normal !important;
+  line-height: 1.3 !important;
+  word-break: keep-all !important;
+  hyphens: none !important;
+  /* font-size: 13px; */
+  /* font-weight: 600 !important; */
+  background: #028084 !important;
+  color: #e5fcff !important;
+  border-bottom: 2.5px solid #bdbdbd !important;
+  /* min-width: 80px;
+  max-width: 140px; */
+   overflow-wrap: break-word;
+  word-wrap: break-word;
+   z-index: 20 !important;
+}
+
+/* Make sure header cells for sticky columns are always above body cells */
+/* Fix: Prevent shadow/rows from showing behind sticky columns while scrolling */
+#order-listing th:nth-child(-n+3),
+#order-listing td:nth-child(-n+3) {
+  z-index: 30 !important; 
+box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+}
+
+/* Prevent sticky columns from overlapping sticky header */
+#order-listing td:nth-child(-n+3) {
+  z-index: 11 !important;
+}
+  /* Make the first column sticky and opaque */
+#order-listing td:first-child,
+#order-listing th:first-child {
+  position: sticky;
+  left: 0;
+  background: #fff;      /* Or match your table background */
+  z-index: 2;            /* Above blurred rows */
+  box-shadow: 2px 0 4px rgba(0,0,0,0.03); /* Optional: subtle shadow */
+}
+/* Force specific table headers to wrap onto two lines */
+#order-listing th:nth-child(4),   /* Polishing Stk No */
+#order-listing th:nth-child(5),   /* Plating Color */
+#order-listing th:nth-child(7),   /* Polish Finish */
+#order-listing th:nth-child(9),   /* Tray Cate-Capacity */
+#order-listing th:nth-child(11),  /* No of Tray */
+#order-listing th:nth-child(12),  /* Input Qty */
+#order-listing th:nth-child(13)   /* Process Status */ {
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  word-break: break-word !important;
+
+  text-align: center;
+  vertical-align: middle;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+/* Freeze style for 1st - 3 columns */
+/* --- Freeze first 3 columns and table header for #order-listing --- */
+#order-listing {
+  position: relative;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: #fff;
+  /* Ensure enough left padding for sticky columns */
+}
+
+#order-listing th,
+#order-listing td {
+  background-clip: padding-box;
+  /* Prevent overlap artifacts */
+  z-index: 1;
+}
+
+/* Sticky header */
+#order-listing thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #028084 !important;
+  color: #e5fcff !important;
+}
+
+/* Freeze 1st column */
+#order-listing th:nth-child(1),
+#order-listing td:nth-child(1) {
+  position: sticky;
+  left: 0 !important;
+  z-index: 12; /* Above header */
+  background: #f7fafd;
+  min-width: 75px;
+  max-width: 75px;
+}
+
+/* Freeze 2nd column - Last Updated*/
+#order-listing th:nth-child(2),
+#order-listing td:nth-child(2) {
+  position: sticky;
+  left: 75px; /* Match min-width of 1st col */
+  z-index: 12;
+  background: #f7fafd;
+  min-width: 85px; /* Increased width */
+  max-width: 85px; /* Increased width */
+}
+
+/* Freeze 3rd column */
+#order-listing th:nth-child(3),
+#order-listing td:nth-child(3) {
+  position: sticky;
+  left: 160px; /* 100px (1st) + 90px (2nd) */
+  z-index: 12;
+  background: #f7fafd;
+  min-width: 100px; /* Increased width 100 - old value*/
+  max-width: 110px; /* Increased width  110 - old value*/
+}
+
+
+
+/* Prevent sticky columns from overlapping sticky header */
+#order-listing th:nth-child(-n + 3) {
+  z-index: 12;
+}
+#order-listing td:nth-child(-n + 3) {
+  z-index: 11;
+}
+
+/* Ensure sticky columns and header work together */
+#order-listing th,
+#order-listing td {
+  box-sizing: border-box;
+  /* Prevent content shake */
+  /* overflow: hidden; */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+
+    .blurred-heading, .blurred-cell {
+    filter: blur(2px) grayscale(0.7) opacity(0.6);
+    pointer-events: none !important;
+    user-select: none;
+    cursor: not-allowed;
+    background: #f5f5f5 !important;
+  }
+    /* Show remark tooltip above the trigger instead of below */
+  .remark-tooltip {
+    top: auto !important;
+    bottom: 110% !important;
+  }
+        /* Model Image Gallery Styles */
+        
+        /* General model circle styling */
+        .model-circle {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: -7px; /* Adjust this value for more/less space */
+        }
+
+        /* Compact and responsive modal for model/stock no */
+        #modelRemarkModal {
+            display: none;
+            position: fixed;
+            top: 6vh;
+            right: 2vw;
+            transform: none;
+            z-index: 20000;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            min-width: 320px;
+            max-width: 420px;
+            min-height: 400px;
+            max-height: 500px;
+            padding: 18px 32px 12px 32px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+            #modelRemarkModal {
+                right: 0;
+                max-width: 98vw;
+                min-width: 0;
+                width: 98vw;
+                padding: 10px 4vw 10px 4vw;
+                font-size: 11px;
+            }
+        }
+
+        #modelRemarkModalContent {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #modelRemarkModal .close-btn,
+        #closeModelRemarkModal {
+            position: absolute;
+            top: 6px;
+            right: 12px;
+            font-size: 18px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        #modelRemarkModal img {
+            max-width: 54px;
+            max-height: 54px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        #modelRemarkModal .model-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 2px;
+        }
+
+        #modelRemarkModal .model-circle {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 2px;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        #modelRemarkModal .model-no {
+            font-weight: 600;
+            color: #023E4DCC;
+            font-size: 0.98rem;
+            margin-bottom: 2px;
+        }
+
+        #modelRemarkModal .remark-label {
+            font-size: 11px;
+            color: #222;
+            margin-bottom: 1px;
+        }
+
+        #modelRemarkModal .remark-text {
+            font-size: 11px;
+            color: #444;
+            background: #f7f7f7;
+            border-radius: 5px;
+            padding: 5px 8px;
+            min-width: 80px;
+            min-height: 18px;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 600px) {
+            #modelRemarkModal {
+                left: 0;
+                top: 0;
+                width: 98vw;
+                max-width: 98vw;
+                min-width: 0;
+                padding: 8px 4px 8px 4px;
+                font-size: 11px;
+                max-height: 60vh;
+            }
+            
+            #modelRemarkModal img {
+                max-width: 38px;
+                max-height: 38px;
+            }
+            
+            #modelRemarkModal .model-no {
+                font-size: 0.92rem;
+            }
+            
+            #modelRemarkModal .remark-label,
+            #modelRemarkModal .remark-text {
+                font-size: 10px;
+            }
+        }
+
+        /* Tooltip for model images */
+        .model-image-tooltip {
+            position: absolute;
+            z-index: 99999;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+            padding: 10px;
+            min-width: 220px;
+            max-width: 350px;
+            max-height: 220px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .model-image-tooltip .image-slider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .model-image-tooltip img {
+            max-width: 180px;
+            max-height: 180px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .model-image-tooltip .slider-btn {
+            background: #eee;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .model-image-tooltip.static {
+            display: block !important;
+            position: fixed !important;
+            top: 80px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 100000;
+        }
+
+        .model-image-tooltip .close-btn {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 18px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        /* Image slider modal */
+        .image-slider-modal {
+            display: none;
+            position: fixed;
+            top: 40px;
+            right: 20px;
+            width: 600px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            z-index: 10000;
+            transition: right 0.3s ease;
+        }
+
+        .image-slider-modal.open {
+            display: block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .slider {
+            position: relative;
+            overflow: hidden;
+            height: 350px;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease;
+            width: 100%;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            box-sizing: border-box;
+            display: none;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .prev,
+        .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            user-select: none;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        @media (max-width: 767px) {
+            .image-slider-modal {
+                width: 100%;
+                right: 0;
+                top: 0;
+                border-radius: 0;
+                padding: 10px;
+            }
+            
+            .slider {
+                height: 250px;
+            }
+            
+            .slide img {
+                height: 250px;
+            }
+        }
+    </style>
+
+<!-- Model/Stock No Modal Popup -->
+<div id="modelRemarkModal">
+  <span id="closeModelRemarkModal">&times;</span>
+  <div style="font-weight:700; font-size:18px; color:#616161; margin-bottom:20px; margin-top:4px; text-align:center;">
+    Model Image Gallery
+  </div>
+  <div id="modelRemarkModalContent"></div>
+</div>
+
+<div class="content-wrapper">
+  <div class="row">
+  <!-- <h5 class="text-left mt-0 mb-3">Day Planning Pick Table</h5> -->
+  
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+          <div class="card-body">
+            <h5 class="text-left mt-0 mb-4" style="font-weight:700;">Inprocess Inspection Complete Table</h5>
+                      <!-- 🔥 NEW: Date Filter Section -->
+          <div class="calendar-bar">
+            <div class="date-input-group">
+              <label for="from-date-simple" style="font-weight: 600; color: #028084; margin-right: 8px;">From Date:</label>
+              <input type="date" id="from-date-simple" name="from_date" 
+                     value="{{ from_date }}" 
+                     max="{{ 'now'|date:'Y-m-d' }}"
+                     style="border: 1.5px solid #028084; border-radius: 6px; padding: 6px 12px; font-size: 14px; color: #028084; font-weight: 600;">
+            </div>
+            
+            <div class="date-input-group">
+              <label for="to-date-simple" style="font-weight: 600; color: #028084; margin-right: 8px;">To Date:</label>
+              <input type="date" id="to-date-simple" name="to_date" 
+                     value="{{ to_date }}" 
+                     max="{{ 'now'|date:'Y-m-d' }}"
+                     style="border: 1.5px solid #028084; border-radius: 6px; padding: 6px 12px; font-size: 14px; color: #028084; font-weight: 600;">
+            </div>
+            
+            <button id="search-date-range-simple" type="button" style="background: #028084; border: none; border-radius: 6px; cursor: pointer; padding: 8px 18px; color: #fff; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa fa-search"></i> Search
+            </button>
+            
+            <button id="clear-date-filter-simple" type="button" style="background: #6c757d; border: none; border-radius: 6px; cursor: pointer; padding: 8px 18px; color: #fff; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; margin-left: 10px;">
+              <i class="fa fa-times"></i> Clear Filter
+            </button>
+                                              <!-- Filter Active indicator - positioned above table -->
+        <div id="filterActiveIndicator" style="display: none; margin: 10px 0;">
+          <span style="font-size: 12px; color: #fff; font-weight: 600; background: #28a745; padding: 5px 12px; border-radius: 15px; border: 1px solid #1e7e34; display: inline-block;">Filter Active</span>
+        </div>
+          </div>
+
+          <input type="hidden" id="from-date" value="{{ from_date }}" />
+          <input type="hidden" id="to-date" value="{{ to_date }}" />
+          <!-- 🔥 END: Date Filter Section -->
+          
+         
+            <!-- Table Section -->
+            <div class="table-responsive" style="overflow: scroll !important">
+              <table id="order-listing" class="table">
+                <thead>
+                  <tr>
+                    <th>S.No <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>JIG ID <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Date &amp;<br> Time <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Model Presents <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Plating Stk No <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Polishing Stk No <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Plating Color <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Polish Finish <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th style="display: none;">Version <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Source-<br> Location <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Tray Type - <br> Capacity <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Jig Type - <br> Capacity <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Bath Type <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Jig Lot Qty <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Bath No <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>IP Info <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Process Status <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Action <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Lot Status <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Current Stage <i class="fa fa-filter" aria-hidden="true"></i></th>
+                    <th>Type of Input</th>
+                    <th>Remarks <i class="fa fa-filter" aria-hidden="true"></i></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for jig_detail in jig_details %}
+                    <tr class="highlighted-tray-scan" data-lot-id="{{ jig_detail.lot_id }}">
+                      <td><span class="sno-value">{{ jig_details.start_index|add:forloop.counter0 }}</span></td>
+                      <td>{{ jig_detail.jig_qr_id }}</td>
+                      <td>
+                    {{ jig_detail.IP_loaded_date_time|date:"d-M-y" }}<br>
+                    <span style="display:inline-block; margin-top:4px;word-break: break-all;">{{ jig_detail.IP_loaded_date_time|date:"h:i A" }}</span>
+                      </td>                         <!-- Model Presents - Keep existing functionality with colored circles -->
+                      <td class="model-stock-no-cell" 
+                          data-images='{{ jig_detail.model_images|json_encode }}'
+                          data-model-colors='{{ jig_detail.model_colors|json_encode }}'
+                          data-model-list='{{ jig_detail.no_of_model_cases|json_encode }}'>
+                        <span class="model-stock-no-text" style="cursor:pointer;">
+                          {% for model_no in jig_detail.no_of_model_cases %}
+                            {% if jig_detail.model_colors %}
+                              <span class="model-circle" style="background:{{ jig_detail.model_colors|get_item:model_no }};{% if forloop.last %}margin-right:0;{% endif %}"></span>
+                            {% else %}
+                              <span class="model-circle" style="background:#ccc;{% if forloop.last %}margin-right:0;{% endif %}"></span>
+                            {% endif %}
+                          {% endfor %}
+                          <!-- Expand menu icon -->
+                          <span class="expand-model-remark" style="display:inline-block;width:18px;height:18px;vertical-align:middle;cursor:pointer;" title="Expand">
+                            <svg width="18" height="18" viewBox="0 0 18 18">
+                              <circle cx="9" cy="9" r="8" fill="#bbb"/>
+                              <polygon points="6,7 12,7 9,12" fill="#fff"/>
+                            </svg>
+                          </span>
+                        </span>
+                        
+                      </td>
+                      <!-- Plating Stock No from ModelMasterCreation -->
+                      <td>
+                          {% if jig_detail.final_plating_stk_nos %}
+                              {{ jig_detail.final_plating_stk_nos }}
+
+                          {% else %}
+                              N/A
+                          {% endif %}
+                      </td>                      <!-- Polishing Stock No from ModelMasterCreation -->
+                      <td>
+                          {% if jig_detail.final_polishing_stk_nos %}
+                              {{ jig_detail.final_polishing_stk_nos }}
+
+                          {% else %}
+                              N/A
+                          {% endif %}
+                      </td>  
+                      <!-- Plating Color from ModelMasterCreation -->
+                      <td>{{ jig_detail.plating_color|default:"N/A" }}</td>
+                      <!-- Polish Finish from ModelMasterCreation -->
+                      <td>{{ jig_detail.polish_finish|default:"N/A" }}</td>
+                      <!-- Version from ModelMasterCreation -->
+                        <td style="display: none;">
+                            {% if jig_detail.final_version_names %}
+                                {{ jig_detail.final_version_names }}
+
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td> 
+                        <!-- Source-Location from ModelMasterCreation -->
+                      <td> {{ jig_detail.location_name|default:"N/A" }}</td>
+                      <!-- Tray Type - Capacity from ModelMasterCreation -->
+                      <td>
+                        {% if jig_detail.tray_type and jig_detail.tray_capacity %}
+                          {{ jig_detail.tray_type }} - {{ jig_detail.tray_capacity }}
+                        {% else %}
+                          No Tray Info
+                        {% endif %}
+                      </td>
+                      <td>{{ jig_detail.jig_type|default:"Normal" }} - {{ jig_detail.jig_capacity|default:"16" }}</td>
+                      <td>{{ jig_detail.ep_bath_type|default:"Bright" }}</td>
+                      <td>{{ jig_detail.total_cases_loaded|default:"0" }}</td>
+                      <!-- Bath No - Dropdown (Always disabled in completed view) -->
+                      <td>
+                        <div style="position:relative; display:flex; align-items:center;">
+                          <!-- Show saved bath number (disabled state) -->
+                          <select style="max-height:110px; overflow-y:auto; width:80px; background-color:#f5f5f5;" 
+                                  size="1" disabled>
+                            <option value="{{ jig_detail.bath_numbers.bath_number }}" selected>
+                              {{ jig_detail.bath_numbers.bath_number }}
+                            </option>
+                          </select>
+                          <img src="{% static 'assets/icons/scan.png' %}" alt="Scan"
+                              style="opacity:0.2; margin-left:4px; height:14px; width:14px; object-fit:contain;" />
+                        </div>
+                      </td>
+                      <!-- IP Info -->
+                      <td>
+                        <div style="display: flex; align-items: center; justify-content: center; position: relative;">
+                          <img
+                            src="{% static 'assets/icons/viewRemarks.png' %}"
+                            alt="View Remarks"
+                            style="width:22px; height:22px; object-fit:contain; cursor:pointer;"
+                            title="View Remarks"
+                            class="view-remarks-icon"
+                            data-remark="{{ jig_detail.remarks|default:'No remarks' }}"
+                            data-tooltip-id="remarks-tooltip-{{ forloop.counter }}"
+                          />
+                          <div class="remarks-tooltip"
+                            data-tooltip-id="remarks-tooltip-{{ forloop.counter }}"
+                            style="display:none; position:absolute; top:-170%; left:50%; transform:translateX(-50%); min-width:180px; max-width:320px; background:#fff; border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.18); padding:10px 14px; font-size:13px; color:#222; z-index:9999; white-space:pre-line;">
+                          </div>
+                        </div>
+                      </td>
+                      <!-- Process Status column (Completed - all green) -->
+                      <td>
+                        <div style="display: flex; gap: 6px; align-items: center; justify-content: center;">
+                          <!-- Tray Scan (B) - Always green in completed view -->
+                          <div title="Tray Scan Completed"
+                            class="d-flex align-items-center justify-content-center rounded-circle ms-1"
+                            style="width: 20px; height: 20px; background-color: #0c8249; color: white; font-weight: 500; line-height: 20px; text-align: center; padding-top: 1px; padding-right: 1px;">
+                            B
+                          </div>
+                          
+                          <!-- Rework (R) - Always green in completed view -->
+                          <div title="Rework Completed"
+                            class="d-flex align-items-center justify-content-center rounded-circle ms-1"
+                            style="width: 20px; height: 20px; background-color: #0c8249; color: white; font-weight: 500; line-height: 20px; text-align: center;">
+                            R
+                          </div>
+                        </div>
+                      </td>
+                      <!-- Action (All disabled in completed view) -->
+                      <td>
+                        <span style="opacity:0.5; pointer-events:none; display:inline-block;">
+                          <img src="{% static 'assets/icons/edit1.png' %}" alt="Edit Disabled" style="width: 20px; margin-right: 8px; height: auto; filter: grayscale(1) opacity(0.5);" />
+                        </span>
+                        <span style="opacity:0.5; pointer-events:none; display:inline-block;">
+                          <img src="{% static 'assets/icons/bin.png' %}" alt="Delete Disabled" style="width: 20px; margin-right: 8px; height: auto; filter: grayscale(1) opacity(0.5);" />
+                        </span>
+                      </td>
+                      <!-- Batch Status (Completed) -->
+                      <td>
+                        {% if jig_detail.lot_status == "Yet to Release" %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                           style="border: 1px solid #0d5d17; background-color: #F0F5B7; color: #727c08; font-size: 13px; white-space: nowrap; padding: 5px;">
+                          {{ jig_detail.lot_status }}
+                        </div>
+                        {% else %}
+                         <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                           style="border: 1px solid #0d5d17; background-color: #c5f9c2; color: #2f801b; font-size: 13px; white-space: nowrap; padding: 5px;">
+                          {{ jig_detail.lot_status }}
+                        </div>
+                        {% endif %}
+                      </td>
+                      <!-- Current Stage -->
+                      <td>
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="border: 1px solid #9adeed; background-color: #d1edf3; color: #033b5d; font-size: 12px; white-space: nowrap; padding: 6px;">
+                          {{ jig_detail.last_process_module }}
+                        </div>
+                      </td>
+                      <!-- Type of Input -->
+                      <td>{% include 'partials/_type_of_input_cell.html' with type_of_input=jig_detail.type_of_input %}</td>
+                      <td>
+
+                        <!-- Audio Remark Icon -->
+                        {% if data.audio_remark %}
+                          <span class="remark-tooltip-trigger" style="display: inline-flex; align-items: center; height: 28px; margin-left: 0; position: relative; cursor: default;">
+                            <img src="{% static 'assets/icons/rec.png' %}" alt="Audio Remark" style="width: 20px; height: 20px;" />
+                            <div class="remark-tooltip" style="position: absolute; top: 110%; left: 50%; transform: translateX(-50%); width: 300px; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 15px; z-index: 1000;">
+                              
+                              <span style="font-size: 12px; color: #333;">Audio remark available</span>
+                            </div>
+                          </span>
+                        {% else %}
+                          <span title="No audio remark" style="display: inline-flex; align-items: center; height: 28px; margin-left: 0; opacity: 0.5; cursor: not-allowed;">
+                            <img src="{% static 'assets/icons/rec.png' %}" alt="Audio Remark Disabled" style="width: 20px; height: 20px; filter: grayscale(1) opacity(0.5);" />
+                          </span>
+                        {% endif %}
+
+                        <!-- Text Remark Icon -->
+                        {% if jig_detail.pick_remarks %}
+                          <span class="remark-tooltip-trigger" style="display: inline-flex; align-items: center; height: 20px; margin-left: 5px; position: relative; cursor: default;">
+                            <img src="{% static 'assets/icons/chat_icon.png' %}" alt="Chat"
+                              style="width: 20px; height: 20px; filter: grayscale(0) brightness(1.1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2); opacity: 1;" />
+                            <div class="remark-tooltip" style="position: absolute; top: 110%; left: 50%; transform: translateX(-50%); width: 300px; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 15px; z-index: 1000;">
+                              
+                              <div style="font-size: 12px; color: #333;">{{jig_detail.pick_remarks }}</div>
+                            </div>
+                          </span>
+                        {% else %}
+                          <span title="No remarks" style="display: inline-flex; align-items: center; height: 20px; margin-left: 5px; opacity: 0.5; cursor: not-allowed;">
+                            <img src="{% static 'assets/icons/chat_icon.png' %}" alt="Chat Disabled" style="width: 20px; height: 20px; filter: grayscale(1) opacity(0.5);" />
+                          </span>
+                        {% endif %}
+
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="21" style="text-align: center; padding: 20px; color: #888;">
+                        No completed jig details found.
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <!-- Tray Scan Modal -->
+              <div id="trayScanModal" class="tray-scan-modal active">
+                <!-- Modal content here -->
+              </div>
+            </div>
+             <!-- Pagination Section -->
+            <div class="pagination-wrapper">
+               <nav aria-label="Page navigation">
+                  <ul class="pagination justify-content-end mb-0">
+                     {# Previous button #}
+                     {% if jig_details.has_previous %}
+                     <li>
+                        <a href="?page={{ jig_details.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true"><i class="fa fa-chevron-left"></i></span>
+                        </a>
+                     </li>
+                     {% else %}
+                     <li class="disabled">
+                        <span aria-hidden="true"><i class="fa fa-chevron-left"></i></span>
+                     </li>
+                     {% endif %}
+                     {# Always show first page #}
+                     {% if jig_details.number > 3 %}
+                     <li><a href="?page=1">1</a></li>
+                     {% if jig_details.number > 4 %}
+                     <li class="disabled"><span>…</span></li>
+                     {% endif %}
+                     {% endif %}
+                     {# Show pages around current page #}
+                     {% for num in jig_details.paginator.page_range %}
+                     {% if num >= jig_details.number|add:'-2' and num <= jig_details.number|add:'2' %}
+                     {% if num == jig_details.number %}
+                     <li class="active"><span>{{ num }}</span></li>
+                     {% else %}
+                     <li><a href="?page={{ num }}">{{ num }}</a></li>
+                     {% endif %}
+                     {% endif %}
+                     {% endfor %}
+                     {# Show ellipsis and last page if needed #}
+                     {% if jig_details.number < jig_details.paginator.num_pages|add:'-2' %}
+                     {% if jig_details.number < jig_details.paginator.num_pages|add:'-3' %}
+                     <li class="disabled"><span>…</span></li>
+                     {% endif %}
+                     <li><a href="?page={{ jig_details.paginator.num_pages }}">{{ jig_details.paginator.num_pages }}</a></li>
+                     {% endif %}
+                     {# Next button #}
+                     {% if jig_details.has_next %}
+                     <li>
+                        <a href="?page={{ jig_details.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true"><i class="fa fa-chevron-right"></i></span>
+                        </a>
+                     </li>
+                     {% else %}
+                     <li class="disabled">
+                        <span aria-hidden="true"><i class="fa fa-chevron-right"></i></span>
+                     </li>
+                     {% endif %}
+                  </ul>
+               </nav>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Remarks - FIXED POSITION -->
+<!-- 1. REPLACE the Remarks Modal section (starting from "Modal for Remarks") -->
+<!-- Modal for Remarks - UPDATED WITH AJAX FUNCTIONALITY -->
+<div class="modal fade" id="remarksModal" tabindex="-1" role="dialog" aria-labelledby="remarksModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header p-0" style="border-bottom:none;">
+        <img src="{% static 'assets/images/loginBG3.jpg' %}" alt="Banner" style="width:100%;height:90px;object-fit:cover;border-radius:8px 8px 0 0;">
+        <button type="button" class="close position-absolute end-0 top-0 m-2" data-bs-dismiss="modal" aria-label="Close" style="z-index:2;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body pt-2">
+        <h5 class="modal-title text-center mb-3" id="remarksModalLabel" style="color:#023E4DCC;font-weight:700;">Add Jig Remark</h5>
+        
+        <!-- Loading spinner -->
+        <div id="remarksLoadingSpinner" style="display:none; text-align:center; padding:20px;">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Saving...</span>
+          </div>
+          <div style="margin-top:10px; color:#666;">Saving remarks...</div>
+        </div>
+        
+        <form id="remarksModalForm" autocomplete="off">
+          <input type="hidden" id="remarksJigId" name="jig_id" />
+          
+          <div class="mb-3 row align-items-center ms-30">
+            <label class="col-5 col-form-label text-end" style="margin-left:-35px; font-weight:bold;">Jig Position:</label>
+            <div class="col-7 d-flex gap-3">
+              <label class="form-check-label me-2">
+                <input type="radio" class="form-check-input" name="jig_position" value="Top" required> Top
+              </label>
+              <label class="form-check-label me-2">
+                <input type="radio" class="form-check-input" name="jig_position" value="Middle"> Middle
+              </label>
+              <label class="form-check-label">
+                <input type="radio" class="form-check-input" name="jig_position" value="Bottom"> Bottom
+              </label>
+            </div>
+          </div>
+          
+          <div class="mb-3 row align-items-center">
+            <label class="col-5 col-form-label text-end fw-bold" style="margin-left:-1px;">Enter Remarks:</label>
+            <div class="col-7 position-relative">
+              <input type="text" name="remarks" maxlength="50" required class="form-control pe-5" 
+                     placeholder="Enter remarks (max 50 chars)" style="padding-right: 70px;" />
+              <span id="remarksCharCount" class="position-absolute end-0 top-50 translate-middle-y text-muted small me-2" 
+                    style="pointer-events:none; font-size:12px;">0/50</span>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-12 d-flex justify-content-center gap-3">
+              <button type="submit" id="saveRemarksBtn" class="btn btn-primary px-4">Save</button>
+              <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. REPLACE the "JavaScript for Remarks Modal" script section -->
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function () {
+  // Character counter for remarks input
+  const remarksInput = document.querySelector('input[name="remarks"]');
+  const charCount = document.getElementById('remarksCharCount');
+  
+  if (remarksInput && charCount) {
+    remarksInput.addEventListener('input', function() {
+      const currentLength = this.value.length;
+      charCount.textContent = `${currentLength}/50`;
+      
+      // Change color if approaching limit
+      if (currentLength > 40) {
+        charCount.style.color = '#dc3545'; // Red color
+      } else {
+        charCount.style.color = '#6c757d'; // Gray color
+      }
+    });
+  }
+
+  // Handle remarks modal trigger
+  document.querySelectorAll('.remarks-modal-trigger').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Get data from the clicked link
+      const jigId = this.getAttribute('data-jig-id');
+      const lotId = this.getAttribute('data-lot-id');
+      const noOfTrays = this.getAttribute('data-no-of-trays');
+      const trayCapacity = this.getAttribute('data-tray-capacity');
+      const currentPosition = this.getAttribute('data-current-position');
+      const currentRemarks = this.getAttribute('data-current-remarks');
+      
+      console.log('Opening remarks modal for:', { jigId, lotId, noOfTrays, trayCapacity, currentPosition, currentRemarks });
+      
+      // Set the jig_id in the hidden input
+      document.getElementById('remarksJigId').value = jigId;
+      
+      // Reset form first
+      const form = document.getElementById('remarksModalForm');
+      if (form) {
+        form.reset();
+        document.getElementById('remarksJigId').value = jigId; // Reset after form reset
+        
+        // Set existing values if they exist
+        if (currentPosition) {
+          const positionRadio = form.querySelector(`input[name="jig_position"][value="${currentPosition}"]`);
+          if (positionRadio) {
+            positionRadio.checked = true;
+          }
+        }
+        
+        if (currentRemarks) {
+          const remarksInput = form.querySelector('input[name="remarks"]');
+          if (remarksInput) {
+            remarksInput.value = currentRemarks;
+            // Update character count
+            if (charCount) {
+              charCount.textContent = `${currentRemarks.length}/50`;
+              if (currentRemarks.length > 40) {
+                charCount.style.color = '#dc3545';
+              } else {
+                charCount.style.color = '#6c757d';
+              }
+            }
+          }
+        } else {
+          if (charCount) charCount.textContent = '0/50';
+        }
+      }
+      
+      // Open modal using Bootstrap 5
+      const modal = document.getElementById('remarksModal');
+      if (modal) {
+        if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+          const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+          bsModal.show();
+        } else {
+          // Fallback for non-Bootstrap: show modal manually
+          modal.style.display = 'block';
+          modal.classList.add('show');
+          modal.classList.add('fade');
+          document.body.classList.add('modal-open');
+          
+          // Create backdrop
+          const backdrop = document.createElement('div');
+          backdrop.className = 'modal-backdrop fade show';
+          backdrop.style.zIndex = '1040';
+          document.body.appendChild(backdrop);
+          
+          // Close modal on backdrop click
+          backdrop.addEventListener('click', function() {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            backdrop.remove();
+          });
+        }
+      }
+    });
+  });
+
+  // Handle form submission
+  document.getElementById('remarksModalForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const jigId = formData.get('jig_id');
+    const jigPosition = formData.get('jig_position');
+    const remarks = formData.get('remarks');
+    
+    if (!jigId) {
+      showFloatingAlert('Error: Missing jig ID', 'error');
+      return;
+    }
+    
+    if (!jigPosition || !remarks.trim()) {
+      showFloatingAlert('Please fill in all required fields', 'error');
+      return;
+    }
+    
+    if (remarks.trim().length > 50) {
+      showFloatingAlert('Remarks cannot exceed 50 characters', 'error');
+      return;
+    }
+    
+    // Show loading state
+    const loadingSpinner = document.getElementById('remarksLoadingSpinner');
+    const saveBtn = document.getElementById('saveRemarksBtn');
+    const form = document.getElementById('remarksModalForm');
+    
+    if (loadingSpinner) loadingSpinner.style.display = 'block';
+    if (saveBtn) saveBtn.disabled = true;
+    if (form) form.style.display = 'none';
+    
+    // Prepare data for AJAX request
+    const data = {
+      jig_id: jigId,
+      jig_position: jigPosition,
+      remarks: remarks.trim()
+    };
+    
+    // Send AJAX request
+    fetch('/inprocess_inspection/save_jig_remarks/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Show success message
+        showFloatingAlert('Jig remarks saved successfully!', 'success');
+        
+        // Update the data attributes of the remarks link to reflect saved values
+        const remarksLink = document.querySelector(`.remarks-modal-trigger[data-jig-id="${jigId}"]`);
+        if (remarksLink) {
+          remarksLink.setAttribute('data-current-position', data.jig_position);
+          remarksLink.setAttribute('data-current-remarks', data.remarks);
+        }
+
+        const reworkStatus = document.querySelector(`.rework-status[data-jig-id="${jigId}"]`);
+        if (reworkStatus) {
+          reworkStatus.style.backgroundColor = '#0c8249';
+          reworkStatus.style.color = 'white';
+        }
+        
+        // Close modal
+        const modal = document.getElementById('remarksModal');
+        if (modal && typeof bootstrap !== "undefined") {
+          const bsModal = bootstrap.Modal.getInstance(modal);
+          if (bsModal) {
+            bsModal.hide();
+          }
+        } else if (modal) {
+          modal.style.display = 'none';
+          modal.classList.remove('show');
+          document.body.classList.remove('modal-open');
+          const backdrop = document.querySelector('.modal-backdrop');
+          if (backdrop) backdrop.remove();
+        }
+
+        setTimeout(() => {
+      window.location.reload();
+    }, 100); // 1-second delay
+        
+      } else {
+        // Show error message
+        showFloatingAlert(data.message || 'Error saving jig remarks', 'error');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showFloatingAlert('Network error occurred while saving remarks', 'error');
+    })
+    .finally(() => {
+      // Hide loading state
+      if (loadingSpinner) loadingSpinner.style.display = 'none';
+      if (saveBtn) saveBtn.disabled = false;
+      if (form) form.style.display = 'block';
+    });
+  });
+});
+</script>
+
+{% block script %}
+
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('.view-remarks-icon').forEach(function(icon) {
+    const tooltipId = icon.getAttribute('data-tooltip-id');
+    const remark = icon.getAttribute('data-remark');
+    const tooltip = document.querySelector(`.remarks-tooltip[data-tooltip-id="${tooltipId}"]`);
+    if (!tooltip) return;
+
+    // Fill tooltip with remark
+    tooltip.textContent = remark;
+
+    // Show tooltip on mouseenter
+    icon.addEventListener('mouseenter', function() {
+      tooltip.style.display = 'block';
+    });
+
+    // Hide tooltip on mouseleave
+    icon.addEventListener('mouseleave', function() {
+      tooltip.style.display = 'none';
+    });
+
+    // Optional: Show tooltip on click (for mobile)
+    icon.addEventListener('click', function() {
+      tooltip.style.display = (tooltip.style.display === 'block') ? 'none' : 'block';
+    });
+  });
+});
+</script>
+
+<!-- 🔥 ENHANCED: Date Filter JavaScript with Future Date Validation -->
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function() {
+  console.log('🔄 Initializing enhanced date filtering with future date validation...');
+  
+  // ✅ Use specific IDs
+  const fromInput = document.getElementById('from-date-simple');
+  const toInput = document.getElementById('to-date-simple');
+  const searchBtn = document.getElementById('search-date-range-simple');
+  const clearBtn = document.getElementById('clear-date-filter-simple');
+  const filterIndicatorSimple = document.getElementById('filterActiveIndicator');
+  
+  console.log('📋 Elements found:');
+  console.log('- From input:', fromInput);
+  console.log('- To input:', toInput);
+  console.log('- Search button:', searchBtn);
+  console.log('- Clear button:', clearBtn);
+  console.log('- Filter indicator:', filterIndicatorSimple);
+  
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date();
+  const todayString = today.getFullYear() + '-' + 
+                      String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                      String(today.getDate()).padStart(2, '0');
+  
+  console.log('📅 Today:', todayString);
+  
+  // ✅ Set max attribute to today's date for both inputs
+  if (fromInput) {
+    fromInput.max = todayString;
+    console.log('📅 Set max date for from input:', fromInput.max);
+  }
+  if (toInput) {
+    toInput.max = todayString;
+    console.log('📅 Set max date for to input:', toInput.max);
+  }
+  
+  // ✅ Enhanced validation function
+  function validateDateInput(input, inputName) {
+    const selectedDate = input.value;
+    const selectedDateObj = new Date(selectedDate);
+    const todayObj = new Date(todayString);
+    
+    console.log(`🔍 Validating ${inputName}:`, selectedDate);
+    console.log(`🔍 Selected date object:`, selectedDateObj);
+    console.log(`🔍 Today object:`, todayObj);
+    
+    // Reset styles first
+    input.style.backgroundColor = '';
+    input.style.borderColor = '';
+    input.style.color = '';
+    
+    if (selectedDate && selectedDateObj > todayObj) {
+      console.log(`❌ ${inputName} is in the future!`);
+      
+      // Apply red styling
+      input.style.backgroundColor = '#ffebee';
+      input.style.borderColor = '#f44336';
+      input.style.color = '#d32f2f';
+      
+      // Show notification
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid Date Selection',
+          text: `${inputName} cannot be a future date. Please select today or an earlier date.`,
+          timer: 3000,
+          showConfirmButton: false,
+          toast: true,
+          position: 'top-end'
+        });
+      } else {
+        // Fallback notification
+        showNotification(`${inputName} cannot be a future date!`, 'error');
+      }
+      
+      // Reset to today's date
+      input.value = todayString;
+      
+      // Remove red styling after reset
+      setTimeout(() => {
+        input.style.backgroundColor = '';
+        input.style.borderColor = '#028084';
+        input.style.color = '#028084';
+      }, 100);
+      
+      return false;
+    }
+    
+    // Valid date - apply success styling
+    if (selectedDate) {
+      input.style.backgroundColor = '#e8f5e8';
+      input.style.borderColor = '#28a745';
+      input.style.color = '#155724';
+      
+      // Remove success styling after 2 seconds
+      setTimeout(() => {
+        input.style.backgroundColor = '';
+        input.style.borderColor = '#028084';
+        input.style.color = '#028084';
+      }, 2000);
+    }
+    
+    return true;
+  }
+  
+  // ✅ Fallback notification function
+  function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'error' ? '#f44336' : '#4caf50'};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      z-index: 10000;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s ease;
+    `;
+    notification.textContent = message;
+    
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.remove();
+      style.remove();
+    }, 3000);
+  }
+  
+  // Check if we're in filter mode by looking at URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const hasFromDateParam = urlParams.has('from_date') && urlParams.get('from_date');
+  const hasToDateParam = urlParams.has('to_date') && urlParams.get('to_date');
+  const isFilterMode = hasFromDateParam && hasToDateParam;
+  
+  // Show "Filter Active" text ONLY if actual URL filter parameters exist
+  if (isFilterMode && filterIndicatorSimple) {
+    filterIndicatorSimple.style.display = 'block';
+    console.log('Filter mode detected - showing indicator');
+  } else {
+    if (filterIndicatorSimple) {
+      filterIndicatorSimple.style.display = 'none';
+    }
+    console.log('No filter mode - hiding indicator');
+  }
+  
+  // ✅ Set dates based on URL parameters or defaults
+  function setDatesFromUrlOrDefaults() {
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(today.getDate() - 1);
+    
+    const formatDate = (date) => {
+      return date.getFullYear() + '-' + 
+             String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+             String(date.getDate()).padStart(2, '0');
+    };
+    
+    // If in filter mode, populate inputs with URL parameter values
+    if (isFilterMode) {
+      const fromDateParam = urlParams.get('from_date');
+      const toDateParam = urlParams.get('to_date');
+      
+      if (fromInput && fromDateParam) {
+        fromInput.value = fromDateParam;
+        validateDateInput(fromInput, 'From Date');
+        console.log('📅 Set from date from URL:', fromInput.value);
+      }
+      
+      if (toInput && toDateParam) {
+        toInput.value = toDateParam;
+        validateDateInput(toInput, 'To Date');
+        console.log('📅 Set to date from URL:', toInput.value);
+      }
+    } else {
+      // Only set defaults if inputs are completely empty and we're not in filter mode
+      if (fromInput && !fromInput.value) {
+        fromInput.value = formatDate(twoDaysAgo);
+        console.log('📅 Set default from date:', fromInput.value);
+      }
+      
+      if (toInput && !toInput.value) {
+        toInput.value = formatDate(today);
+        console.log('📅 Set default to date:', toInput.value);
+      }
+    }
+  }
+  
+  // Call the function to set dates
+  setDatesFromUrlOrDefaults();
+  
+  // ✅ Enhanced date validation with future date checking
+  if (fromInput && toInput) {
+    fromInput.addEventListener('change', function() {
+      console.log('📅 From date changed:', fromInput.value);
+      
+      if (validateDateInput(fromInput, 'From Date')) {
+        if (toInput.value && fromInput.value > toInput.value) {
+          toInput.value = fromInput.value;
+        }
+        toInput.min = fromInput.value;
+      }
+    });
+    
+    // Add blur event for additional validation
+    fromInput.addEventListener('blur', function() {
+      validateDateInput(fromInput, 'From Date');
+    });
+    
+    toInput.addEventListener('change', function() {
+      console.log('📅 To date changed:', toInput.value);
+      
+      if (validateDateInput(toInput, 'To Date')) {
+        if (fromInput.value && toInput.value < fromInput.value) {
+          fromInput.value = toInput.value;
+        }
+        fromInput.max = toInput.value;
+      }
+    });
+    
+    // Add blur event for additional validation
+    toInput.addEventListener('blur', function() {
+      validateDateInput(toInput, 'To Date');
+    });
+  }
+  
+  // ✅ Enhanced search functionality with validation
+  if (searchBtn) {
+    searchBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const fromDate = fromInput ? fromInput.value : '';
+      const toDate = toInput ? toInput.value : '';
+      
+      console.log('🔍 Search clicked - From:', fromDate, 'To:', toDate);
+      
+      if (!fromDate || !toDate) {
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Date Selection Required',
+            text: 'Please select both start and end dates.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        } else {
+          showNotification('Please select both start and end dates.', 'error');
+        }
+        return;
+      }
+      
+      // Validate dates are not in the future
+      const fromDateObj = new Date(fromDate);
+      const toDateObj = new Date(toDate);
+      const todayObj = new Date(todayString);
+      
+      if (fromDateObj > todayObj || toDateObj > todayObj) {
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Date Range',
+            text: 'Selected dates cannot be in the future. Please select today or earlier dates.',
+            timer: 3000,
+            showConfirmButton: false
+          });
+        } else {
+          showNotification('Selected dates cannot be in the future!', 'error');
+        }
+        return;
+      }
+      
+      if (new Date(fromDate) > new Date(toDate)) {
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Invalid Date Range',
+            text: 'Start date must be before or equal to end date.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        } else {
+          showNotification('Start date must be before or equal to end date.', 'error');
+        }
+        return;
+      }
+      
+      // Construct URL
+      const currentUrl = window.location.href.split('?')[0];
+      const newUrl = `${currentUrl}?from_date=${fromDate}&to_date=${toDate}`;
+      console.log('🔄 Redirecting to:', newUrl);
+      window.location.href = newUrl;
+    });
+  } else {
+    console.error('❌ Search button not found with ID: search-date-range-simple');
+  }
+  
+  // ✅ Clear functionality (prevents cache/flickering issues)
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Reset input styles
+      if (fromInput) {
+        fromInput.style.backgroundColor = '';
+        fromInput.style.borderColor = '';
+        fromInput.style.color = '';
+      }
+      if (toInput) {
+        toInput.style.backgroundColor = '';
+        toInput.style.borderColor = '';
+        toInput.style.color = '';
+      }
+      
+      // Immediately redirect to clean URL without date parameters
+      const currentUrl = window.location.href.split('?')[0];
+      console.log('🔄 Redirecting to:', currentUrl);
+      window.location.href = currentUrl;
+    });
+  } else {
+    console.error('❌ Clear button not found with ID: clear-date-filter-simple');
+  }
+  
+  console.log('✅ Enhanced date filtering initialization complete');
+});
+</script>
+<script nonce="{{ csp_nonce }}">
+// Helper to get CSRF token from cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+
+
+<!-- Script for dynamic model image gallery view -->
+<script nonce="{{ csp_nonce }}">
+const ipCompletedPreviewImageCache = {};
+
+function normalizeIpCompletedImageUrl(rawUrl) {
+  const value = String(rawUrl || '').trim();
+  if (!value) return '';
+  try {
+    const parsed = new URL(value, window.location.origin);
+    const hostname = String(parsed.hostname || '').toLowerCase();
+    const isLoopbackHost =
+      hostname === '127.0.0.1' ||
+      hostname === 'localhost' ||
+      hostname === '::1' ||
+      hostname === '[::1]';
+    const isApplicationAsset =
+      parsed.pathname.startsWith('/media/') ||
+      parsed.pathname.startsWith('/static/');
+    if (parsed.origin === window.location.origin || (isLoopbackHost && isApplicationAsset)) {
+      return parsed.pathname + parsed.search + parsed.hash;
+    }
+    return parsed.href;
+  } catch (error) {
+    return value;
+  }
+}
+
+function getIpCompletedImageUrlFromEntry(entry) {
+  if (!entry) return '';
+  return normalizeIpCompletedImageUrl(entry.preview_image || entry.image_url || entry.url || entry.src || entry.image || '');
+}
+
+function resolveIpCompletedPreviewImage(payload) {
+  const previewImage = normalizeIpCompletedImageUrl(payload && payload.preview_image);
+  if (previewImage) return previewImage;
+  const images = Array.isArray(payload && payload.images) ? payload.images : [];
+  const insideView = images.find(function(entry) {
+    return String(entry && entry.view_code || '').toUpperCase() === 'IV';
+  });
+  const insideViewUrl = getIpCompletedImageUrlFromEntry(insideView);
+  if (insideViewUrl) return insideViewUrl;
+  const noImage = images.find(function(entry) {
+    const viewCode = String(entry && entry.view_code || '').toUpperCase();
+    return viewCode === 'NO_IMAGE' || entry && entry.is_placeholder === true;
+  });
+  return getIpCompletedImageUrlFromEntry(noImage);
+}
+
+function fetchIpCompletedPreviewImage(modelNo) {
+  const cacheKey = String(modelNo || '').trim().toUpperCase();
+  if (!cacheKey) return Promise.resolve('');
+  if (Object.prototype.hasOwnProperty.call(ipCompletedPreviewImageCache, cacheKey)) {
+    return Promise.resolve(ipCompletedPreviewImageCache[cacheKey]);
+  }
+  return fetch('/adminportal/api/model-hover-preview/?stock_no=' + encodeURIComponent(modelNo) + '&_ts=' + Date.now(), {
+    credentials: 'same-origin',
+    cache: 'no-store',
+    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+  })
+    .then(function(response) {
+      if (!response.ok) return '';
+      return response.json();
+    })
+    .then(function(payload) {
+      const imageUrl = resolveIpCompletedPreviewImage(payload);
+      ipCompletedPreviewImageCache[cacheKey] = imageUrl || '';
+      return imageUrl || '';
+    })
+    .catch(function() {
+      ipCompletedPreviewImageCache[cacheKey] = '';
+      return '';
+    });
+}
+
+function hydrateIpCompletedPreviewImages(root) {
+  if (!root) return;
+  root.querySelectorAll('.ip-completed-preview-img[data-model-no]').forEach(function(img) {
+    const modelNo = img.getAttribute('data-model-no') || '';
+    fetchIpCompletedPreviewImage(modelNo).then(function(previewUrl) {
+      if (previewUrl) img.src = previewUrl;
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById('modelRemarkModal');
+  const closeBtn = document.getElementById('closeModelRemarkModal');
+  const modalContent = document.getElementById('modelRemarkModalContent');
+
+  document.querySelectorAll('.expand-model-remark').forEach(function(expandBtn) {
+    expandBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const cell = expandBtn.closest('.model-stock-no-cell');
+      if (!cell) return;
+
+      try {
+        // Get dynamic data from data attributes
+        const modelImages = JSON.parse(cell.getAttribute('data-images') || '{}');
+        const modelColors = JSON.parse(cell.getAttribute('data-model-colors') || '{}');
+        const modelList = JSON.parse(cell.getAttribute('data-model-list') || '[]');
+
+        // Build grid of images (3 columns max, responsive)
+        let html = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:18px 12px;justify-items:center;">`;
+        
+        modelList.forEach(function(modelNo, index) {
+          const color = modelColors[modelNo] || '#ccc';
+          const modelImageData = modelImages[modelNo] || {};
+          const firstImage = normalizeIpCompletedImageUrl(modelImageData.first_image) || '/static/assets/images/imagePlaceholder.jpg';
+          
+          html += `
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <span class="model-circle" style="background:${color};width:22px;height:22px;display:inline-block;margin-bottom:2px;"></span>
+              <img src="${firstImage}" data-model-no="${modelNo}" class="ip-completed-preview-img" alt="${modelNo}" style="max-width:80px;max-height:80px;border-radius:8px;border:1px solid #eee;background:#fafafa;cursor:pointer;object-fit:contain;" onclick="showModelImages('${modelNo}', '${JSON.stringify(modelImageData.images || []).replace(/'/g, "\\'")}')"/>
+              <div style="font-weight:600;color:#023E4DCC;font-size:0.98rem;text-align:center;word-break:break-all;">${modelNo}</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+
+        modalContent.innerHTML = html;
+        hydrateIpCompletedPreviewImages(modalContent);
+        modal.style.display = 'block';
+      } catch (error) {
+        console.error('Error parsing model data:', error);
+        modalContent.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">Error loading model data</div>';
+        modal.style.display = 'block';
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+  
+  window.addEventListener('click', function(e) {
+    if (modal.style.display === 'block' && !modal.contains(e.target) && !e.target.classList.contains('expand-model-remark')) {
+      modal.style.display = 'none';
+    }
+  });
+});
+
+// Function to show model images in a larger view
+function showModelImages(modelNo, imagesJson) {
+  try {
+    const images = JSON.parse(imagesJson);
+    if (images.length === 0) {
+      alert('No images available for ' + modelNo);
+      return;
+    }
+    
+    // Create image viewer modal
+    let imageModal = document.getElementById('modelImageViewer');
+    if (!imageModal) {
+      imageModal = document.createElement('div');
+      imageModal.id = 'modelImageViewer';
+      imageModal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.8); z-index: 100000; display: none;
+        justify-content: center; align-items: center;
+      `;
+      document.body.appendChild(imageModal);
+    }
+    
+    let currentIndex = 0;
+    
+    function updateImage() {
+      imageModal.innerHTML = `
+        <div style="position: relative; max-width: 90%; max-height: 90%; background: white; border-radius: 8px; overflow: hidden;">
+          <div style="position: absolute; top: 10px; right: 10px; font-size: 24px; cursor: pointer; color: #000; z-index: 2;" onclick="document.getElementById('modelImageViewer').style.display='none'">&times;</div>
+          <div style="padding: 20px; text-align: center;">
+            <h3 style="margin: 0 0 15px 0; color: #023E4DCC;">${modelNo}</h3>
+            <img src="${images[currentIndex]}" style="max-width: 100%; max-height: 70vh; object-fit: contain;" />
+            <div style="margin-top: 15px;">
+              <button onclick="prevImage()" ${currentIndex === 0 ? 'disabled' : ''} style="margin: 0 10px; padding: 8px 16px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer;">Previous</button>
+              <span style="margin: 0 15px; color: #666;">${currentIndex + 1} / ${images.length}</span>
+              <button onclick="nextImage()" ${currentIndex === images.length - 1 ? 'disabled' : ''} style="margin: 0 10px; padding: 8px 16px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer;">Next</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    window.prevImage = function() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateImage();
+      }
+    };
+    
+    window.nextImage = function() {
+      if (currentIndex < images.length - 1) {
+        currentIndex++;
+        updateImage();
+      }
+    };
+    
+    updateImage();
+    imageModal.style.display = 'flex';
+    
+  } catch (error) {
+    console.error('Error showing images:', error);
+    alert('Error loading images');
+  }
+}
+</script>
+
+<!-- Rest of your existing scripts -->
+<script nonce="{{ csp_nonce }}">
+// Helper: Remove image tooltips on hover when modal is open
+function removeModelImageTooltip() {
+  document.querySelectorAll('.model-image-tooltip').forEach(function(tip) {
+    tip.remove();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Mouse hover for tooltip functionality
+  document.querySelectorAll('.model-stock-no-cell').forEach(function(cell, i) {
+    const textSpan = cell.querySelector('.model-stock-no-text');
+    if (!textSpan) return;
+    
+    let tooltip = null;
+    let hideTimeout = null;
+    let staticTooltip = null;
+    
+    try {
+      const modelImages = JSON.parse(cell.getAttribute('data-images') || '{}');
+      const modelList = JSON.parse(cell.getAttribute('data-model-list') || '[]');
+      
+      textSpan.addEventListener('mouseenter', function(e) {
+        if (e.target.closest('.expand-model-remark')) return;
+        if (staticTooltip) return;
+        if (tooltip) tooltip.remove();
+        
+        // Create tooltip with first model's first image
+        if (modelList.length > 0) {
+          const firstModel = modelList[0];
+          const firstModelImages = modelImages[firstModel] || {};
+          const firstImage = firstModelImages.first_image || '/static/assets/images/imagePlaceholder.jpg';
+          
+          tooltip = document.createElement('div');
+          tooltip.className = 'model-image-tooltip';
+          tooltip.innerHTML = `
+            <div style="text-align: center;">
+              <img src="${firstImage}" alt="${firstModel}" style="max-width: 150px; max-height: 150px; object-fit: contain;" />
+              <div style="margin-top: 8px; font-weight: 600; color: #023E4DCC;">${firstModel}</div>
+              ${modelList.length > 1 ? `<div style="font-size: 12px; color: #666;">+${modelList.length - 1} more models</div>` : ''}
+            </div>
+          `;
+          
+          document.body.appendChild(tooltip);
+          tooltip.style.display = 'block';
+          const rect = textSpan.getBoundingClientRect();
+          tooltip.style.top = (window.scrollY + rect.bottom + 6) + 'px';
+          tooltip.style.left = (window.scrollX + rect.left) + 'px';
+        }
+      });
+      
+      textSpan.addEventListener('mouseleave', function() {
+        if (staticTooltip) return;
+        hideTimeout = setTimeout(() => { if (tooltip) { tooltip.remove(); tooltip = null; } }, 150);
+      });
+      
+    } catch (error) {
+      console.error('Error setting up tooltip for cell', i, error);
+    }
+  });
+});
+</script>
+
+<!-- FIXED: JavaScript for Remarks Modal -->
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function () {
+  // Character counter for remarks input
+  const remarksInput = document.querySelector('input[name="remarks"]');
+  const charCount = document.getElementById('remarksCharCount');
+  
+  if (remarksInput && charCount) {
+    remarksInput.addEventListener('input', function() {
+      const currentLength = this.value.length;
+      charCount.textContent = `${currentLength}/50`;
+      
+      // Change color if approaching limit
+      if (currentLength > 40) {
+        charCount.style.color = '#dc3545'; // Red color
+      } else {
+        charCount.style.color = '#6c757d'; // Gray color
+      }
+    });
+  }
+
+  // Handle remarks modal trigger
+  document.querySelectorAll('.remarks-modal-trigger').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Get data from the clicked link
+      const jigId = this.getAttribute('data-jig-id');
+      const lotId = this.getAttribute('data-lot-id');
+      const noOfTrays = this.getAttribute('data-no-of-trays');
+      const trayCapacity = this.getAttribute('data-tray-capacity');
+      
+      console.log('Opening remarks modal for:', { jigId, lotId, noOfTrays, trayCapacity });
+      
+      // Reset form
+      const form = document.getElementById('remarksModalForm');
+      if (form) {
+        form.reset();
+        if (charCount) charCount.textContent = '0/50';
+      }
+      
+      // Open modal using Bootstrap 5
+      const modal = document.getElementById('remarksModal');
+      if (modal) {
+        if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+          const bsModal = bootstrap.Modal.getOrCreateInstance(modal);
+          bsModal.show();
+        } else {
+          // Fallback for non-Bootstrap: show modal manually
+          modal.style.display = 'block';
+          modal.classList.add('show');
+          modal.classList.add('fade');
+          document.body.classList.add('modal-open');
+          
+          // Create backdrop
+          const backdrop = document.createElement('div');
+          backdrop.className = 'modal-backdrop fade show';
+          backdrop.style.zIndex = '1040';
+          document.body.appendChild(backdrop);
+          
+          // Close modal on backdrop click
+          backdrop.addEventListener('click', function() {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            backdrop.remove();
+          });
+        }
+      }
+    });
+  });
+
+  // Handle form submission
+  document.getElementById('remarksModalForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const jigPosition = formData.get('jig_position');
+    const remarks = formData.get('remarks');
+    
+    if (!jigPosition || !remarks.trim()) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+    
+    // Here you can add your AJAX call to save the remark
+    console.log('Saving remark:', { jigPosition, remarks });
+    
+    // For now, just show success message and close modal
+    
+    // Close modal
+    const modal = document.getElementById('remarksModal');
+    if (modal && typeof bootstrap !== "undefined") {
+      bootstrap.Modal.getInstance(modal)?.hide();
+    } else if (modal) {
+      modal.style.display = 'none';
+      modal.classList.remove('show');
+      document.body.classList.remove('modal-open');
+      document.querySelector('.modal-backdrop')?.remove();
+    }
+  });
+});
+</script>
+
+<!-- Active row to be highlighted & Restores the highlighted row to its original position and removes the highlight bg when the tray scan modal is closed. -->
+<script nonce="{{ csp_nonce }}">
+// Row highlight for Tray Scan (matches highlightWF.html logic) + Move active row to top and restore on close
+document.addEventListener("DOMContentLoaded", function() {
+  // Add highlight style if not present
+  if (!document.getElementById('dp-row-action-highlight-style')) {
+    var style = document.createElement('style');
+    style.id = 'dp-row-action-highlight-style';
+    style.innerHTML = `
+      .dp-row-action-highlight {
+        transition: box-shadow 1.3s;
+        background-color: #fff5bd !important;
+        animation: highlightAnimation 2s ease-in-out;
+      }
+      .dp-row-action-highlight td:nth-child(1),
+      .dp-row-action-highlight td:nth-child(2),
+      .dp-row-action-highlight td:nth-child(5) {
+        background-color: #fff5bd !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  let originalRowIndex = null;
+  let movedRow = null;
+  let placeholderRow = null;
+
+  // Highlight and move row for remarks, edit, delete, model presents
+  function highlightAndMoveRow(row) {
+    document.querySelectorAll('tbody tr').forEach(function(r) {
+      r.classList.remove('dp-row-action-highlight');
+    });
+    if (row && row.parentNode) {
+      const tbody = row.parentNode;
+      if (tbody.firstElementChild !== row) {
+        // If a previous move exists, restore it first
+        if (movedRow && placeholderRow && placeholderRow.parentNode) {
+          placeholderRow.parentNode.insertBefore(movedRow, placeholderRow);
+          placeholderRow.parentNode.removeChild(placeholderRow);
+          movedRow.classList.remove('dp-row-action-highlight');
+          movedRow = null;
+          placeholderRow = null;
+          originalRowIndex = null;
+        }
+        // Store original index and row
+        originalRowIndex = Array.from(tbody.children).indexOf(row);
+        movedRow = row;
+        // Insert a placeholder at the original position
+        placeholderRow = document.createElement('tr');
+        placeholderRow.style.display = 'none';
+        for (let i = 0; i < row.children.length; i++) {
+          placeholderRow.appendChild(document.createElement('td'));
+        }
+        tbody.insertBefore(placeholderRow, tbody.children[originalRowIndex]);
+        // Move row to top
+        tbody.insertBefore(row, tbody.firstElementChild);
+      }
+      row.classList.add('dp-row-action-highlight');
+    }
+  }
+
+  // Remarks
+  document.querySelectorAll('.remarks-modal-trigger').forEach(function(link) {
+    link.addEventListener('click', function(event) {
+      var row = event.target.closest('tr');
+      highlightAndMoveRow(row);
+    });
+  });
+
+  // Edit
+  document.querySelectorAll('.edit-qty-btn').forEach(function(link) {
+    link.addEventListener('click', function(event) {
+      var row = event.target.closest('tr');
+      highlightAndMoveRow(row);
+    });
+  });
+
+  // Delete
+  document.querySelectorAll('.delete-jig-btn').forEach(function(link) {
+    link.addEventListener('click', function(event) {
+      var row = event.target.closest('tr');
+      highlightAndMoveRow(row);
+    });
+  });
+
+  // Model Presents (colored circles)
+  document.querySelectorAll('.model-stock-no-text, .expand-model-remark').forEach(function(link) {
+    link.addEventListener('click', function(event) {
+      var row = event.target.closest('tr');
+      highlightAndMoveRow(row);
+    });
+  });
+
+  // On modal close, restore row to original position and remove highlight for both modals
+  function restoreRowAndClearHighlight() {
+    if (movedRow && placeholderRow && placeholderRow.parentNode) {
+      placeholderRow.parentNode.insertBefore(movedRow, placeholderRow);
+      placeholderRow.parentNode.removeChild(placeholderRow);
+      movedRow.classList.remove('dp-row-action-highlight');
+      movedRow = null;
+      placeholderRow = null;
+      originalRowIndex = null;
+    }
+    document.querySelectorAll('tbody tr').forEach(function(row) {
+      row.classList.remove('dp-row-action-highlight');
+      row.classList.remove('highlighted-tray-scan');
+    });
+  }
+
+  // Attach to all close buttons for tray scan/modal
+  document.querySelectorAll('#closeTrayScanModal, #closeTrayScanModal_DayPlanning, .close, [data-bs-dismiss="modal"]').forEach(function(btn) {
+    btn.addEventListener('click', restoreRowAndClearHighlight);
+  });
+});
+</script>
+<!-- Updated Color Mapping Script for Completed Table -->
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function () {
+  // Get all table rows
+  document.querySelectorAll("#order-listing tbody tr").forEach(function (row) {
+    // For Inprocess Inspection COMPLETED table, plating color is in the 7th column (index 6)
+    var cell = row.children[6]; // CHANGED from 5 to 6
+    
+    if (!cell) return;
+
+    var colorText = (cell.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+    console.log("Normalized colorText:", colorText);
+
+    if (!colorText || colorText === "n/a") return;
+
+    var colorMap = {
+      black: {
+        bg: "linear-gradient(135deg, #222 60%, #555 100%)",
+        border: "#888",
+      },
+      ips: {
+        bg: "linear-gradient(135deg, #e0e0e0 60%, #bdbdbd 100%)",
+        border: "#757575",
+      },
+      ipg: {
+        bg: "linear-gradient(135deg, #ffd700 60%, #ffe066 100%)",
+        border: "#bfa600",
+      },
+      "ip-gun": {
+        bg: "linear-gradient(135deg, #4b4b4b 60%, #a6a6a6 100%)",
+        border: "#333",
+      },
+      "ip-brown": {
+        bg: "linear-gradient(135deg, #b97a56 60%, #ffe066 100%)",
+        border: "#8d5524",
+      },
+      rg: {
+        bg: "linear-gradient(135deg, #e3a6a1 60%, #f7cac9 100%)",
+        border: "#b76e79",
+      },
+      ipsipg: {
+        bg: "linear-gradient(135deg, #e0e0e0 60%, #ffd700 100%)",
+        border: "#757575",
+      },
+      "ip-blue m": {
+        bg: "linear-gradient(135deg, #0074d9 60%, #7fdbff 100%)",
+        border: "#00509e",
+      },
+      "ipsipg-2n": {
+        bg: "linear-gradient(135deg, #ffe066 60%, #ffd700 100%)",
+        border: "#bfa600",
+      },
+      "rg-bi": {
+        bg: "linear-gradient(135deg, #e3a6a1 60%, #f7cac9 100%)",
+        border: "#b76e79",
+      },
+      "ipg-2n": {
+        bg: "linear-gradient(135deg, #ffe066 60%, #ffd700 100%)",
+        border: "#bfa600",
+      },
+      "ipsipg-hn": {
+        bg: "linear-gradient(135deg, #e0e0e0 60%, #ffd700 100%)",
+        border: "#757575",
+      },
+      "ip-corn.gold": {
+        bg: "linear-gradient(135deg, #ffd700 60%, #ffcc00 100%)",
+        border: "#bfa600",
+      },
+      "ip-titanium": {
+        bg: "linear-gradient(135deg, #8a8a8a 60%, #bdbdbd 100%)",
+        border: "#666",
+      },
+      "ipg-half.n": {
+        bg: "linear-gradient(135deg, #ffe066 60%, #ffd700 100%)",
+        border: "#bfa600",
+      },
+      anodising: {
+        bg: "linear-gradient(135deg, #ff7f50 60%, #ff4500 100%)",
+        border: "#cc3700",
+      },
+      "ip-blue inh": {
+        bg: "linear-gradient(135deg, #0074d9 60%, #7fdbff 100%)",
+        border: "#00509e",
+      },
+      "ip-blue": {
+        bg: "linear-gradient(135deg, #0074d9 60%, #7fdbff 100%)",
+        border: "#00509e",
+      },
+      "ip-br anti": {
+        bg: "linear-gradient(135deg, #b97a56 60%, #8d5524 100%)",
+        border: "#8d5524",
+      },
+      "ip-bronze": {
+        bg: "linear-gradient(135deg, #cd7f32 60%, #d2b48c 100%)",
+        border: "#8b4513",
+      },
+      "ip-ch.gold": {
+        bg: "linear-gradient(135deg, #ffd700 60%, #ffcc00 100%)",
+        border: "#bfa600",
+      },
+      "ip-sil anti": {
+        bg: "linear-gradient(135deg, #c0c0c0 60%, #f5f5f5 100%)",
+        border: "#888",
+      },
+      "ip-lcr": {
+        bg: "linear-gradient(135deg, #ff4500 60%, #ff6347 100%)",
+        border: "#cc3700",
+      },
+      "ip-ogr": {
+        bg: "linear-gradient(135deg, #228b22 60%, #32cd32 100%)",
+        border: "#006400",
+      },
+      "ip-ice blue": {
+        bg: "linear-gradient(135deg, #0074d9 60%, #7fdbff 100%)",
+        border: "#00509e",
+      },
+      "ip-plum": {
+        bg: "linear-gradient(135deg, #dda0dd 60%, #ee82ee 100%)",
+        border: "#800080",
+      },
+      "ip-titanium blue": {
+        bg: "linear-gradient(135deg, #4682b4 60%, #5f9ea0 100%)",
+        border: "#2c5d72",
+      },
+    };
+
+    var match = Object.keys(colorMap).find(function (key) {
+      return colorText === key || colorText.includes(key);
+    });
+    console.log("Matched key:", match);
+
+    var oldCircle = cell.querySelector(".plating-color-indicator");
+    if (oldCircle) oldCircle.remove();
+
+    if (match) {
+      console.log("Creating indicator for:", match);
+      var style = colorMap[match];
+      var circle = document.createElement("span");
+      circle.className = "plating-color-indicator";
+      circle.style.display = "inline-block";
+      circle.style.width = "16px";
+      circle.style.height = "16px";
+      circle.style.borderRadius = "50%";
+      circle.style.marginRight = "6px";
+      circle.style.verticalAlign = "middle";
+      if (style.bg.startsWith("linear-gradient")) {
+        circle.style.background = "";
+        circle.style.backgroundImage = style.bg;
+      } else {
+        circle.style.background = style.bg;
+      }
+      circle.style.border = "2px solid " + style.border;
+      cell.insertBefore(circle, cell.firstChild);
+    }
+  });
+});
+</script>
+{% endblock %}
+{% endblock content %}

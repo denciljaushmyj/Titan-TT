@@ -1,0 +1,1316 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-5" style="margin-top: 0px !important">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style nonce="{{ csp_nonce }}">
+
+
+
+      th, td {
+      padding: 4px !important;
+      height: 28px !important;
+    }
+      .selection-info,
+      .delete-btn {
+        display: inline-block;
+        vertical-align: middle;
+        margin-bottom: 10px !important;
+      }
+      .tab-pane.tab-container {
+        /* max-height: calc(100vh - 180px); */ /* Adjust as needed for header/pagination */
+        overflow: auto !important;
+        padding-bottom: 60px; /* Prevent content hiding behind fixed pagination */
+      }
+      .back-btn {
+      background-color: #e7f6f7;
+      color: #028084;
+      border: 1px solid #028084;
+      border-radius: 25px;
+      padding: 5px 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-right: 20px;
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .back-btn:hover {
+      background-color: #028084;
+      color: #fff;
+      text-decoration: none;
+    }
+    .header-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    h3.text-center {
+      margin-top: 0;
+      margin-bottom: 0;
+      flex: 1;
+      text-align: left;
+    }
+    h3.text-center {
+      margin-top: -45px;
+      margin-bottom: 15px;
+    }
+    .nav-tabs .nav-link {
+      color: white;
+      border: none;
+      margin-right: 5px;
+      border-radius: 5px;
+      padding: 10px 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #model-tab {
+      background-color: #d9eafc;
+      color: #004085;
+    }
+    #model-tab:hover {
+      background-color: #d9eafc;
+      color: #004085;
+    }
+    #model-tab.active {
+      background-color: #d9eafc;
+      color: #004085;
+    }
+
+    #polish-tab {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    #polish-tab:hover {
+      background-color: #c3e6cb;
+      color: #155724;
+    }
+    #polish-tab.active {
+      background-color: #b1dfbb;
+      color: #155724;
+    }
+
+    #plating-tab {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+    #plating-tab:hover {
+      background-color: #bee5eb;
+      color: #0c5460;
+    }
+    #plating-tab.active {
+      background-color: #abdde5;
+      color: #0c5460;
+    }
+
+    #tray-tab {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    #tray-tab:hover {
+      background-color: #ffeeba;
+      color: #856404;
+    }
+    #tray-tab.active {
+      background-color: #ffe8a1;
+      color: #856404;
+    }
+
+    #vendor-tab {
+      background-color: #ffe4f9;
+      color: #5a0547;
+    }
+    #vendor-tab:hover {
+      background-color: #ffe4f9;
+      color: #5a0547;
+    }
+    #vendor-tab.active {
+      background-color: #ffe4f9;
+      color: #5a0547;
+    }
+
+    #images-tab {
+      background-color: #e2e3e5;
+      color: #41464b;
+    }
+    #images-tab:hover {
+      background-color: #d6d8db;
+      color: #41464b;
+    }
+    #images-tab.active {
+      background-color: #c8cacc;
+      color: #41464b;
+    }
+
+    #trayid-tab {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    #trayid-tab:hover {
+      background-color: #f5c6cb;
+      color: #721c24;
+    }
+    #trayid-tab.active {
+      background-color: #f1b0b7;
+      color: #721c24;
+    }
+
+    #category-tab {
+      background-color: #d1e7dd;
+      color: #0f5132;
+    }
+    #category-tab:hover {
+      background-color: #c3e6cb;
+      color: #0f5132;
+    }
+    #category-tab.active {
+      background-color: #b9e3bc;
+      color: #0f5132;
+    }
+
+    #iprejection-tab {
+      background-color: #e5f1be;
+      color: #0f5132;
+    }
+    #iprejection-tab:hover {
+      background-color: #e9f8b7;
+      color: #0f5132;
+    }
+    #iprejection-tab.active {
+      background-color: #e9f8b7;
+      color: #0f5132;
+    }
+
+    #brassiqf-tab {
+      background-color: #ffdf9f;
+      color: #0f5132;
+    }
+    #brassiqf-tab:hover {
+      background-color: #ffdf9f;
+      color: #0f5132;
+    }
+    #brassiqf-tab.active {
+      background-color: #ffdf9f;
+      color: #0f5132;
+    }
+
+    #nickelrejection-tab {
+      background-color: #c7f2b8;
+      color: #0f5132;
+      border-radius: 5px;
+    }
+    #nickelrejection-tab:hover {
+      background-color: #c7f2b8;
+      color: #0f5132;
+    }
+    #nickelrejection-tab.active {
+      background-color: #c7f2b8;
+      color: #0f5132;
+    }
+
+    .nav-tabs {
+      justify-content: center;
+    }
+
+    .tab-content {
+      margin-top: 20px;
+      border: none !important;
+    }
+
+    .nav-tabs .nav-link:hover {
+      background-color: #026b6b;
+      color: white;
+    }
+
+    .nav-tabs .nav-link.active {
+      background-color: #028084;
+      color: white;
+      font-weight: bold;
+    }
+        
+    thead {
+      background-color: #028084;
+      color: white;
+    }
+
+    .table {
+      border: none;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f9f9f9;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+
+    .delete-btn:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .select-checkbox {
+      transform: scale(1.2);
+      margin: 0;
+    }
+
+    .selection-info {
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #28a745;
+    }
+/* Make .pagination-container fixed at bottom, similar to DP_PickTable.html */
+.pagination-container {
+  position: fixed;
+  left: 0;
+  bottom: 30px; /* Place above the footer */
+  width: 100vw;
+  background: #f5f7ff;
+  z-index: 101;
+  padding: 15px 0 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive: adjust for mobile */
+@media (max-width: 600px) {
+  .pagination-container {
+    bottom: 40px;
+    padding: 4px 0 0 0;
+    margin-left: 4px !important;
+  }
+}
+
+    .pagination-info {
+      color: #6c757d;
+      font-size: 14px;
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 5px;
+    }
+
+    .pagination-btn {
+      background-color: #028084;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background-color: #026b6b;
+    }
+
+    .pagination-btn:disabled {
+      background-color: #d8d8d8;
+      cursor: not-allowed;
+      color: #fff;
+    }
+
+.pagination-btn.current {
+  background-color: #028084; /* teal for active */
+  color: #fff;
+  font-weight: bold;
+}
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .tab-container {
+      position: relative;
+    }
+
+    .pagination-ellipsis {
+      padding: 8px 4px;
+      color: #6c757d;
+      font-weight: bold;
+    }
+  </style>
+
+  
+{% if nickel_rejections.paginator.count <= 10 %}
+<style nonce="{{ csp_nonce }}">
+  #nickelrejection-pagination .pagination-btn {
+    cursor: not-allowed !important;
+    background-color: #d8d8d8 !important;
+    color: #fff !important;
+    border: 1px solid #dc3545 !important;
+  }
+  #nickelrejection-pagination .pagination-btn:hover {
+    background-color: #d8d8d8 !important;
+    color: #fff !important;
+  }
+</style>
+{% endif %}
+
+  <div class="header-row" style="padding-bottom: 20px;">
+  <a href="{% url 'dp_modelmaster' %}" class="back-btn">Back</a>
+</div>
+<h3 class="text-center">View Master Data</h3>
+
+<ul class="nav nav-tabs" id="viewTabs" role="tablist" style="gap: 5px;">
+  <li class="nav-item"><button class="nav-link active" id="model-tab" data-bs-toggle="tab" data-bs-target="#model" type="button" role="tab">Model Master</button></li>
+  <li class="nav-item"><button class="nav-link" id="polish-tab" data-bs-toggle="tab" data-bs-target="#polish" type="button" role="tab">Polish Finish</button></li>
+  <li class="nav-item"><button class="nav-link" id="plating-tab" data-bs-toggle="tab" data-bs-target="#plating" type="button" role="tab">Plating Colors</button></li>
+  <li class="nav-item"><button class="nav-link" id="tray-tab" data-bs-toggle="tab" data-bs-target="#tray" type="button" role="tab">Tray Types</button></li>
+  <li class="nav-item"><button class="nav-link" id="vendor-tab" data-bs-toggle="tab" data-bs-target="#vendor" type="button" role="tab">Source</button></li>
+  <li class="nav-item"><button class="nav-link" id="images-tab" data-bs-toggle="tab" data-bs-target="#images" type="button" role="tab">Model Images</button></li>
+  <li class="nav-item"><button class="nav-link" id="trayid-tab" data-bs-toggle="tab" data-bs-target="#trayid" type="button" role="tab">Tray ID</button></li>
+  <li class="nav-item"><button class="nav-link" id="category-tab" data-bs-toggle="tab" data-bs-target="#category" type="button" role="tab">Category</button></li>
+  <li class="nav-item"><button class="nav-link" id="iprejection-tab" data-bs-toggle="tab" data-bs-target="#iprejection" type="button" role="tab">IP Rejection</button></li>
+  <li class="nav-item"><button class="nav-link" id="brassiqf-tab" data-bs-toggle="tab" data-bs-target="#brassiqf" type="button" role="tab">BQ/BA/IQF Rejection</button></li>
+  <li class="nav-item"><button class="nav-link" id="nickelrejection-tab" data-bs-toggle="tab" data-bs-target="#nickelrejection" type="button" role="tab">NQ/NA Rejection</button></li>
+</ul>
+
+<div class="table-responsive" style="max-height:calc(100vh - 250px);overflow:auto !important;">
+  <div class="tab-content mt-3" id="viewTabsContent">
+    <div class="tab-pane fade show active tab-container" id="model" role="tabpanel">
+      <div id="model-table-container">
+        <div class="selection-info" id="model-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-model-btn" disabled>Delete Selected</button>
+        <form id="model-form">{% csrf_token %}
+          <table id="modelTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-model"><label for="select-all-model" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Model No</th><th>Plating Stk</th><th>Polish Finish</th><th>EP Bath Type</th><th>Version</th><th>Tray Type</th><th>Tray Capacity</th>
+              </tr>
+            </thead>
+            <tbody id="model-tbody">
+              {% for obj in model_masters %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox model-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date_time|date:"Y-m-d" }}</td><td>{{ obj.model_no }}</td><td>{{ obj.plating_stk_no }}</td><td>{{ obj.polish_finish.polish_finish }}</td><td>{{ obj.ep_bath_type }}</td><td>{{ obj.version }}</td><td>{{ obj.tray_type.tray_type }}</td><td>{{ obj.tray_type.tray_capacity }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="10">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+          
+      </div>
+             <!-- Model Master Pagination -->
+      <div class="pagination-container" id="model-pagination">
+        <div class="pagination-controls">
+          <button class="pagination-btn" data-tab="model" data-page="{% if model_masters.has_previous %}{{ model_masters.previous_page_number }}{% else %}1{% endif %}" {% if not model_masters.has_previous %}disabled{% endif %}>&lt;</button>
+          {% for i in model_masters.paginator.page_range %}
+            {% if i == 1 or i == model_masters.paginator.num_pages or i >= model_masters.number|add:"-2" and i <= model_masters.number|add:"2" %}
+              <button class="pagination-btn {% if model_masters.number == i %}current{% endif %}" data-tab="model" data-page="{{ i }}" {% if model_masters.number == i %}disabled{% endif %}>{{ i }}</button>
+            {% elif i == model_masters.number|add:"-3" or i == model_masters.number|add:"3" %}
+              <span class="pagination-ellipsis">...</span>
+            {% endif %}
+          {% endfor %}
+          <button class="pagination-btn" data-tab="model" data-page="{% if model_masters.has_next %}{{ model_masters.next_page_number }}{% else %}{{ model_masters.paginator.num_pages }}{% endif %}" {% if not model_masters.has_next %}disabled{% endif %}>&gt;</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="polish" role="tabpanel">
+      <div id="polish-table-container">
+        <div class="selection-info" id="polish-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-polish-btn" disabled>Delete Selected</button>
+        <form id="polish-form">{% csrf_token %}
+          <table id="polishTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-polish"><label for="select-all-polish" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Polish Finish</th><th>Internal ID</th>
+              </tr>
+            </thead>
+            <tbody id="polish-tbody">
+              {% for obj in polish_finishes %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox polish-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date_time|date:"Y-m-d" }}</td><td>{{ obj.polish_finish }}</td><td>{{ obj.polish_internal }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+       <!-- Pagination for polish tab -->
+            <div class="pagination-container" id="polish-pagination">
+        <div class="pagination-controls">
+          <button class="pagination-btn" data-tab="polish" data-page="{% if polish_finishes.has_previous %}{{ polish_finishes.previous_page_number }}{% else %}1{% endif %}" {% if not polish_finishes.has_previous %}disabled{% endif %}>&lt;</button>
+          {% for i in polish_finishes.paginator.page_range %}
+            {% if i == 1 or i == polish_finishes.paginator.num_pages or i >= polish_finishes.number|add:"-2" and i <= polish_finishes.number|add:"2" %}
+              <button class="pagination-btn {% if polish_finishes.number == i %}current{% endif %}" data-tab="polish" data-page="{{ i }}" {% if polish_finishes.number == i %}disabled{% endif %}>{{ i }}</button>
+            {% elif i == polish_finishes.number|add:"-3" or i == polish_finishes.number|add:"3" %}
+              <span class="pagination-ellipsis">...</span>
+            {% endif %}
+          {% endfor %}
+          <button class="pagination-btn" data-tab="polish" data-page="{% if polish_finishes.has_next %}{{ polish_finishes.next_page_number }}{% else %}{{ polish_finishes.paginator.num_pages }}{% endif %}" {% if not polish_finishes.has_next %}disabled{% endif %}>&gt;</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="plating" role="tabpanel">
+      <div id="plating-table-container">
+        <div class="selection-info" id="plating-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-plating-btn" disabled>Delete Selected</button>
+        <form id="plating-form">{% csrf_token %}
+          <table id="platingTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-plating"><label for="select-all-plating" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Plating Color</th><th>Internal ID</th>
+              </tr>
+            </thead>
+            <tbody id="plating-tbody">
+              {% for obj in plating_colors %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox plating-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date_time|date:"Y-m-d" }}</td><td>{{ obj.plating_color }}</td><td>{{ obj.plating_color_internal }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After plating table -->
+          <div class="pagination-container" id="plating-pagination">
+        <div class="pagination-controls">
+          <button class="pagination-btn" data-tab="plating" data-page="{% if plating_colors.has_previous %}{{ plating_colors.previous_page_number }}{% else %}1{% endif %}" {% if not plating_colors.has_previous %}disabled{% endif %}>&lt;</button>
+          {% for i in plating_colors.paginator.page_range %}
+            {% if i == 1 or i == plating_colors.paginator.num_pages or i >= plating_colors.number|add:"-2" and i <= plating_colors.number|add:"2" %}
+              <button class="pagination-btn {% if plating_colors.number == i %}current{% endif %}" data-tab="plating" data-page="{{ i }}" {% if plating_colors.number == i %}disabled{% endif %}>{{ i }}</button>
+            {% elif i == plating_colors.number|add:"-3" or i == plating_colors.number|add:"3" %}
+              <span class="pagination-ellipsis">...</span>
+            {% endif %}
+          {% endfor %}
+          <button class="pagination-btn" data-tab="plating" data-page="{% if plating_colors.has_next %}{{ plating_colors.next_page_number }}{% else %}{{ plating_colors.paginator.num_pages }}{% endif %}" {% if not plating_colors.has_next %}disabled{% endif %}>&gt;</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="tray" role="tabpanel">
+      <div id="tray-table-container">
+        <div class="selection-info" id="tray-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-tray-btn" disabled>Delete Selected</button>
+        <form id="tray-form">{% csrf_token %}
+          <table id="trayTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-tray"><label for="select-all-tray" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Tray Type</th><th>Tray Capacity</th>
+              </tr>
+            </thead>
+            <tbody id="tray-tbody">
+              {% for obj in tray_types %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox tray-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date_time|date:"Y-m-d" }}</td><td>{{ obj.tray_type }}</td><td>{{ obj.tray_capacity }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After tray table -->
+            <div class="pagination-container" id="tray-pagination">
+        <div class="pagination-controls">
+          <button class="pagination-btn" data-tab="tray" data-page="{% if tray_types.has_previous %}{{ tray_types.previous_page_number }}{% else %}1{% endif %}" {% if not tray_types.has_previous %}disabled{% endif %}>&lt;</button>
+          {% for i in tray_types.paginator.page_range %}
+            {% if i == 1 or i == tray_types.paginator.num_pages or i >= tray_types.number|add:"-2" and i <= tray_types.number|add:"2" %}
+              <button class="pagination-btn {% if tray_types.number == i %}current{% endif %}" data-tab="tray" data-page="{{ i }}" {% if tray_types.number == i %}disabled{% endif %}>{{ i }}</button>
+            {% elif i == tray_types.number|add:"-3" or i == tray_types.number|add:"3" %}
+              <span class="pagination-ellipsis">...</span>
+            {% endif %}
+          {% endfor %}
+          <button class="pagination-btn" data-tab="tray" data-page="{% if tray_types.has_next %}{{ tray_types.next_page_number }}{% else %}{{ tray_types.paginator.num_pages }}{% endif %}" {% if not tray_types.has_next %}disabled{% endif %}>&gt;</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="vendor" role="tabpanel">
+      <div id="vendor-table-container">
+        <div class="selection-info" id="vendor-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-vendor-btn" disabled>Delete Selected</button>
+        <form id="vendor-form">{% csrf_token %}
+          <table id="vendorTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-vendor"><label for="select-all-vendor" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Source Name</th>
+              </tr>
+            </thead>
+            <tbody id="vendor-tbody">
+              {% for obj in locations %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox vendor-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date_time|date:"Y-m-d" }}</td><td>{{ obj.location_name }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After vendor table -->
+                <div class="pagination-container" id="vendor-pagination">
+              <div class="pagination-controls">
+                <button class="pagination-btn" data-tab="vendor" data-page="{% if locations.has_previous %}{{ locations.previous_page_number }}{% else %}1{% endif %}" {% if not locations.has_previous %}disabled{% endif %}>&lt;</button>
+                {% for i in locations.paginator.page_range %}
+                  {% if i == 1 or i == locations.paginator.num_pages or i >= locations.number|add:"-2" and i <= locations.number|add:"2" %}
+                    <button class="pagination-btn {% if locations.number == i %}current{% endif %}" data-tab="vendor" data-page="{{ i }}" {% if locations.number == i %}disabled{% endif %}>{{ i }}</button>
+                  {% elif i == locations.number|add:"-3" or i == locations.number|add:"3" %}
+                    <span class="pagination-ellipsis">...</span>
+                  {% endif %}
+                {% endfor %}
+                <button class="pagination-btn" data-tab="vendor" data-page="{% if locations.has_next %}{{ locations.next_page_number }}{% else %}{{ locations.paginator.num_pages }}{% endif %}" {% if not locations.has_next %}disabled{% endif %}>&gt;</button>
+              </div>
+            </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="images" role="tabpanel">
+      <div id="images-table-container">
+        <div class="selection-info" id="images-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-images-btn" disabled>Delete Selected</button>
+        <form id="images-form">{% csrf_token %}
+          <table id="imagesTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-images"><label for="select-all-images" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Image Name</th><th>Image Path</th>
+              </tr>
+            </thead>
+            <tbody id="images-tbody">
+              {% for obj in model_images %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox images-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date_time|date:"Y-m-d" }}</td><td>{{ obj.master_image.name|default:"-" }}</td>
+                <td>{% if obj.master_image %}<a href="{{ obj.master_image.url }}" target="_blank">{{ obj.master_image.url }}</a>{% else %}-{% endif %}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After images table -->
+                 <div class="pagination-container" id="images-pagination">
+            <div class="pagination-controls">
+              <button class="pagination-btn" data-tab="images" data-page="{% if model_images.has_previous %}{{ model_images.previous_page_number }}{% else %}1{% endif %}" {% if not model_images.has_previous %}disabled{% endif %}>&lt;</button>
+              {% for i in model_images.paginator.page_range %}
+                {% if i == 1 or i == model_images.paginator.num_pages or i >= model_images.number|add:"-2" and i <= model_images.number|add:"2" %}
+                  <button class="pagination-btn {% if model_images.number == i %}current{% endif %}" data-tab="images" data-page="{{ i }}" {% if model_images.number == i %}disabled{% endif %}>{{ i }}</button>
+                {% elif i == model_images.number|add:"-3" or i == model_images.number|add:"3" %}
+                  <span class="pagination-ellipsis">...</span>
+                {% endif %}
+              {% endfor %}
+              <button class="pagination-btn" data-tab="images" data-page="{% if model_images.has_next %}{{ model_images.next_page_number }}{% else %}{{ model_images.paginator.num_pages }}{% endif %}" {% if not model_images.has_next %}disabled{% endif %}>&gt;</button>
+            </div>
+          </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="trayid" role="tabpanel">
+      <div id="trayid-table-container">
+        <div class="selection-info" id="trayid-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-trayid-btn" disabled>Delete Selected</button>
+        <form id="trayid-form">{% csrf_token %}
+          <table id="trayIdTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-trayid"><label for="select-all-trayid" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Tray ID</th><th>Tray Type</th><th>Tray Capacity</th>
+              </tr>
+            </thead>
+            <tbody id="trayid-tbody">
+              {% for obj in tray_ids %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox trayid-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date|date:"Y-m-d" }}</td><td>{{ obj.tray_id }}</td><td>{{ obj.tray_type }}</td><td>{{ obj.tray_capacity }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After trayid table -->
+                 <div class="pagination-container" id="trayid-pagination">
+            <div class="pagination-controls">
+              <button class="pagination-btn" data-tab="trayid" data-page="{% if tray_ids.has_previous %}{{ tray_ids.previous_page_number }}{% else %}1{% endif %}" {% if not tray_ids.has_previous %}disabled{% endif %}>&lt;</button>
+              {% for i in tray_ids.paginator.page_range %}
+                {% if i == 1 or i == tray_ids.paginator.num_pages or i >= tray_ids.number|add:"-2" and i <= tray_ids.number|add:"2" %}
+                  <button class="pagination-btn {% if tray_ids.number == i %}current{% endif %}" data-tab="trayid" data-page="{{ i }}" {% if tray_ids.number == i %}disabled{% endif %}>{{ i }}</button>
+                {% elif i == tray_ids.number|add:"-3" or i == tray_ids.number|add:"3" %}
+                  <span class="pagination-ellipsis">...</span>
+                {% endif %}
+              {% endfor %}
+              <button class="pagination-btn" data-tab="trayid" data-page="{% if tray_ids.has_next %}{{ tray_ids.next_page_number }}{% else %}{{ tray_ids.paginator.num_pages }}{% endif %}" {% if not tray_ids.has_next %}disabled{% endif %}>&gt;</button>
+            </div>
+          </div>
+
+    </div>
+    <div class="tab-pane fade tab-container" id="category" role="tabpanel">
+      <div id="category-table-container">
+        <div class="selection-info" id="category-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-category-btn" disabled>Delete Selected</button>
+        <form id="category-form">{% csrf_token %}
+          <table id="categoryTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-category"><label for="select-all-category" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Category Name</th>
+              </tr>
+            </thead>
+            <tbody id="category-tbody">
+              {% for obj in categories %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox category-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date_time|date:"Y-m-d" }}</td><td>{{ obj.category_name }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After category table -->
+           <div class="pagination-container" id="category-pagination">
+        <div class="pagination-controls">
+          <button class="pagination-btn" data-tab="category" data-page="{% if categories.has_previous %}{{ categories.previous_page_number }}{% else %}1{% endif %}" {% if not categories.has_previous %}disabled{% endif %}>&lt;</button>
+          {% for i in categories.paginator.page_range %}
+            {% if i == 1 or i == categories.paginator.num_pages or i >= categories.number|add:"-2" and i <= categories.number|add:"2" %}
+              <button class="pagination-btn {% if categories.number == i %}current{% endif %}" data-tab="category" data-page="{{ i }}" {% if categories.number == i %}disabled{% endif %}>{{ i }}</button>
+            {% elif i == categories.number|add:"-3" or i == categories.number|add:"3" %}
+              <span class="pagination-ellipsis">...</span>
+            {% endif %}
+          {% endfor %}
+          <button class="pagination-btn" data-tab="category" data-page="{% if categories.has_next %}{{ categories.next_page_number }}{% else %}{{ categories.paginator.num_pages }}{% endif %}" {% if not categories.has_next %}disabled{% endif %}>&gt;</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="iprejection" role="tabpanel">
+      <div id="iprejection-table-container">
+        <div class="selection-info" id="iprejection-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-iprejection-btn" disabled>Delete Selected</button>
+        <form id="iprejection-form">{% csrf_token %}
+          <table id="iprejectionTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-iprejection"><label for="select-all-iprejection" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Rejection Reason ID</th><th>Rejection Reason</th>              </tr>
+            </thead>
+            <tbody id="iprejection-tbody">
+              {% for obj in ip_rejections %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox iprejection-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date|date:"Y-m-d" }}</td><td>{{ obj.rejection_reason_id }}</td><td>{{ obj.rejection_reason }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After iprejection table -->
+            <div class="pagination-container" id="iprejection-pagination">
+        <div class="pagination-controls">
+          <button class="pagination-btn" data-tab="iprejection" data-page="{% if ip_rejections.has_previous %}{{ ip_rejections.previous_page_number }}{% else %}1{% endif %}" {% if not ip_rejections.has_previous %}disabled{% endif %}>&lt;</button>
+          {% for i in ip_rejections.paginator.page_range %}
+            {% if i == 1 or i == ip_rejections.paginator.num_pages or i >= ip_rejections.number|add:"-2" and i <= ip_rejections.number|add:"2" %}
+              <button class="pagination-btn {% if ip_rejections.number == i %}current{% endif %}" data-tab="iprejection" data-page="{{ i }}" {% if ip_rejections.number == i %}disabled{% endif %}>{{ i }}</button>
+            {% elif i == ip_rejections.number|add:"-3" or i == ip_rejections.number|add:"3" %}
+              <span class="pagination-ellipsis">...</span>
+            {% endif %}
+          {% endfor %}
+          <button class="pagination-btn" data-tab="iprejection" data-page="{% if ip_rejections.has_next %}{{ ip_rejections.next_page_number }}{% else %}{{ ip_rejections.paginator.num_pages }}{% endif %}" {% if not ip_rejections.has_next %}disabled{% endif %}>&gt;</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="brassiqf" role="tabpanel">
+      <div id="brassiqf-table-container">
+        <div class="selection-info" id="brassiqf-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-brassiqf-btn" disabled>Delete Selected</button>
+        <form id="brassiqf-form">{% csrf_token %}
+          <table id="brassiqfTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-brassiqf"><label for="select-all-brassiqf" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Rejection Reason ID</th><th>Rejection Reason</th>
+              </tr>
+            </thead>
+            <tbody id="brassiqf-tbody">
+              {% for obj in brassiqf_rejections %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox brassiqf-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date_time|date:"Y-m-d" }}</td><td>{{ obj.rejection_reason_id }}</td><td>{{ obj.rejection_reason }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After brassiqf table -->
+           <div class="pagination-container" id="brassiqf-pagination">
+        <div class="pagination-controls">
+          <button class="pagination-btn" data-tab="brassiqf" data-page="{% if brassiqf_rejections.has_previous %}{{ brassiqf_rejections.previous_page_number }}{% else %}1{% endif %}" {% if not brassiqf_rejections.has_previous %}disabled{% endif %}>&lt;</button>
+          {% for i in brassiqf_rejections.paginator.page_range %}
+            {% if i == 1 or i == brassiqf_rejections.paginator.num_pages or i >= brassiqf_rejections.number|add:"-2" and i <= brassiqf_rejections.number|add:"2" %}
+              <button class="pagination-btn {% if brassiqf_rejections.number == i %}current{% endif %}" data-tab="brassiqf" data-page="{{ i }}" {% if brassiqf_rejections.number == i %}disabled{% endif %}>{{ i }}</button>
+            {% elif i == brassiqf_rejections.number|add:"-3" or i == brassiqf_rejections.number|add:"3" %}
+              <span class="pagination-ellipsis">...</span>
+            {% endif %}
+          {% endfor %}
+          <button class="pagination-btn" data-tab="brassiqf" data-page="{% if brassiqf_rejections.has_next %}{{ brassiqf_rejections.next_page_number }}{% else %}{{ brassiqf_rejections.paginator.num_pages }}{% endif %}" {% if not brassiqf_rejections.has_next %}disabled{% endif %}>&gt;</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade tab-container" id="nickelrejection" role="tabpanel">
+      <div id="nickelrejection-table-container">
+        <div class="selection-info" id="nickelrejection-selection-info">0 items selected</div>
+        <button type="button" class="delete-btn" id="delete-nickelrejection-btn" disabled>Delete Selected</button>
+        <form id="nickelrejection-form">{% csrf_token %}
+          <table id="nickelrejectionTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="select-checkbox" id="select-all-nickelrejection"><label for="select-all-nickelrejection" style="margin-left: 5px;">Select All</label></th>
+                <th>S.No</th><th>Date</th><th>Rejection Reason</th>
+              </tr>
+            </thead>
+            <tbody id="nickelrejection-tbody">
+              {% for obj in nickel_rejections %}
+              <tr>
+                <td><input type="checkbox" class="select-checkbox nickelrejection-checkbox" name="selected_ids" value="{{ obj.id }}"></td>
+                <td>{{ forloop.counter }}</td><td>{{ obj.date|date:"Y-m-d" }}</td><td>{{ obj.rejection_reason }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4">No records found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      <!-- After nickelrejection table -->
+          <div class="pagination-container" id="nickelrejection-pagination">
+        <div class="pagination-controls">
+          <button class="pagination-btn" data-tab="nickelrejection" data-page="{% if nickel_rejections.has_previous %}{{ nickel_rejections.previous_page_number }}{% else %}1{% endif %}" {% if not nickel_rejections.has_previous %}disabled{% endif %}>&lt;</button>
+          {% for i in nickel_rejections.paginator.page_range %}
+            {% if i == 1 or i == nickel_rejections.paginator.num_pages or i >= nickel_rejections.number|add:"-2" and i <= nickel_rejections.number|add:"2" %}
+              <button class="pagination-btn {% if nickel_rejections.number == i %}current{% endif %}" data-tab="nickelrejection" data-page="{{ i }}" {% if nickel_rejections.number == i %}disabled{% endif %}>{{ i }}</button>
+            {% elif i == nickel_rejections.number|add:"-3" or i == nickel_rejections.number|add:"3" %}
+              <span class="pagination-ellipsis">...</span>
+            {% endif %}
+          {% endfor %}
+          <button class="pagination-btn" data-tab="nickelrejection" data-page="{% if nickel_rejections.has_next %}{{ nickel_rejections.next_page_number }}{% else %}{{ nickel_rejections.paginator.num_pages }}{% endif %}" {% if not nickel_rejections.has_next %}disabled{% endif %}>&gt;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+// Fixed JavaScript for pagination functionality
+// CSP-Compliant JavaScript for pagination functionality using event delegation
+
+let currentPages = {
+  model: 1,
+  polish: 1,
+  plating: 1,
+  tray: 1,
+  vendor: 1,
+  images: 1,
+  trayid: 1,
+  category: 1,
+  iprejection: 1,
+  brassiqf: 1,
+  nickelrejection: 1
+};
+
+function loadPage(tabName, pageNumber) {
+  console.log(`Loading page ${pageNumber} for tab ${tabName}`);
+  
+  if (!pageNumber || pageNumber < 1) {
+    console.error('Invalid page number:', pageNumber);
+    return;
+  }
+  
+  const container = document.getElementById(`${tabName}-table-container`);
+  if (!container) {
+    console.error(`Container not found for tab: ${tabName}`);
+    return;
+  }
+  
+  // Show loading state
+  showLoading(tabName);
+  
+  // Build the URL for the AJAX request
+  const currentUrl = window.location.href.split('?')[0];
+  const requestUrl = `${currentUrl}?tab=${tabName}&page=${pageNumber}`;
+  
+  console.log('Making AJAX request to:', requestUrl);
+  
+  // Make AJAX request
+  fetch(requestUrl, {
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json',
+    }
+  })
+  .then(response => {
+    console.log('Response status:', response.status);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Received data:', data);
+    
+    if (data.html) {
+      // Update table content
+      updateTableContent(tabName, data);
+      
+      // Update pagination controls
+      updatePaginationControls(tabName, data);
+      
+      // Update current page
+      currentPages[tabName] = data.current_page;
+      
+      // Reinitialize event listeners for the new content
+      initializeTabEventListeners(tabName);
+      
+      console.log(`Successfully loaded page ${data.current_page} for ${tabName}`);
+    } else {
+      console.error('No HTML content in response');
+      throw new Error('No HTML content received');
+    }
+  })
+  .catch(error => {
+    console.error('Error loading page:', error);
+    Swal.fire({
+      title: 'Error!',
+      text: 'Failed to load page. Please try again.',
+      icon: 'error',
+      confirmButtonColor: '#3085d6'
+    });
+  })
+  .finally(() => {
+    hideLoading(tabName);
+  });
+}
+
+function showLoading(tabName) {
+  const container = document.getElementById(`${tabName}`);
+  if (container && !container.querySelector('.loading-overlay')) {
+    const overlay = document.createElement('div');
+    overlay.className = 'loading-overlay';
+    overlay.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>';
+    container.appendChild(overlay);
+  }
+}
+
+function hideLoading(tabName) {
+  const container = document.getElementById(`${tabName}`);
+  if (container) {
+    const overlay = container.querySelector('.loading-overlay');
+    if (overlay) {
+      overlay.remove();
+    }
+  }
+}
+
+function updateTableContent(tabName, data) {
+  console.log(`Updating table content for ${tabName}`);
+  
+  const tbody = document.getElementById(`${tabName}-tbody`);
+  if (!tbody) {
+    console.error(`Table body not found for ${tabName}`);
+    return;
+  }
+  
+  // Clear existing checkboxes state
+  const selectAllCheckbox = document.getElementById(`select-all-${tabName}`);
+  if (selectAllCheckbox) {
+    selectAllCheckbox.checked = false;
+    selectAllCheckbox.indeterminate = false;
+  }
+  
+  // Update the tbody content with new HTML
+  tbody.innerHTML = data.html;
+  
+  console.log(`Table content updated for ${tabName}`);
+}
+
+function updatePaginationControls(tabName, data) {
+  console.log(`Updating pagination controls for ${tabName}`);
+
+  const paginationContainer = document.getElementById(`${tabName}-pagination`);
+  if (!paginationContainer) {
+    console.error(`Pagination container not found for ${tabName}`);
+    return;
+  }
+
+  try {
+    const paginationControls = paginationContainer.querySelector('.pagination-controls');
+    if (paginationControls) {
+      let buttonsHTML = '';
+
+      // Previous button
+      buttonsHTML += `<button class="pagination-btn" data-tab="${tabName}" data-page="${data.previous_page || 1}" ${!data.has_previous ? 'disabled' : ''}>&lt;</button>`;
+
+      // Windowed page numbers with ellipsis
+      const total = data.total_pages;
+      const current = data.current_page;
+
+      for (let i = 1; i <= total; i++) {
+        if (
+          i === 1 ||
+          i === total ||
+          (i >= current - 2 && i <= current + 2)
+        ) {
+          buttonsHTML += `<button class="pagination-btn${i === current ? ' current' : ''}" data-tab="${tabName}" data-page="${i}" ${i === current ? 'disabled' : ''}>${i}</button>`;
+        } else if (
+          i === current - 3 ||
+          i === current + 3
+        ) {
+          buttonsHTML += `<span class="pagination-ellipsis">...</span>`;
+        }
+      }
+
+      // Next button
+      buttonsHTML += `<button class="pagination-btn" data-tab="${tabName}" data-page="${data.next_page || data.total_pages}" ${!data.has_next ? 'disabled' : ''}>&gt;</button>`;
+
+      paginationControls.innerHTML = buttonsHTML;
+    }
+    console.log(`Pagination controls updated for ${tabName}`);
+  } catch (error) {
+    console.error('Error updating pagination controls:', error);
+  }
+}// Event delegation for pagination buttons
+
+function setupPaginationEventDelegation() {
+  document.addEventListener('click', function(event) {
+    // Check if the clicked element is a pagination button
+    if (event.target.classList.contains('pagination-btn') && 
+        event.target.hasAttribute('data-tab') && 
+        event.target.hasAttribute('data-page') &&
+        !event.target.disabled) {
+      
+      event.preventDefault();
+      
+      const tabName = event.target.getAttribute('data-tab');
+      const pageNumber = parseInt(event.target.getAttribute('data-page'));
+      
+      console.log(`Pagination button clicked: ${tabName}, page ${pageNumber}`);
+      
+      if (tabName && pageNumber) {
+        loadPage(tabName, pageNumber);
+      }
+    }
+  });
+}
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", function () {
+  console.log('DOM Content Loaded - Initializing pagination functionality');
+  
+  // Setup event delegation for pagination buttons
+  setupPaginationEventDelegation();
+  
+  // Initialize current pages from the template
+  try {
+    // Get initial page numbers from pagination info elements
+    const tabNames = [
+      'model', 'polish', 'plating', 'tray', 'vendor', 'images', 'trayid', 'category', 'iprejection',
+      'brassiqf', 'nickelrejection'
+    ];
+
+    tabNames.forEach(tabName => {
+      const paginationInfo = document.getElementById(`${tabName}-pagination`);
+      if (paginationInfo) {
+        const infoText = paginationInfo.querySelector('.pagination-info');
+        if (infoText) {
+          const match = infoText.textContent.match(/Page (\d+) of (\d+)/);
+          if (match) {
+            currentPages[tabName] = parseInt(match[1]);
+          }
+        }
+      }
+      
+      // Initialize event listeners
+      initializeTabEventListeners(tabName);
+    });
+    
+    console.log('Initial current pages:', currentPages);
+  } catch (error) {
+    console.error('Error initializing pagination:', error);
+  }
+});
+
+function initializeTabEventListeners(tabName) {
+  console.log(`Initializing event listeners for tab: ${tabName}`);
+  
+  // Update selection count
+  updateSelectionInfo(tabName);
+  
+  // Add event listeners to individual checkboxes
+  const individualCheckboxes = document.querySelectorAll(`.${tabName}-checkbox`);
+  console.log(`Found ${individualCheckboxes.length} individual checkboxes for ${tabName}`);
+  
+  individualCheckboxes.forEach((checkbox, index) => {
+    // Remove existing listeners to prevent duplicates
+    checkbox.removeEventListener('change', checkbox.changeHandler);
+    
+    // Create new handler
+    checkbox.changeHandler = function() {
+      console.log(`Individual checkbox ${index} changed for ${tabName}, checked: ${this.checked}`);
+      updateSelectionInfo(tabName);
+    };
+    
+    checkbox.addEventListener('change', checkbox.changeHandler);
+  });
+  
+  // Add event listener to select all checkbox
+  const selectAllCheckbox = document.getElementById(`select-all-${tabName}`);
+  if (selectAllCheckbox) {
+    // Remove existing listener
+    selectAllCheckbox.removeEventListener('change', selectAllCheckbox.changeHandler);
+    
+    // Create new handler
+    selectAllCheckbox.changeHandler = function() {
+      console.log(`Select all checkbox changed for ${tabName}, checked: ${this.checked}`);
+      toggleSelectAll(tabName);
+    };
+    
+    selectAllCheckbox.addEventListener('change', selectAllCheckbox.changeHandler);
+  } else {
+    console.error(`Select all checkbox not found for ${tabName}`);
+  }
+  
+  // Add event listener to delete button
+  const deleteBtn = document.getElementById(`delete-${tabName}-btn`);
+  if (deleteBtn) {
+    // Remove existing listener
+    deleteBtn.removeEventListener('click', deleteBtn.clickHandler);
+    
+    // Create new handler
+    deleteBtn.clickHandler = function() {
+      console.log(`Delete button clicked for ${tabName}`);
+      deleteSelected(tabName);
+    };
+    
+    deleteBtn.addEventListener('click', deleteBtn.clickHandler);
+  } else {
+    console.error(`Delete button not found for ${tabName}`);
+  }
+}
+
+function toggleSelectAll(tabName) {
+  console.log(`toggleSelectAll called for: ${tabName}`);
+  
+  const selectAllCheckbox = document.getElementById(`select-all-${tabName}`);
+  const checkboxes = document.querySelectorAll(`.${tabName}-checkbox`);
+  
+  if (!selectAllCheckbox) {
+    console.error(`Select all checkbox not found for tab: ${tabName}`);
+    return;
+  }
+  
+  if (checkboxes.length === 0) {
+    console.error(`No individual checkboxes found for tab: ${tabName}`);
+    return;
+  }
+  
+  // Set all individual checkboxes to match the select all checkbox
+  checkboxes.forEach((checkbox, index) => {
+    checkbox.checked = selectAllCheckbox.checked;
+  });
+  
+  updateSelectionInfo(tabName);
+}
+
+function updateSelectionInfo(tabName) {
+  const checkboxes = document.querySelectorAll(`.${tabName}-checkbox:checked`);
+  const selectAllCheckbox = document.getElementById(`select-all-${tabName}`);
+  const allCheckboxes = document.querySelectorAll(`.${tabName}-checkbox`);
+  const selectionInfo = document.getElementById(`${tabName}-selection-info`);
+  const deleteBtn = document.getElementById(`delete-${tabName}-btn`);
+  
+  if (!selectionInfo || !deleteBtn) {
+    return;
+  }
+  
+  const selectedCount = checkboxes.length;
+  
+  // Update selection info text
+  selectionInfo.textContent = `${selectedCount} item${selectedCount !== 1 ? 's' : ''} selected`;
+  
+  // Enable/disable delete button
+  deleteBtn.disabled = selectedCount === 0;
+  
+  // Update select all checkbox state
+  if (selectAllCheckbox) {
+    if (selectedCount === 0) {
+      selectAllCheckbox.indeterminate = false;
+      selectAllCheckbox.checked = false;
+    } else if (selectedCount === allCheckboxes.length) {
+      selectAllCheckbox.indeterminate = false;
+      selectAllCheckbox.checked = true;
+    } else {
+      selectAllCheckbox.indeterminate = true;
+    }
+  }
+}
+
+function deleteSelected(tabName) {
+  const checkboxes = document.querySelectorAll(`.${tabName}-checkbox:checked`);
+  
+  if (checkboxes.length === 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'No Selection',
+      text: 'Please select items to delete.',
+      confirmButtonColor: '#3085d6'
+    });
+    return;
+  }
+  
+  const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+  
+  Swal.fire({
+    title: 'Are you sure?',
+    text: `You are about to delete ${selectedIds.length} selected item${selectedIds.length > 1 ? 's' : ''}. This action cannot be undone!`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: `Yes, delete ${selectedIds.length > 1 ? 'them' : 'it'}!`,
+    cancelButtonText: 'Cancel',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const deleteBtn = document.getElementById(`delete-${tabName}-btn`);
+      deleteBtn.disabled = true;
+      deleteBtn.textContent = 'Deleting...';
+      
+      Swal.fire({
+        title: 'Deleting...',
+        text: 'Please wait while we delete the selected items.',
+        icon: 'info',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+      
+      const formData = new FormData();
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+      if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken.value);
+      }
+      formData.append('action', 'delete');
+      formData.append('tab_name', tabName);
+      selectedIds.forEach(id => {
+        formData.append('selected_ids', id);
+      });
+      
+      fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire({
+            title: 'Deleted!',
+            text: `Successfully deleted ${data.deleted_count} item${data.deleted_count > 1 ? 's' : ''}.`,
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            timer: 2000,
+            timerProgressBar: true
+          }).then(() => {
+            // Reload current page of the current tab
+            loadPage(tabName, currentPages[tabName]);
+          });
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Error deleting items: ' + (data.error || 'Unknown error'),
+            icon: 'error',
+            confirmButtonColor: '#3085d6'
+          });
+          deleteBtn.disabled = false;
+          deleteBtn.textContent = 'Delete Selected';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+          title: 'Network Error!',
+          text: 'Error deleting items. Please check your connection and try again.',
+          icon: 'error',
+          confirmButtonColor: '#3085d6'
+        });
+        deleteBtn.disabled = false;
+        deleteBtn.textContent = 'Delete Selected';
+      });
+    }
+  });
+}
+
+// Test function for debugging
+function testPagination(tabName = 'plating') {
+  console.log(`Testing pagination for ${tabName}`);
+  console.log('Current pages:', currentPages);
+  console.log('Loading page 2...');
+  loadPage(tabName, 2);
+}
+</script>
+{% endblock %}

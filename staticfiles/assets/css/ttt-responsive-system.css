@@ -1,0 +1,1189 @@
+/*
+ * TTT Responsive System CSS
+ * Companion stylesheet for ttt-responsive-system.js
+ * Layout tokens are defined inline in base.html; this file handles
+ * any supplemental responsive overrides that require a separate load.
+ */
+
+/* ── Tablet landscape viewport ─────────────────────────────────────── */
+@media (any-pointer: coarse) and (min-width: 800px) and (max-width: 1300px)
+  and (min-height: 600px) and (max-height: 900px)
+  and (orientation: landscape),
+  (hover: none) and (min-width: 800px) and (max-width: 1300px)
+  and (min-height: 600px) and (max-height: 900px)
+  and (orientation: landscape),
+  (any-pointer: coarse) and (min-width: 768px) and (max-width: 2000px) and (min-height: 1200px),
+  (hover: none) and (min-width: 768px) and (max-width: 2000px) and (min-height: 1200px),
+  (any-pointer: coarse) and (min-width: 1200px) and (max-width: 1920px) and (min-height: 700px) and (max-height: 1200px),
+  (hover: none) and (min-width: 1200px) and (max-width: 1920px) and (min-height: 700px) and (max-height: 1200px) {
+
+  :root {
+    --ttt-font-size-body:         22px;
+    --ttt-font-size-control:      22px;
+    --ttt-font-size-table:        22px;
+    --ttt-font-size-table-header: 22px;
+    --ttt-font-size-tablet:       22px;
+  }
+}
+
+/* ── Touch / coarse-pointer tablet ────────────────────────────────── */
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1280px) {
+  /* Ensure form controls are tap-friendly */
+  input, select, textarea, button {
+    min-height: 40px;
+  }
+}
+
+
+/* Site-wide tablet font baseline: applies 22px tablet font beyond DP/Input Screening pages. */
+html.ttt-viewport-tablet body,
+html.ttt-viewport-tablet :where(
+  .navbar,
+  .navbar *,
+  .dropdown-menu,
+  .dropdown-menu *,
+  .sidebar,
+  .sidebar *,
+  .main-panel,
+  .content-wrapper,
+  .card,
+  .card *,
+  .table,
+  .table *,
+  table,
+  table *,
+  button,
+  .btn,
+  input,
+  select,
+  textarea,
+  label,
+  span,
+  div,
+  a,
+  p,
+  small,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .form-control,
+  .dropdown-item,
+  .nav-link,
+  .menu-title,
+  .badge,
+  .modal,
+  .modal *
+) {
+  font-size: var(--ttt-font-size-tablet, 22px) !important;
+}
+
+/* Sidebar circle badges (D, DP, IS, BQ, NW1, etc.) must stay at their
+   compact desktop size on tablet. The site-wide tablet font baseline
+   above bumps every .sidebar descendant to 22px !important, which beat
+   the circle badge's 8.5px font-size in base.html (that rule had no
+   !important). The 22px letters were spilling outside the fixed 27px
+   circle, making both the text AND the circle look oversized on tablet.
+   This rule wins on specificity (more classes) while matching !important,
+   so it restores the original compact size without touching base.html. */
+html.ttt-viewport-tablet .sidebar .nav .nav-item .menu-icon.menu-icon-circle {
+  font-size: 8.5px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+}
+
+html.ttt-viewport-tablet .dropdown-menu .dropdown-item {
+  line-height: 1.35 !important;
+  min-height: 48px !important;
+}
+.dp-bulk-upload-page,
+.dp-bulk-upload-page :where(.card-body, .table-responsive, #order-listing, #order-listing th, #order-listing td, h4, h5, button, .btn, input, select, textarea, label, span, div, a, p, small, kbd, .badge, .rounded-pill) {
+  font-size: var(--titan-ui-font-size) !important;
+}
+
+.dp-bulk-upload-page .card-body *,
+.dp-bulk-upload-page #order-listing,
+.dp-bulk-upload-page #order-listing * {
+  font-size: var(--titan-ui-font-size) !important;
+}
+
+/* Final tablet debug fallback for Day Planning tables.
+   This file loads after titan-style.css, so keep tablet verification rules here. */
+html.ttt-viewport-tablet :is(.dp-pick-table-page, .dp-completed-table-page, .dp-bulk-upload-page) {
+  --titan-ui-font-size: 22px !important;
+  --dp-table-font-size: 22px !important;
+  --dp-table-header-font-size: 22px !important;
+}
+
+html.ttt-viewport-tablet :is(.dp-pick-table-page, .dp-completed-table-page, .dp-bulk-upload-page) :is(
+  #order-listing,
+  #order-listing th,
+  #order-listing td,
+  #order-listing th *,
+  #order-listing td *,
+  .rounded-pill,
+  .badge,
+  .status-badge,
+  .tray-scan-btn,
+  .tray-scan-btn-Jig,
+  .tray-scan-view-img,
+  .tray-scan-status-circle,
+  .data-table,
+  .data-table th,
+  .data-table td,
+  .data-table th *,
+  .data-table td *,
+  .cell-input,
+  .simple-dropdown,
+  .table-actions .btn
+) {
+  font-size: 22px !important;
+}
+
+html.ttt-viewport-tablet :is(.dp-pick-table-page, .dp-completed-table-page, .dp-bulk-upload-page) #order-listing thead th {
+  height: 46px !important;
+  min-height: 46px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  line-height: 1.12 !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.dp-pick-table-page, .dp-completed-table-page, .dp-bulk-upload-page) :is(
+  #order-listing,
+  #order-listing th,
+  #order-listing td,
+  #order-listing th *,
+  #order-listing td *,
+  .rounded-pill,
+  .badge,
+  .status-badge,
+  .tray-scan-btn,
+  .tray-scan-btn-Jig,
+  .tray-scan-view-img,
+  .tray-scan-status-circle,
+  .data-table,
+  .data-table th,
+  .data-table td,
+  .data-table th *,
+  .data-table td *,
+  .cell-input,
+  .simple-dropdown,
+  .table-actions .btn
+) {
+  font-size: 14px !important;
+}
+
+/* Shared sticky-column repair for non-Input-Screening tables.
+   Input Screening has page-specific sticky rules, so keep it excluded here. */
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(-n+3),
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(-n+3) {
+  position: sticky !important;
+  background: #f7fafd !important;
+  background-clip: padding-box !important;
+  z-index: 32 !important;
+}
+
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(1),
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(1) {
+  left: 0 !important;
+  width: 78px !important;
+  min-width: 78px !important;
+  max-width: 78px !important;
+}
+
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(2),
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(2) {
+  left: 78px !important;
+  width: 165px !important;
+  min-width: 165px !important;
+  max-width: 165px !important;
+}
+
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(3),
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(3) {
+  left: 243px !important;
+  width: 175px !important;
+  min-width: 175px !important;
+  max-width: 175px !important;
+}
+
+html:not(.ttt-viewport-tablet) .dp-pick-table-page #order-listing th:nth-child(3),
+html:not(.ttt-viewport-tablet) .dp-pick-table-page #order-listing td:nth-child(3) {
+  width: 225px !important;
+  min-width: 225px !important;
+  max-width: 225px !important;
+}
+
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing thead th:nth-child(-n+3) {
+  background: #028084 !important;
+  color: #e5fcff !important;
+  z-index: 60 !important;
+}
+
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing tbody tr.dp-row-action-highlight > td:nth-child(-n+3) {
+  background: #fff5bd !important;
+  z-index: 45 !important;
+}
+
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing tbody tr.row-inactive > td:nth-child(-n+3),
+.content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing tbody tr.row-inactive-blur > td:nth-child(-n+3) {
+  background: #f7fafd !important;
+}
+
+html.ttt-viewport-tablet .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(1),
+html.ttt-viewport-tablet .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(1) {
+  left: 0 !important;
+  width: 92px !important;
+  min-width: 92px !important;
+  max-width: 92px !important;
+}
+
+html.ttt-viewport-tablet .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(2),
+html.ttt-viewport-tablet .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(2) {
+  left: 92px !important;
+  width: 168px !important;
+  min-width: 168px !important;
+  max-width: 168px !important;
+}
+
+html.ttt-viewport-tablet .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(3),
+html.ttt-viewport-tablet .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(3) {
+  left: 260px !important;
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+}
+
+html.ttt-viewport-tablet .dp-pick-table-page #order-listing th:nth-child(3),
+html.ttt-viewport-tablet .dp-pick-table-page #order-listing td:nth-child(3) {
+  width: 200px !important;
+  min-width: 200px !important;
+  max-width: 200px !important;
+}
+
+/* Day Planning Pick Table (tablet/mobile only): freeze ONLY the Action column
+   HEADER during vertical scroll, exactly like the existing desktop pattern
+   (see the generic "thead th:nth-child(n+4)" sticky-top rule further down in
+   this file, which already keeps every header cell - including Action -
+   pinned to the top on desktop). Nothing here is a horizontal/right-edge
+   freeze, and the Action body <td> cells are left completely alone - they
+   scroll normally with their row, same as on desktop.
+   IMPORTANT: Action is column 4 in this table's visual order (S.No, Last
+   Updated, Plating Stock Number, Action, Remarks) - Remarks is untouched.
+   A .sticky-action class is also matched in case one is added to the Action
+   <th> in the template later - harmless if absent.
+   Desktop (html:not(.ttt-viewport-tablet)) is completely untouched. */
+html.ttt-viewport-tablet .dp-pick-table-page #order-listing thead th:nth-child(4),
+html.ttt-viewport-tablet .dp-pick-table-page #order-listing thead th.sticky-action {
+  position: sticky !important;
+  top: 0 !important;
+  right: auto !important;
+  left: auto !important;
+  background: #028084 !important;
+  color: #e5fcff !important;
+  background-clip: padding-box !important;
+  z-index: 20 !important;
+}
+
+/* Media-query fallback for the same tablet breakpoints this file already uses
+   (see the tablet font-size query at the top of this file). Pure safety net
+   in case ttt-responsive-system.js hasn't added .ttt-viewport-tablet yet on
+   first paint - duplicates only the header rule above, never fires on
+   desktop widths/pointers. */
+@media (any-pointer: coarse) and (min-width: 800px) and (max-width: 1300px)
+  and (min-height: 600px) and (max-height: 900px)
+  and (orientation: landscape),
+  (hover: none) and (min-width: 800px) and (max-width: 1300px)
+  and (min-height: 600px) and (max-height: 900px)
+  and (orientation: landscape),
+  (any-pointer: coarse) and (min-width: 768px) and (max-width: 2000px) and (min-height: 1200px),
+  (hover: none) and (min-width: 768px) and (max-width: 2000px) and (min-height: 1200px),
+  (any-pointer: coarse) and (min-width: 1200px) and (max-width: 1920px) and (min-height: 700px) and (max-height: 1200px),
+  (hover: none) and (min-width: 1200px) and (max-width: 1920px) and (min-height: 700px) and (max-height: 1200px) {
+
+  .dp-pick-table-page #order-listing thead th:nth-child(4),
+  .dp-pick-table-page #order-listing thead th.sticky-action {
+    position: sticky !important;
+    top: 0 !important;
+    right: auto !important;
+    left: auto !important;
+    background: #028084 !important;
+    color: #e5fcff !important;
+    background-clip: padding-box !important;
+    z-index: 20 !important;
+  }
+}
+
+/* Input Screening shared font and tablet alignment fallback. */
+:is(.is-pick-table-page, .is-completed-table-page),
+:is(.is-pick-table-page, .is-completed-table-page) :where(.card-body, .table-responsive, #order-listing, #order-listing th, #order-listing td, h4, h5, button, .btn, input, select, textarea, label, span, div, a, p, small, kbd, .badge, .rounded-pill, .status-badge, .avatar, .remark-circle) {
+  font-size: var(--titan-ui-font-size) !important;
+}
+
+:is(.is-pick-table-page, .is-completed-table-page) .card-body *,
+:is(.is-pick-table-page, .is-completed-table-page) #order-listing,
+:is(.is-pick-table-page, .is-completed-table-page) #order-listing * {
+  font-size: var(--titan-ui-font-size) !important;
+}
+
+html.ttt-viewport-tablet :is(.is-pick-table-page, .is-completed-table-page) {
+  --titan-ui-font-size: 22px !important;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+html.ttt-viewport-tablet :is(.is-pick-table-page, .is-completed-table-page) :is(
+  #order-listing,
+  #order-listing th,
+  #order-listing td,
+  #order-listing th *,
+  #order-listing td *,
+  .rounded-pill,
+  .badge,
+  .status-badge,
+  .avatar,
+  .remark-circle,
+  button,
+  .btn,
+  input,
+  select,
+  textarea
+) {
+  font-size: 22px !important;
+}
+
+html.ttt-viewport-tablet :is(.is-pick-table-page, .is-completed-table-page) .table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+html.ttt-viewport-tablet :is(.is-pick-table-page, .is-completed-table-page) #order-listing th,
+html.ttt-viewport-tablet :is(.is-pick-table-page, .is-completed-table-page) #order-listing td {
+  height: 44px !important;
+  min-height: 44px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+}
+
+html.ttt-viewport-tablet :is(.is-pick-table-page, .is-completed-table-page) #order-listing thead th {
+  height: 46px !important;
+  min-height: 46px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  line-height: 1.12 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* IS Pick Table tablet layout: keep wide columns scrollable instead of squeezed. */
+html.ttt-viewport-tablet .is-pick-table-page .table-responsive {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-width: 100% !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page #order-listing {
+  width: max-content !important;
+  min-width: 3400px !important;
+  table-layout: fixed !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page #order-listing thead th {
+  white-space: normal !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  padding-left: 10px !important;
+  padding-right: 32px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page #order-listing tbody td {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th .fa-filter {
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(1),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(1) { width: 95px !important; min-width: 95px !important; max-width: 95px !important; left: 0 !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(2),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(2) { width: 190px !important; min-width: 190px !important; max-width: 190px !important; left: 95px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(3),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(3) { width: 210px !important; min-width: 210px !important; max-width: 210px !important; left: 285px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(4),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(4) { width: 320px !important; min-width: 320px !important; max-width: 320px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(5),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(5) { width: 140px !important; min-width: 140px !important; max-width: 140px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(6),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(6) { width: 165px !important; min-width: 165px !important; max-width: 165px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(7),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(7),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(8),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(8) { width: 160px !important; min-width: 160px !important; max-width: 160px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(9),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(9) { width: 210px !important; min-width: 210px !important; max-width: 210px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(10),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(10) { width: 185px !important; min-width: 185px !important; max-width: 185px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(11),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(11) { width: 190px !important; min-width: 190px !important; max-width: 190px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(12),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(12) { width: 230px !important; min-width: 230px !important; max-width: 230px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(13),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(13) { width: 255px !important; min-width: 255px !important; max-width: 255px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(14),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(14) { width: 190px !important; min-width: 190px !important; max-width: 190px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(15),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(15) { width: 165px !important; min-width: 165px !important; max-width: 165px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(16),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(16) { width: 190px !important; min-width: 190px !important; max-width: 190px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(17),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(17) { width: 170px !important; min-width: 170px !important; max-width: 170px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(18),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(18) { width: 190px !important; min-width: 190px !important; max-width: 190px !important; }
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(19),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(19) { width: 170px !important; min-width: 170px !important; max-width: 170px !important; }
+
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(4),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(4) > * {
+  white-space: nowrap !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page #order-listing th:nth-child(4),
+html.ttt-viewport-tablet .is-pick-table-page #order-listing td:nth-child(4) {
+  position: static !important;
+  left: auto !important;
+  z-index: auto !important;
+}
+
+/* Input Screening Pick Table: the Action header is vertically sticky only.
+   This follows the fourth-column reset above so it wins without freezing the
+   header on the horizontal axis. */
+html.ttt-viewport-tablet .is-pick-table-page #order-listing thead th.is-vertical-sticky-action {
+  position: sticky !important;
+  top: 0 !important;
+  left: auto !important;
+  right: auto !important;
+  z-index: 40 !important;
+  background: #028084 !important;
+  background-clip: padding-box;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page .btn-accept-is,
+html.ttt-viewport-tablet .is-pick-table-page .btn-reject-is {
+  min-width: 118px !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  line-height: 1.1 !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) :is(
+  #order-listing,
+  #order-listing th,
+  #order-listing td,
+  #order-listing th *,
+  #order-listing td *,
+  .rounded-pill,
+  .badge,
+  .status-badge,
+  .avatar,
+  .remark-circle
+) {
+  font-size: 14px !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) {
+  overflow-x: visible !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing {
+  min-width: max-content !important;
+  table-layout: auto !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing th,
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing td {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 3px 7px !important;
+  line-height: 1.15 !important;
+  vertical-align: middle !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing thead th {
+  height: 46px !important;
+  min-height: 46px !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing :is(.btn, button, .rounded-pill, .badge, .status-badge) {
+  min-height: 0 !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  line-height: 1.15 !important;
+}
+
+/* Tablet popup font fallback. Modals are appended outside page wrappers on several pages. */
+html.ttt-viewport-tablet body :is(
+  #trayScanModal,
+  #trayScanModal_DayPlanning,
+  .tray-scan-modal,
+  .tray-scan-modal-content,
+  .tray-scan-modal-DayPlanning,
+  .tray-scan-modal-DayPlanning-content,
+  .tray-scan-modal-BrassCompleted,
+  .tray-scan-modal-content-BrassCompleted,
+  .tray-scan-modal-header-BrassCompleted,
+  .tray-scan-modal-body-BrassCompleted
+),
+html.ttt-viewport-tablet body :is(
+  #trayScanModal,
+  #trayScanModal_DayPlanning,
+  .tray-scan-modal,
+  .tray-scan-modal-content,
+  .tray-scan-modal-DayPlanning,
+  .tray-scan-modal-DayPlanning-content,
+  .tray-scan-modal-BrassCompleted,
+  .tray-scan-modal-content-BrassCompleted,
+  .tray-scan-modal-header-BrassCompleted,
+  .tray-scan-modal-body-BrassCompleted
+) :is(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  div,
+  label,
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  button,
+  .btn,
+  input,
+  select,
+  textarea,
+  .form-control,
+  .table-grid,
+  .table-grid > div
+) {
+  font-size: 22px !important;
+}
+/* Input Screening Accepted Table: override shared pick-table tablet widths. */
+html.ttt-viewport-tablet .is-pick-table-page.is-accept-table-page #order-listing th:nth-child(2),
+html.ttt-viewport-tablet .is-pick-table-page.is-accept-table-page #order-listing td:nth-child(2) {
+  left: 95px !important;
+  width: 150px !important;
+  min-width: 150px !important;
+  max-width: 150px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-accept-table-page #order-listing th:nth-child(3),
+html.ttt-viewport-tablet .is-pick-table-page.is-accept-table-page #order-listing td:nth-child(3) {
+  left: 245px !important;
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-accept-table-page #order-listing th:nth-child(4),
+html.ttt-viewport-tablet .is-pick-table-page.is-accept-table-page #order-listing td:nth-child(4) {
+  left: auto !important;
+}
+/* Input Screening Reject Table: compact tablet columns after shared pick-table rules. */
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing {
+  min-width: 1495px !important;
+  table-layout: fixed !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(1),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(1) {
+  position: sticky !important;
+  left: 0 !important;
+  width: 92px !important;
+  min-width: 92px !important;
+  max-width: 92px !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(2),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(2) {
+  position: sticky !important;
+  left: 92px !important;
+  width: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(3),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(3) {
+  position: sticky !important;
+  left: 156px !important;
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(4),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(4) {
+  position: sticky !important;
+  left: 296px !important;
+  width: 170px !important;
+  min-width: 170px !important;
+  max-width: 170px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(5),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(5),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(6),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(6) {
+  width: 105px !important;
+  min-width: 105px !important;
+  max-width: 105px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(7),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(7) {
+  width: 190px !important;
+  min-width: 190px !important;
+  max-width: 190px !important;
+  white-space: normal !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(8),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(8),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(9),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(9),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(12),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(12) {
+  width: 135px !important;
+  min-width: 135px !important;
+  max-width: 135px !important;
+}
+
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(10),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(10),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing th:nth-child(11),
+html.ttt-viewport-tablet .is-pick-table-page.is-reject-table-page #order-listing td:nth-child(11) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+/* Safety reset: do not apply Input Screening table layouts to unrelated modules. */
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing {
+  width: max-content !important;
+  min-width: max-content !important;
+  table-layout: auto !important;
+}
+
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(n+4),
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(n+4) {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  z-index: auto !important;
+  max-width: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+}
+
+/* Fix: header cells for column 4 onward (Action, No of Trays, etc.) must stay
+   pinned to the top like the rest of the header row, otherwise scrolling
+   rows show through them. Body cells for these columns are left untouched. */
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing thead th:nth-child(n+4) {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+}
+
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(-n+3),
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(-n+3) {
+  position: sticky !important;
+  background: #f7fafd !important;
+  background-clip: padding-box !important;
+}
+
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(1),
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(1) {
+  left: 0 !important;
+  z-index: 35 !important;
+}
+
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(2),
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(2) {
+  left: 78px !important;
+  z-index: 35 !important;
+}
+
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(3),
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(3) {
+  left: 243px !important;
+  z-index: 35 !important;
+}
+
+html body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing thead th:nth-child(-n+3) {
+  background: #028084 !important;
+  color: #e5fcff !important;
+  z-index: 65 !important;
+}
+
+html body .dp-pick-table-page #order-listing th:nth-child(3),
+html body .dp-pick-table-page #order-listing td:nth-child(3) {
+  width: 225px !important;
+  min-width: 225px !important;
+  max-width: 225px !important;
+}
+
+html body .dp-completed-table-page #order-listing th:nth-child(1),
+html body .dp-completed-table-page #order-listing td:nth-child(1) {
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
+}
+
+html body .dp-completed-table-page #order-listing th:nth-child(2),
+html body .dp-completed-table-page #order-listing td:nth-child(2) {
+  left: 80px !important;
+}
+
+html body .dp-completed-table-page #order-listing th:nth-child(3),
+html body .dp-completed-table-page #order-listing td:nth-child(3) {
+  left: 245px !important;
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+
+/* Tablet-only balance for the Day Planning Completed Table. */
+html.ttt-viewport-tablet .dp-completed-table-page #order-listing th:nth-child(3),
+html.ttt-viewport-tablet .dp-completed-table-page #order-listing td:nth-child(3) {
+  width: 210px !important;
+  min-width: 210px !important;
+  max-width: 210px !important;
+}
+
+/* Scope the desktop correction to the Completed Table when the shared
+   responsive helper misclassifies a desktop browser as a tablet. */
+html.dp-completed-desktop-client.ttt-viewport-tablet .dp-completed-table-page #order-listing th:nth-child(3),
+html.dp-completed-desktop-client.ttt-viewport-tablet .dp-completed-table-page #order-listing td:nth-child(3) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+
+html.ttt-viewport-tablet .dp-completed-table-page #order-listing th:nth-child(4),
+html.ttt-viewport-tablet .dp-completed-table-page #order-listing td:nth-child(4) {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+}
+
+html.ttt-viewport-tablet body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(2),
+html.ttt-viewport-tablet body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(2) {
+  left: 92px !important;
+}
+
+html.ttt-viewport-tablet body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing th:nth-child(3),
+html.ttt-viewport-tablet body .content-wrapper:not(.is-pick-table-page):not(.is-completed-table-page) #order-listing td:nth-child(3) {
+  left: 260px !important;
+}
+/* Footer bottom fix for short table pages only. */
+body.force-footer-bottom-page .container-scroller,
+body.force-footer-bottom-page .page-body-wrapper,
+body.force-footer-bottom-page .main-panel {
+  min-height: calc(100vh - var(--ttt-navbar-height, 60px)) !important;
+}
+
+body.force-footer-bottom-page .main-panel {
+  padding-bottom: var(--ttt-footer-height, 32px) !important;
+}
+
+body.force-footer-bottom-page .main-panel > .content-wrapper.force-footer-bottom-page {
+  min-height: calc(100vh - var(--ttt-navbar-height, 60px) - var(--ttt-footer-height, 32px)) !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body.force-footer-bottom-page .main-panel > footer.footer {
+  position: fixed !important;
+  left: var(--ttt-sidebar-width, 250px) !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: auto !important;
+  z-index: 10000 !important;
+  margin: 0 !important;
+}
+
+body.force-footer-bottom-page.sidebar-icon-only .main-panel > footer.footer {
+  left: var(--ttt-sidebar-collapsed-width, 70px) !important;
+}
+
+@media (max-width: 991.98px) {
+  body.force-footer-bottom-page .main-panel > footer.footer {
+    left: 0 !important;
+    width: 100% !important;
+  }
+}
+/* Shared tablet table layout for Jig Loading and Spider Spindle pick tables. */
+html.ttt-viewport-tablet .module-pick-table-page,
+html.ttt-viewport-tablet .module-pick-table-page :where(.card-body, .table-responsive, #order-listing, #order-listing th, #order-listing td, h4, h5, button, .btn, input, select, textarea, label, span, div, a, p, small, .badge, .rounded-pill) {
+  font-size: var(--ttt-font-size-tablet, 22px) !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page .table-responsive {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing {
+  width: max-content !important;
+  min-width: 2850px !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th,
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td {
+  height: 58px !important;
+  min-height: 58px !important;
+  padding: 8px 12px !important;
+  line-height: 1.12 !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing thead th {
+  height: 70px !important;
+  min-height: 70px !important;
+  white-space: normal !important;
+  word-break: keep-all !important;
+  overflow: visible !important;
+  padding-right: 34px !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing tbody td {
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th .fa-filter {
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th:nth-child(1),
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td:nth-child(1) {
+  position: sticky !important;
+  left: 0 !important;
+  width: 155px !important;
+  min-width: 155px !important;
+  max-width: 155px !important;
+  z-index: 45 !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th:nth-child(2),
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td:nth-child(2) {
+  position: sticky !important;
+  left: 155px !important;
+  width: 190px !important;
+  min-width: 190px !important;
+  max-width: 190px !important;
+  z-index: 45 !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th:nth-child(3),
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td:nth-child(3) {
+  position: sticky !important;
+  left: 345px !important;
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  z-index: 45 !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing thead th:nth-child(-n+3) {
+  z-index: 60 !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td:nth-child(-n+3) {
+  background: #fff !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th:nth-child(4),
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td:nth-child(4) {
+  width: 315px !important;
+  min-width: 315px !important;
+  max-width: 315px !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th:nth-child(5),
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td:nth-child(5) {
+  width: 170px !important;
+  min-width: 170px !important;
+  max-width: 170px !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th:nth-child(6),
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td:nth-child(6) {
+  width: 185px !important;
+  min-width: 185px !important;
+  max-width: 185px !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing th:nth-child(n+7),
+html.ttt-viewport-tablet .module-pick-table-page #order-listing td:nth-child(n+7) {
+  width: 210px !important;
+  min-width: 210px !important;
+  max-width: 210px !important;
+}
+
+html.ttt-viewport-tablet .module-pick-table-page #order-listing :is(.btn, button, .rounded-pill, .badge, .status-badge) {
+  min-height: 0 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+}
+/* Desktop fix: Input Screening pick/completed sticky columns must stay continuous. */
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing th:nth-child(1),
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing td:nth-child(1) {
+  position: sticky !important;
+  left: 0 !important;
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+  z-index: 45 !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing th:nth-child(2),
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing td:nth-child(2) {
+  position: sticky !important;
+  left: 100px !important;
+  width: 125px !important;
+  min-width: 125px !important;
+  max-width: 125px !important;
+  z-index: 45 !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing th:nth-child(3),
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing td:nth-child(3) {
+  position: sticky !important;
+  left: 225px !important;
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  z-index: 45 !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing td:nth-child(4) {
+  position: static !important;
+  left: auto !important;
+}
+
+/* Fix: Action column header must stay pinned to the top like every other
+   header when scrolling, otherwise row content shows through in its place. */
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing thead th:nth-child(4) {
+  position: sticky !important;
+  top: 0 !important;
+  left: auto !important;
+  z-index: 40 !important;
+  background: #028084 !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing thead th:nth-child(-n+3) {
+  z-index: 60 !important;
+  background: #028084 !important;
+}
+
+html:not(.ttt-viewport-tablet) :is(.is-pick-table-page, .is-completed-table-page) #order-listing tbody td:nth-child(-n+3) {
+  background: #fff !important;
+}
+/* Desktop fix: give Input Screening Pick Table action buttons enough room. */
+html:not(.ttt-viewport-tablet) .is-pick-table-page #order-listing th:nth-child(4),
+html:not(.ttt-viewport-tablet) .is-pick-table-page #order-listing td:nth-child(4) {
+  width: 280px !important;
+  min-width: 275px !important;
+  max-width: 275px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+html:not(.ttt-viewport-tablet) .is-pick-table-page #order-listing td:nth-child(4) :is(button, .btn, a) {
+  white-space: nowrap !important;
+}
+
+/* Input Screening Pick Table: preserve the desktop column widths when the
+   shared responsive helper classifies a desktop browser as tablet. */
+html.is-input-screening-desktop-client .is-pick-table-page #order-listing[data-lock-module="INPUT_SCREENING"] th:nth-child(3),
+html.is-input-screening-desktop-client .is-pick-table-page #order-listing[data-lock-module="INPUT_SCREENING"] td:nth-child(3) {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+}
+
+html.is-input-screening-desktop-client .is-pick-table-page #order-listing[data-lock-module="INPUT_SCREENING"] th:nth-child(4),
+html.is-input-screening-desktop-client .is-pick-table-page #order-listing[data-lock-module="INPUT_SCREENING"] td:nth-child(4) {
+  width: 260px !important;
+  min-width: 260px !important;
+  max-width: 260px !important;
+}
+/* Desktop fix: widen Input Screening Pick Table Process Status column. */
+html:not(.ttt-viewport-tablet) .is-pick-table-page #order-listing th:nth-child(9),
+html:not(.ttt-viewport-tablet) .is-pick-table-page #order-listing td:nth-child(9) {
+  width: 125px !important;
+  min-width: 125px !important;
+  max-width: 125px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+html:not(.ttt-viewport-tablet) .is-pick-table-page #order-listing td:nth-child(9) :is(.avatar, .badge, .rounded-pill, .status-badge, span, div) {
+  white-space: nowrap !important;
+}
+
+/* Tablet fix: widen the Input Screening Completed Table Action column. */
+html.ttt-viewport-tablet .is-completed-table-page:not(.dp-completed-table-page) #order-listing th:nth-child(4),
+html.ttt-viewport-tablet .is-completed-table-page:not(.dp-completed-table-page) #order-listing td:nth-child(4) {
+  width: 300px !important;
+  min-width: 300px !important;
+  max-width: 300px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+html.ttt-viewport-tablet .is-completed-table-page:not(.dp-completed-table-page) #order-listing td:nth-child(4) :is(button, .btn, a, .badge, .rounded-pill, .status-badge, span, div) {
+  white-space: nowrap !important;
+}
+/* DP Pick Table remark popup: keep the typed remark textbox wide enough on server/desktop. */
+.dp-pick-table-page #order-listing .remark-tooltip:has(textarea) {
+  width: 380px !important;
+  max-width: calc(100vw - 48px) !important;
+  box-sizing: border-box !important;
+}
+
+.dp-pick-table-page #order-listing .remark-tooltip textarea {
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 88px !important;
+  min-height: 88px !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+.dp-pick-table-page #order-listing .remark-tooltip textarea + div {
+  margin-top: 10px !important;
+  text-align: right !important;
+}
+
+.dp-pick-table-page #order-listing td:last-child .remark-tooltip:has(textarea) {
+  left: auto !important;
+  right: 0 !important;
+  transform: none !important;
+}
+
+/* Safety override: DP & Brass QC Completed Tables use the normal .content-wrapper
+   shell (height: auto), not the flex-height shell that .is-completed-table-page
+   assumes. That rule set the wrapper to display:flex + overflow:hidden with the
+   table area at flex-basis:0, which collapsed the table to 0 height/invisible on
+   these two pages while the pagination (flex:0 0 auto) still rendered fine.
+   Scoped narrowly to these two modules only - does not touch is-completed-table-page
+   itself, so any other page relying on it is unaffected. */
+.dp-completed-table-page.is-completed-table-page,
+.brass-completed-table-page.is-completed-table-page {
+  display: block !important;
+  overflow: visible !important;
+  min-height: 0 !important;
+  flex: none !important;
+}
+
+.dp-completed-table-page.is-completed-table-page .card,
+.dp-completed-table-page.is-completed-table-page .card-body,
+.brass-completed-table-page.is-completed-table-page .card,
+.brass-completed-table-page.is-completed-table-page .card-body {
+  display: block !important;
+  overflow: visible !important;
+  min-height: 0 !important;
+}
+
+.dp-completed-table-page.is-completed-table-page .table-responsive,
+.brass-completed-table-page.is-completed-table-page .table-responsive {
+  flex: none !important;
+  height: auto !important;
+}
+
+/* Safety override 2: match the compact row/badge sizing already used on the Pick
+   Table pages. Without this, DP/Brass Completed pages inherit larger font-size,
+   row height and badge padding from elsewhere in the stylesheet meant for a
+   different (touch-optimized) table, making rows/badges look oversized compared
+   to the Pick Table. Scoped to the same two modules only. */
+.dp-completed-table-page.is-completed-table-page #order-listing th,
+.dp-completed-table-page.is-completed-table-page #order-listing td,
+.brass-completed-table-page.is-completed-table-page #order-listing th,
+.brass-completed-table-page.is-completed-table-page #order-listing td {
+  font-size: 14px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 3px 7px !important;
+  line-height: 1.15 !important;
+  vertical-align: middle !important;
+}
+
+.dp-completed-table-page.is-completed-table-page #order-listing thead th,
+.brass-completed-table-page.is-completed-table-page #order-listing thead th {
+  height: 46px !important;
+  min-height: 46px !important;
+}
+
+.dp-completed-table-page.is-completed-table-page #order-listing :is(.btn, button, .rounded-pill, .badge, .status-badge),
+.brass-completed-table-page.is-completed-table-page #order-listing :is(.btn, button, .rounded-pill, .badge, .status-badge) {
+  font-size: 12px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 4px 10px !important;
+  line-height: 1.15 !important;
+}
+
+/* Brass QC Completed Table ONLY: smaller status badge size (Accepted / Partially Accepted / Rejected).
+   Does not affect DP Completed Table or any other module. */
+.brass-completed-table-page.is-completed-table-page #order-listing .status-badge {
+  font-size: 11px !important;
+  padding: 3px 8px !important;
+  line-height: 1.1 !important;
+}
+
+.brass-completed-table-page.is-completed-table-page #order-listing .status-badge i {
+  font-size: 11px !important;
+}

@@ -1,0 +1,4 @@
+[
+  { "Quote": "Q1", "Product": "Life", "Business": "B1", "Policy": "P1", "Premium": "$100", "Status": "Active", "Updated": "2025-05-21" },
+  { "Quote": "Q2", "Product": "Health", "Business": "B2", "Policy": "P2", "Premium": "$200", "Status": "Expired", "Updated": "2025-04-18" }
+]

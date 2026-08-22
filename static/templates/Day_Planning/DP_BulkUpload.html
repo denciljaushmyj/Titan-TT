@@ -1,0 +1,2464 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style nonce="{{ csp_nonce }}">
+    :root {
+      --clr-primary: #14b8a6;        /* Light Teal */
+      --clr-primary-light: #6ee7de;  /* Lighter Teal */
+      --clr-secondary: #5eead4;      /* Soft Cyan */
+      --clr-accent: #2dd4bf;         /* Soft Teal Accent */
+      --clr-success: #34d399;        /* Soft Emerald */
+      --clr-warning: #fcd34d;        /* Soft Amber */
+      --clr-danger: #f87171;         /* Soft Red */
+      --clr-bg: #f0fdf9;             /* Very Light Bg */
+      --clr-surface: #ffffff;        /* White */
+      --clr-text: #0d9488;           /* Soft Teal Text */
+      --clr-muted: #94a3b8;          /* Light Gray */
+      --clr-border: #ccfbf1;         /* Very Light Teal Border */
+    }
+
+    .data-table th {
+    background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-primary-light) 100%);
+    color: #ffffff;
+    font-weight: 700;
+    border-bottom: 3px solid var(--clr-accent);
+    text-align: left;
+    letter-spacing: 0.5px;
+    /* Optional: rounded top corners for thead */
+    /* border-top-left-radius: 8px; */
+    /* border-top-right-radius: 8px; */
+  }
+ .main-panel {
+    padding: 20px 20px 0 20px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+  }
+      /* Show record count next to Data Table title */
+      .table-header .data-count {
+    display: inline-block;
+    margin-left: 18px;
+    font-size: 1rem;
+    color: #126a83;
+    background: #e6f7fa;
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-weight: 600;
+    vertical-align: middle;
+    box-shadow: none;
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+  }
+    /* Font size 13px for table and form elements on laptop/PC only (not tablet) */
+  
+    .table-header h2 {
+    margin-bottom: -20px !important; /* Reduce space below heading */
+    padding-bottom: 0 !important;
+  }
+  
+.data-count {
+  display: inline-block;
+  margin-left: 18px;
+  font-size: 1rem;
+  color: #126a83;
+  background: #e6f7fa;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-weight: 600;
+  vertical-align: middle;
+  box-shadow: none;
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
+}
+  /* Count display styling - no longer needed at bottom */
+  
+  
+    
+      /* Sticky submit/cancel buttons - moved to table header */
+    .table-actions {
+      position: relative !important;
+      bottom: auto !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      transform: none !important;
+      z-index: auto !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      margin-left: auto !important;
+      display: flex !important;
+      justify-content: flex-end !important;
+      gap: 0.5rem !important;
+      min-width: auto !important;
+      pointer-events: auto !important;
+    }
+    
+    /* Make table-header sticky to freeze during scroll */
+    [id^="data-table-section"] .table-header {
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 10 !important;
+      background: var(--clr-surface) !important;
+    }
+    
+    /* Adjust for sidebar - no longer needed */
+    
+    .table-actions .btn {
+      min-width: auto !important;
+      padding: 0.5rem 0.8rem !important;
+      font-weight: 600 !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      border-radius: 6px !important;
+      transition: all 0.3s ease !important;
+      box-shadow: none !important;
+      font-size: 0.75rem !important;
+      background-color: transparent !important;
+    }
+    
+    /* Submit button specific styling */
+    .table-actions .btn:first-child {
+      background: linear-gradient(135deg, rgba(52, 211, 153, 0.3), rgba(52, 211, 153, 0.2)) !important;
+      color: var(--clr-text) !important;
+      border: 1px solid rgba(52, 211, 153, 0.4) !important;
+      box-shadow: none !important;
+    }
+    
+    .table-actions .btn:first-child:hover {
+      background: linear-gradient(135deg, rgba(52, 211, 153, 0.5), rgba(52, 211, 153, 0.4)) !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    
+    /* Cancel button specific styling */
+    .table-actions .btn:last-child {
+      background: linear-gradient(135deg, rgba(248, 113, 113, 0.3), rgba(248, 113, 113, 0.2)) !important;
+      color: var(--clr-text) !important;
+      border: 1px solid rgba(248, 113, 113, 0.4) !important;
+      box-shadow: none !important;
+    }
+    
+    .table-actions .btn:last-child:hover {
+      background: linear-gradient(135deg, rgba(248, 113, 113, 0.5), rgba(248, 113, 113, 0.4)) !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    
+    
+    /* Responsive adjustments - no longer needed for header buttons */
+    
+    
+    
+    :root {
+      --clr-primary: #126a83;      /* Teal */
+      --clr-secondary: #023E4D;    /* Deep Navy */
+      --clr-tertiary: #FF6B6B;     /* Soft Coral */
+      --clr-bg: #F5F9FA;           /* Light background */
+      --clr-surface: #FFFFFF;      /* Surface white */
+      --clr-text: #212529;         /* Default text */
+      --clr-muted: #6C757D;        /* Muted text */
+    }
+    /* Full page layout */
+    body {
+      margin: 0;
+      background: var(--clr-bg);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--clr-text);
+      overflow-x: hidden;
+    }
+    /* Main card container */
+                .bulk-card {
+          background: var(--clr-surface);
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+          width: 90%;
+          max-width: 1300px;
+          overflow: hidden;
+          animation: slideIn 0.8s ease-out;
+          margin-left: auto;    /* Center horizontally */
+          margin-right: auto;   /* Center horizontally */
+          margin-top: 15px !important;
+        }
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    /* Header with animated background */
+    .card-header {
+      background: var(--clr-secondary);
+      color: var(--clr-surface);
+      padding: 0.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+    .card-header::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 45deg, var(--clr-tertiary), var(--clr-secondary));
+      animation: spin 10s linear infinite;
+      opacity: 0.15;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    /* Lottie animation in header */
+    .header-lottie {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      width: 60px;
+      height: 60px;
+      opacity: 0.35;
+    }
+    /* Body styling */
+      .card-body {
+      padding-left: 24px !important;
+      padding-top: 15px !important;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: #ffffff !important;
+      box-shadow: 0 6px 18px -6px rgba(18, 106, 131, 0.13); /* Add bottom shadow */
+      margin: 18px 18px 18px 18px; /* Add outer space (adjust as needed) */
+    }
+    /* Add left padding to the data table section title */
+[id^="data-table-section"] .table-header {
+  padding-left: 24px !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+
+}
+[id^="data-table-section"] .table-container {
+  margin-top: 0 !important;
+  padding-top: 18px !important; /* Reduce if needed */
+}
+    .action-area {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 0.875rem 1.75rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.15);
+      transition: left 0.3s ease;
+    }
+    .btn:hover::before {
+      left: 100%;
+    }
+    .btn-outline {
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(20, 184, 166, 0.15));
+      border: 1px solid rgba(20, 184, 166, 0.3);
+      color: var(--clr-text);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15);
+    }
+    .btn svg.icon {
+      margin-right: 0.5rem;
+    }
+    /* Header section with Records, buttons, files, and drag-drop inline */
+    .dp-header-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1rem;
+      padding: 1rem 24px;
+      background: linear-gradient(135deg, rgba(32, 201, 189, 0.03) 0%, rgba(94, 234, 212, 0.03) 100%);
+      border-bottom: 1px solid var(--clr-border);
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+    
+    .dp-records-badge {
+      background: transparent;
+      color: var(--clr-text);
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      border: 1px solid rgba(45, 212, 191, 0.4);
+      box-shadow: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .dp-button-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      min-width: max-content;
+    }
+    
+    .dp-files-chips {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .dp-file-chip {
+      background: rgba(20, 184, 166, 0.08);
+      border: 1px solid var(--clr-border);
+      border-radius: 16px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      color: var(--clr-text);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      min-width: max-content;
+    }
+    
+    .dp-file-chip button {
+      background: none;
+      border: none;
+      color: var(--clr-danger);
+      cursor: pointer;
+      padding: 0;
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: all 0.2s ease;
+    }
+    
+    .dp-file-chip button:hover {
+      color: #dc2626;
+      transform: scale(1.2);
+    }
+    
+    /* Split area: Upload area & File list */
+    .upload-file-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 20px 30px;
+      position: relative;
+    }
+        
+    .file-upload-area {
+      flex-shrink: 0;
+      border: 2px dashed rgba(45, 212, 191, 0.4);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: rgba(32, 201, 189, 0.03);
+      min-width: max-content;
+    }
+    .file-upload-area:hover {
+      background: rgba(32, 201, 189, 0.08);
+      border-color: var(--clr-accent);
+      box-shadow: 0 2px 8px rgba(20, 184, 166, 0.1);
+    }
+    .file-upload-area p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--clr-text);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .upload-link {
+      color: var(--clr-accent) !important;
+      font-weight: 700;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      cursor: pointer;
+    }
+    
+    /* Hide old file list since we show chips in header */
+    .file-list {
+      display: none !important;
+    }
+    
+    /* Data Table styling */
+    .data-table-card {
+      background: var(--clr-surface);
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .data-table-card .table-header {
+      padding: 20px 24px;
+      margin-bottom: 0;
+      border-bottom: 2px solid var(--clr-border);
+    }
+    
+    .data-table-card .table-header h4 {
+      margin: 0;
+      color: var(--clr-text);
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+   /*  .lottie-upload {
+      width: 80px;
+      height: 80px;
+    } */
+    .file-upload-area.dragover {
+      background: rgba(18,106,131,0.1);
+      border-color: var(--clr-primary);
+    }
+    /* File List styling */
+    .file-list {
+      flex: 1 1 300px;
+      display: grid;
+      gap: 1rem;
+    }
+       .file-card {
+      background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(248, 250, 252, 0.5) 100%);
+      border: 1.5px solid var(--clr-border);
+      border-radius: 10px;
+      padding: 12px !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeIn 0.5s ease-in;
+      max-width: 350px !important;
+      min-width: 0;
+      word-break: break-all;
+      box-shadow: 0 2px 8px rgba(30, 58, 138, 0.06);
+    }
+    .file-name {
+      max-width: 170px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--clr-text);
+      font-weight: 500;
+    }
+    .file-card:hover {
+      border-color: var(--clr-secondary);
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.12);
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(229, 245, 255, 0.3) 100%);
+    }
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+    }
+    .file-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(14, 165, 233, 0.05));
+      color: var(--clr-primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid rgba(30, 58, 138, 0.08);
+      font-weight: 600;
+    }
+    .file-details {
+      overflow: hidden;
+    }
+   
+    .file-size {
+      font-size: 0.8rem;
+      color: var(--clr-muted);
+      margin-top: 2px;
+    }
+    .remove-file {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+      color: var(--clr-text);
+      border-radius: 8px;
+      border: 1.5px solid rgba(239, 68, 68, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .remove-file:hover {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: var(--clr-surface);
+      border-color: #ef4444;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+      transform: scale(1.05);
+    }
+    .remove-file:active {
+      transform: scale(0.95);
+    }
+    /* Data Table Section */
+    .data-table-card {
+      margin: 20px 0;
+      animation: slideIn 0.8s ease-out;
+      background: var(--clr-surface);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--clr-border);
+    }
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0px !important;
+    }
+    .table-header h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      color: var(--clr-text);
+      margin: 0;
+    }
+    .table-header h2 .icon {
+      margin-right: 0.5rem;
+    }
+   .table-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 450px;
+  margin-bottom: 50px !important;
+  padding: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  max-width: 100%;
+  background: var(--clr-surface);
+}
+  
+  /* Ensure table scroll track is visible */
+  .table-container::-webkit-scrollbar {
+    width: 8px !important;
+    height: 6px !important;
+    z-index: 999 !important;
+  }
+  
+  .table-container::-webkit-scrollbar-track {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.05), rgba(20, 184, 166, 0.05)) !important;
+    border-radius: 6px !important;
+    z-index: 999 !important;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--clr-primary), var(--clr-accent)) !important;
+    border-radius: 6px !important;
+    z-index: 999 !important;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #0d5c5b, #0f766e) !important;
+  }
+  
+  /* Responsive table heights for different screen sizes */
+  
+    .data-table {
+      width: 100%;
+      min-width: 600px;
+      padding: 0;
+      border-spacing: 0 !important;
+      background: var(--clr-surface);
+      border-radius: 0 !important;
+      overflow: hidden;
+      margin-bottom: 0 !important;
+      border: 1px solid var(--clr-border);
+    }
+        [id^="data-table-section"] .card-body {
+      padding: 0 !important;
+    }
+      
+    .data-table th {
+      background: rgba(32, 201, 189, 0.08);
+      border: 1px solid var(--clr-border);
+      color: var(--clr-text);
+      font-weight: 600;
+      padding: 0.875rem 1rem;
+      text-align: left;
+    }
+    
+    .data-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(205, 250, 245, 0.5);
+      border-right: 1px solid rgba(205, 250, 245, 0.3);
+      color: var(--clr-text);
+    }
+    
+    .data-table tbody tr {
+      transition: background 0.2s ease;
+    }
+    
+    .data-table tbody tr:hover {
+      background: rgba(32, 201, 189, 0.05);
+    }
+  
+    /* Action Column */
+    .data-table .actions {
+      width: 80px;
+      text-align: right;
+    }
+    /* Redesigned Delete Button */
+    .btn-delete {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: rgba(248, 113, 113, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-delete:hover {
+      background: rgba(248, 113, 113, 0.25);
+      border-color: rgba(248, 113, 113, 0.5);
+      transform: scale(1.08);
+      box-shadow: 0 2px 8px rgba(248, 113, 113, 0.2);
+    }
+    .btn-delete .icon {
+      width: 16px;
+      height: 16px;
+      stroke: rgba(248, 113, 113, 0.7);
+      stroke-width: 2;
+      transition: all 0.3s;
+    }
+    .btn-delete:hover .icon {
+      stroke: rgba(248, 113, 113, 1);
+    }
+    .cell-input {
+      width: 100%;\n      padding: 0.625rem 0.75rem;\n      border: 1.5px solid var(--clr-border);\n      border-radius: 8px;\n      min-width: 100px;\n      font-family: inherit;\n      font-size: 0.9rem;\n      background: linear-gradient(to bottom, rgba(30, 58, 138, 0.02), rgba(255,255,255,0));\n      transition: all 0.3s ease;\n    }
+    .cell-input:focus { 
+      outline: none; 
+      border-color: var(--clr-secondary);\n      background: var(--clr-surface);\n      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1), inset 0 2px 4px rgba(30, 58, 138, 0.05);\n    }
+    
+    /* Simple dropdown styling - no conflicts */
+    .simple-dropdown {
+      appearance: none;
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      border: 1.5px solid var(--clr-border);
+      border-radius: 8px;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 10px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 40px !important;
+      background-color: linear-gradient(to bottom, rgba(30, 58, 138, 0.02), rgba(255,255,255,0));
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .simple-dropdown:hover {
+      border-color: var(--clr-secondary);
+      box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
+    }
+    
+    .simple-dropdown:focus {
+      outline: none;
+      border-color: var(--clr-secondary) !important;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1) !important;
+    }
+    
+    .simple-dropdown option {
+      padding: 8px;
+      background: white;
+      color: var(--clr-text);
+      font-weight: 500;
+    }
+    
+    /* Auto-filled field styling */
+    .auto-filled {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)) !important;
+      border-left: 4px solid var(--clr-success) !important;
+      border-color: var(--clr-success) !important;
+    }
+    
+    /* Read-only auto-filled cells */
+    td[style*="cursor: not-allowed"] {
+      position: relative;
+    }
+    
+    td[style*="cursor: not-allowed"]::after {
+      content: '🔒';
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      opacity: 0.5;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .table-row-animation { animation: fadeIn 0.5s ease-in; }
+  
+    /* Override any row gutter padding for the card-header so it touches the bulk-card edges */
+    .bulk-card > .card-header {
+      margin-left: -14px !important;
+      margin-right: -14px !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    
+    /* Then add inner padding if desired to the header-content */
+    .header-content {
+      padding: 1rem 1rem; /* Adjust as needed */
+    }
+    
+    /* Responsive adjustments */
+    
+    
+
+  
+  
+
+ /* Top Buttons style */
+ .content-wrapper, .card, .card-body {
+    min-height: 0 !important;
+    max-height: none !important;
+    height: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    
+    box-sizing: border-box !important;
+    
+}
+
+/* Empty State Styling (id is suffixed per-tab: empty-state-section / empty-state-section-recovery) */
+[id^="empty-state-section"] {
+  background: var(--clr-surface);
+  border-radius: 12px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 40px 20px;
+  text-align: center;
+  display: none;
+}
+
+[id^="empty-state-section"].show {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 350px;
+}
+
+[id^="empty-state-section"] img {
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+[id^="empty-state-section"] h3 {
+  color: var(--clr-text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+}
+
+[id^="empty-state-section"] p {
+  color: var(--clr-muted);
+  font-size: 0.95rem;
+  margin: 0;
+  max-width: 400px;
+}
+
+/* Override: Remove yellow row highlight for bulk upload data table */
+.data-table tr.dp-row-action-highlight > td {
+  background: inherit !important;
+  z-index: auto !important;
+  position: static !important;
+  left: auto !important;
+}
+.data-table tr.dp-row-action-highlight {
+  background-color: transparent !important;
+}
+
+@media screen and (pointer: coarse) and (min-width: 1100px) and (max-width: 1920px) and (orientation: landscape) {
+  .main-panel {
+    padding: 16px 16px 0 16px !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .content-wrapper {
+    padding: 1rem !important;
+    overflow-x: hidden !important;
+  }
+
+  .dp-bulk-upload-page {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .dp-bulk-upload-page .dp-header-controls {
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .dp-bulk-upload-page .dp-header-controls h7 {
+    flex: 0 0 auto;
+    line-height: 1.25;
+  }
+
+  .dp-bulk-upload-page .dp-records-badge,
+  .dp-bulk-upload-page .dp-file-chip,
+  .dp-bulk-upload-page .file-upload-area p,
+  .dp-bulk-upload-page .dp-button-group .btn,
+  .dp-bulk-upload-page #download-template-btn,
+  .dp-bulk-upload-page #add-model-btn {
+    font-size: var(--titan-ui-font-size) !important;
+  }
+
+  .dp-bulk-upload-page .dp-button-group {
+    flex-wrap: nowrap;
+    gap: 0.6rem;
+  }
+
+  .dp-bulk-upload-page .file-upload-area,
+  .dp-bulk-upload-page .dp-button-group .btn,
+  .dp-bulk-upload-page #download-template-btn,
+  .dp-bulk-upload-page #add-model-btn {
+    min-height: 40px;
+    padding: 0.55rem 0.9rem !important;
+  }
+
+  .dp-bulk-upload-page .dp-files-chips {
+    flex: 1 1 320px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .dp-bulk-upload-page .dp-file-chip {
+    max-width: 320px !important;
+    min-width: 0;
+  }
+
+  .dp-bulk-upload-page .dp-file-chip span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dp-bulk-upload-page [id^="empty-state-section"],
+  .dp-bulk-upload-page[id^="data-table-section"] {
+    width: 100%;
+    max-width: 100%;
+    margin: 16px 0 !important;
+  }
+
+  .dp-bulk-upload-page[id^="data-table-section"] .card-body {
+    margin: 0 !important;
+    box-shadow: none;
+  }
+
+  .dp-bulk-upload-page[id^="data-table-section"] .table-header {
+    min-height: 58px;
+    padding: 0.75rem 1rem !important;
+    gap: 1rem;
+  }
+
+  .dp-bulk-upload-page[id^="data-table-section"] .table-header h4,
+  .dp-bulk-upload-page .table-actions .btn {
+    font-size: var(--titan-ui-font-size) !important;
+  }
+
+  .dp-bulk-upload-page .table-container,
+  .dp-bulk-upload-page #data-table-container {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 230px) !important;
+    overflow: auto !important;
+    margin-bottom: 0 !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dp-bulk-upload-page .data-table {
+    width: 100%;
+    min-width: 1320px;
+    table-layout: auto;
+    font-size: var(--titan-ui-font-size) !important;
+  }
+
+  .dp-bulk-upload-page .data-table th,
+  .dp-bulk-upload-page .data-table td {
+    padding: 0.85rem 1rem !important;
+    font-size: var(--titan-ui-font-size) !important;
+    line-height: 1.35;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  .dp-bulk-upload-page .cell-input,
+  .dp-bulk-upload-page .simple-dropdown {
+    min-height: 40px;
+    font-size: var(--titan-ui-font-size) !important;
+  }
+
+  .dp-bulk-upload-page .btn-delete {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+#dataUploadTabs {
+  margin: 0 0 0 0;
+  border-bottom: 2px solid var(--clr-border);
+  gap: 0.25rem;
+}
+#dataUploadTabs .nav-link {
+  font-weight: 600;
+  color: var(--clr-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding: 0.65rem 1.15rem;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+#dataUploadTabs .nav-link:hover {
+  color: var(--clr-text);
+  isolation: isolate;
+}
+#dataUploadTabs #dp-upload-tab.active {
+  color: var(--clr-primary);
+  background: transparent;
+  border-bottom-color: var(--clr-primary);
+}
+#dataUploadTabs #recovery-upload-tab.active {
+  color: var(--clr-secondary);
+  background: transparent;
+  border-bottom-color: var(--clr-secondary);
+}
+
+/* Subtle, single-hue (teal-family) per-tab accent: a faint top wash + thin left
+   accent bar. Same color family for both tabs, only shade/intensity differs -
+   avoids flooding the page with a flat, unrelated color (e.g. yellow). */
+.dp-tab-pane {
+  border-radius: 0 0 8px 8px;
+  padding: 14px 10px 4px 12px;
+}
+.dp-tab-pane-dayplanning {
+  background: linear-gradient(180deg, rgba(18, 106, 131, 0.035) 0%, rgba(18, 106, 131, 0) 140px);
+  border-left: 3px solid rgba(18, 106, 131, 0.25);
+}
+.dp-tab-pane-recovery {
+  background: linear-gradient(180deg, rgba(2, 62, 77, 0.045) 0%, rgba(2, 62, 77, 0) 140px);
+  border-left: 3px solid rgba(2, 62, 77, 0.3);
+}
+</style>
+
+<ul class="nav nav-tabs" id="dataUploadTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="dp-upload-tab" data-bs-toggle="tab" data-bs-target="#dp-upload-pane" type="button" role="tab" aria-controls="dp-upload-pane" aria-selected="true">Day Planning Upload</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="recovery-upload-tab" data-bs-toggle="tab" data-bs-target="#recovery-upload-pane" type="button" role="tab" aria-controls="recovery-upload-pane" aria-selected="false">Recovery Upload</button>
+  </li>
+</ul>
+<div class="tab-content" id="dataUploadTabsContent">
+  <div class="tab-pane fade show active dp-tab-pane dp-tab-pane-dayplanning" id="dp-upload-pane" role="tabpanel" aria-labelledby="dp-upload-tab">
+    {% include "Day_Planning/_DP_UploadTabPane.html" with id_suffix="" header_text="Day Planning - Data Upload" %}
+  </div>
+  <div class="tab-pane fade dp-tab-pane dp-tab-pane-recovery" id="recovery-upload-pane" role="tabpanel" aria-labelledby="recovery-upload-tab">
+    {% include "Day_Planning/_DP_UploadTabPane.html" with id_suffix="-recovery" header_text="Recovery - Data Upload" %}
+  </div>
+</div>
+
+<!-- Download Progress Overlay (hidden by default, shared across both tabs) -->
+<div id="downloadProgressOverlay" style="display:none; position:fixed; inset:0; z-index:220000; align-items:center; justify-content:center;">
+  <div style="background:rgba(255,255,255,0.98); padding:18px 18px; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.12); min-width:300px; max-width:90vw; text-align:center;">
+    <div id="downloadProgressLabel" style="font-weight:700;color:#0f766e;margin-bottom:10px;font-size:1rem">Preparing download...</div>
+    <div style="background:#eef8f7;border-radius:8px;height:12px;overflow:hidden;">
+      <div id="downloadProgressBar" style="height:100%; width:0%; background:linear-gradient(90deg,#14b8a6,#06b6d4); transition:width 140ms linear;"></div>
+    </div>
+    <div id="downloadProgressPct" style="margin-top:10px;color:#3f6b68;font-weight:600;">0%</div>
+  </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+
+<script nonce="{{ csp_nonce }}">
+  // ================= SHARED MODULE-LEVEL STATE & HELPERS =================
+  // These are upload-type-agnostic (validation, dropdown data, CSRF, toasts) and are
+  // reused by both the Day Planning and Recovery upload tab controllers below.
+  let allowedVersionsCache = null;
+  let allowedVersionsPromise = null;
+  let categoriesCache = null;
+  // Keyed by upload_type ('day_planning' | 'recovery') — Recovery only ever gets EPSF from backend.
+  let locationsCache = {};
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  function fetchAllowedVersions() {
+    if (allowedVersionsCache) {
+      return Promise.resolve(allowedVersionsCache);
+    }
+    if (allowedVersionsPromise) {
+      return allowedVersionsPromise;
+    }
+    allowedVersionsPromise = fetch('/dayplanning/get_allowed_versions/')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success && Array.isArray(data.allowed_versions)) {
+          allowedVersionsCache = data.allowed_versions;
+          console.log('✅ Dynamic versions loaded:', allowedVersionsCache);
+          return allowedVersionsCache;
+        } else {
+          throw new Error(data.error || 'Invalid response format');
+        }
+      })
+      .catch(error => {
+        console.error('❌ Failed to fetch allowed versions:', error);
+        allowedVersionsCache = [];
+        return allowedVersionsCache;
+      })
+      .finally(() => {
+        allowedVersionsPromise = null;
+      });
+
+    return allowedVersionsPromise;
+  }
+
+  async function validateVersionCode(versionCode) {
+    try {
+      const allowedVersions = await fetchAllowedVersions();
+
+      if (!allowedVersions || allowedVersions.length === 0) {
+        console.warn('⚠️ No allowed versions loaded, skipping frontend validation');
+        return { isValid: true };
+      }
+
+      const isValid = allowedVersions.includes(versionCode);
+
+      if (!isValid) {
+        return {
+          isValid: false,
+          message: `Version code '${versionCode}' not available in Master Data. Available version codes: ${allowedVersions.join(', ')}`
+        };
+      }
+
+      return { isValid: true };
+    } catch (error) {
+      console.error('❌ Version validation error:', error);
+      return { isValid: true };
+    }
+  }
+
+  function loadDropdownData(column, uploadType) {
+    if (column === 'Category') {
+      if (categoriesCache) {
+        return Promise.resolve(categoriesCache);
+      }
+      return fetch('/dayplanning/get_categories/')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            categoriesCache = data.categories;
+            return categoriesCache;
+          }
+          return [];
+        })
+        .catch(() => []);
+    }
+
+    if (column === 'Source') {
+      // Recovery vs Day Planning get separate cache entries — backend returns only
+      // EPSF for Recovery, so the two tabs must never share a cached list.
+      const cacheKey = uploadType === 'recovery' ? 'recovery' : 'day_planning';
+      if (locationsCache[cacheKey]) {
+        return Promise.resolve(locationsCache[cacheKey]);
+      }
+      const url = uploadType === 'recovery'
+        ? '/dayplanning/get_locations/?upload_type=recovery'
+        : '/dayplanning/get_locations/';
+      return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            locationsCache[cacheKey] = data.locations;
+            return locationsCache[cacheKey];
+          }
+          return [];
+        })
+        .catch(() => []);
+    }
+
+    return Promise.resolve([]);
+  }
+
+  function createSimpleDropdown(td, row, column, currentValue, uploadType) {
+    const select = document.createElement('select');
+    select.className = 'simple-dropdown';
+    select.style.cssText = `
+      width: 100%;
+      min-width: 150px;
+      padding: 8px 12px;
+      border: 2px solid #126a83;
+      border-radius: 6px;
+      background: white;
+      font-size: 14px;
+      cursor: pointer;
+      outline: none;
+    `;
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = `Choose ${column}...`;
+    select.appendChild(defaultOption);
+
+    td.innerHTML = '';
+    td.appendChild(select);
+
+    loadDropdownData(column, uploadType).then(data => {
+      select.innerHTML = '';
+
+      const defaultOpt = document.createElement('option');
+      defaultOpt.value = '';
+      defaultOpt.textContent = `Choose ${column}...`;
+      select.appendChild(defaultOpt);
+
+      data.forEach(item => {
+        const option = document.createElement('option');
+        const fieldName = column === 'Category' ? 'category_name' : 'location_name';
+        option.value = item[fieldName];
+        option.textContent = item[fieldName];
+
+        if (item[fieldName] === currentValue) {
+          option.selected = true;
+        }
+
+        select.appendChild(option);
+      });
+
+      setTimeout(() => {
+        select.focus();
+        if (select.showPicker) {
+          select.showPicker();
+        }
+      }, 100);
+    });
+
+    let isSelecting = false;
+
+    select.addEventListener('change', function(e) {
+      e.stopPropagation();
+      const selectedValue = this.value;
+      row[column] = selectedValue;
+      td.textContent = selectedValue || currentValue || '';
+      console.log(`Selected ${column}:`, selectedValue);
+      isSelecting = false;
+    });
+
+    select.addEventListener('blur', function(e) {
+      if (!isSelecting) {
+        setTimeout(() => {
+          if (this.parentNode === td) {
+            td.textContent = currentValue || '';
+          }
+        }, 150);
+      }
+    });
+
+    select.addEventListener('mousedown', function(e) {
+      isSelecting = true;
+    });
+
+    select.addEventListener('keydown', function(e) {
+      e.stopPropagation();
+
+      if (e.key === 'Escape') {
+        td.textContent = currentValue || '';
+        isSelecting = false;
+      } else if (e.key === 'Enter') {
+        const selectedValue = this.value;
+        row[column] = selectedValue;
+        td.textContent = selectedValue || currentValue || '';
+        isSelecting = false;
+      } else {
+        isSelecting = true;
+      }
+    });
+
+    select.addEventListener('click', function(e) {
+      e.stopPropagation();
+      isSelecting = true;
+    });
+  }
+
+  async function validatePlatingStockNo(platingStockNo) {
+    if (!platingStockNo || platingStockNo.length < 8) {
+      return {
+        isValid: false,
+        message: "Stock number must be at least 8 characters long"
+      };
+    }
+
+    const platingBase = platingStockNo.split("/")[0];
+
+    if (!platingBase.endsWith("02")) {
+      return {
+        isValid: false,
+        message: "Stock number must end with '02'"
+      };
+    }
+
+    const match = platingBase.match(/^(\d+)([A-Z])([A-Z])([A-Z])02$/);
+    if (!match) {
+      return {
+        isValid: false,
+        message: "Invalid format. Expected: ModelNumber + ColorCode + LettersLetters02"
+      };
+    }
+
+    const [, modelNumber, colorCode, polish_code, version_code] = match;
+
+    const versionValidation = await validateVersionCode(version_code);
+    if (!versionValidation.isValid) {
+      return {
+        isValid: false,
+        message: versionValidation.message
+      };
+    }
+
+    try {
+      const response = await fetch(`/dayplanning/validate_plating_stk_no/?plating_stk_no=${encodeURIComponent(platingStockNo)}`);
+      const data = await response.json();
+
+      if (!data.success || !data.is_valid) {
+        return {
+          isValid: false,
+          message: data.message || `Plating Stock No "${platingStockNo}" not found in database`
+        };
+      }
+
+      return {
+        isValid: true,
+        data: {
+          modelNumber,
+          colorCode,
+          polish_code,
+          version_code,
+          ...data.data
+        }
+      };
+
+    } catch (error) {
+      console.error('❌ Database validation error:', error);
+      return {
+        isValid: false,
+        message: 'Error checking plating stock number in database. Please try again.'
+      };
+    }
+  }
+
+  function fetchPlatingColour(colorCode, platingStockNo) {
+    return fetch('/dayplanning/get_plating_colour/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify({
+        color_code: colorCode,
+        plating_stock_no: platingStockNo
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success && data.plating_colour) {
+        return data.plating_colour;
+      } else {
+        console.warn('Could not fetch plating colour:', data.error || 'Unknown error');
+        return null;
+      }
+    })
+    .catch(error => {
+      console.error('API error:', error);
+      return null;
+    });
+  }
+
+  function showAutoFetchMessage(message, type = 'info') {
+    const messageElement = document.createElement('div');
+    messageElement.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      max-width: 400px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: opacity 0.3s ease;
+    `;
+
+    switch(type) {
+      case 'success':
+        messageElement.style.backgroundColor = '#d4edda';
+        messageElement.style.color = '#155724';
+        messageElement.style.borderLeft = '4px solid #28a745';
+        break;
+      case 'warning':
+        messageElement.style.backgroundColor = '#fff3cd';
+        messageElement.style.color = '#856404';
+        messageElement.style.borderLeft = '4px solid #ffc107';
+        break;
+      case 'error':
+        messageElement.style.backgroundColor = '#f8d7da';
+        messageElement.style.color = '#721c24';
+        messageElement.style.borderLeft = '4px solid #dc3545';
+        break;
+      default:
+        messageElement.style.backgroundColor = '#d1ecf1';
+        messageElement.style.color = '#0c5460';
+        messageElement.style.borderLeft = '4px solid #17a2b8';
+    }
+
+    messageElement.textContent = message;
+    document.body.appendChild(messageElement);
+
+    setTimeout(() => {
+      messageElement.style.opacity = '0';
+      setTimeout(() => {
+        if (messageElement.parentNode) {
+          document.body.removeChild(messageElement);
+        }
+      }, 300);
+    }, 4000);
+  }
+
+  async function autoFetchRelatedFields(row, platingStockNo, onUpdated) {
+    if (!platingStockNo || platingStockNo.length < 8) {
+      return;
+    }
+
+    try {
+      const platingBase = platingStockNo.split("/")[0];
+
+      if (!platingBase.endsWith("02")) {
+        showAutoFetchMessage("Plating Stk No must end with '02'", 'warning');
+        return;
+      }
+
+      const match = platingBase.match(/^(\d+)([A-Z])([A-Z])([A-Z])02$/);
+      if (!match) {
+        showAutoFetchMessage("Invalid Plating Stk No format. Expected: ModelNumber + ColorCode + LettersLetters02", 'warning');
+        return;
+      }
+
+      const [, modelNumber, colorCode, polish_code, version_code] = match;
+
+      const versionValidation = await validateVersionCode(version_code);
+      if (!versionValidation.isValid) {
+        showAutoFetchMessage(`❌ ${versionValidation.message}`, 'error');
+        return;
+      }
+
+      const polishingStockNo = `${modelNumber}X${polish_code}${version_code}02`;
+      row['Polishing Stk No'] = polishingStockNo;
+
+      if (!row._autoFilled) row._autoFilled = [];
+      if (!row._autoFilled.includes('Polishing Stk No')) {
+        row._autoFilled.push('Polishing Stk No');
+      }
+
+      showAutoFetchMessage("Auto-fetching plating colour...", 'info');
+
+      fetchPlatingColour(colorCode, platingStockNo)
+        .then(platingColour => {
+          if (platingColour) {
+            row['Plating Colour'] = platingColour;
+            if (!row._autoFilled.includes('Plating Colour')) {
+              row._autoFilled.push('Plating Colour');
+            }
+            showAutoFetchMessage(`✅ Auto-filled: Polishing Stk No → ${polishingStockNo}, Plating Colour → ${platingColour}`, 'success');
+          } else {
+            showAutoFetchMessage(`✅ Polishing Stk No auto-filled → ${polishingStockNo}. Please manually enter Plating Colour.`, 'warning');
+          }
+          if (typeof onUpdated === 'function') onUpdated();
+        })
+        .catch(error => {
+          console.error('Error fetching plating colour:', error);
+          showAutoFetchMessage(`✅ Polishing Stk No auto-filled → ${polishingStockNo}. Could not fetch Plating Colour.`, 'warning');
+          if (typeof onUpdated === 'function') onUpdated();
+        });
+
+    } catch (error) {
+      console.error('Error in auto-fetch:', error);
+      showAutoFetchMessage("Error processing Plating Stk No", 'error');
+    }
+  }
+
+  function formatFileSize(bytes) {
+    if (!bytes) return '0 Bytes';
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+  }
+
+  function showToast(title, message, type = 'default') {
+    const toastContainer = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+      <div class="toast-content">
+        <div class="toast-title">${title}</div>
+        <div class="toast-description">${message}</div>
+      </div>
+      <button class="toast-close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="var(--clr-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    `;
+    toastContainer.appendChild(toast);
+    toast.querySelector('.toast-close').addEventListener('click', () => {
+      toast.style.animation = 'fadeOut 0.3s forwards';
+      setTimeout(() => toastContainer.removeChild(toast), 300);
+    });
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.style.animation = 'fadeOut 0.3s forwards';
+        setTimeout(() => { if (toast.parentNode) toastContainer.removeChild(toast); }, 300);
+      }
+    }, 5000);
+  }
+
+  // Visual success card specifically for downloads (in case toast is missed)
+  function showDownloadSuccessVisual(message = 'Template downloaded successfully to your local') {
+    const id = 'downloadSuccessCard';
+    let card = document.getElementById(id);
+    if (card) {
+      card.parentNode.removeChild(card);
+    }
+    card = document.createElement('div');
+    card.id = id;
+    card.style.cssText = `position:fixed; right:20px; bottom:22px; z-index:230000; background:#e6fffa; border-left:6px solid #10b981; color:#064e3b; padding:12px 16px; border-radius:10px; box-shadow:0 8px 28px rgba(4,22,22,0.12); font-weight:700; display:flex; align-items:center; gap:10px;`;
+    card.innerHTML = `
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6L9 17l-5-5" stroke="#065f46" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div style="font-size:0.95rem">${message}</div>
+    `;
+    document.body.appendChild(card);
+    setTimeout(()=>{ if (card && card.parentNode) card.style.opacity='0'; setTimeout(()=>{ if (card && card.parentNode) card.parentNode.removeChild(card); },300); }, 3600);
+  }
+
+  // Attach the "Download Template" behaviour to a given button id. Shared across both
+  // tabs since the template/endpoint/progress UI are identical regardless of upload type.
+  function attachDownloadTemplateHandler(buttonId) {
+    const downloadTemplateBtn = document.getElementById(buttonId);
+    if (!downloadTemplateBtn) return;
+    const downloadOverlay = document.getElementById('downloadProgressOverlay');
+    const downloadBar = document.getElementById('downloadProgressBar');
+    const downloadPct = document.getElementById('downloadProgressPct');
+    const downloadLabel = document.getElementById('downloadProgressLabel');
+
+    downloadTemplateBtn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      const endpoint = '/dayplanning/download_excel_template/';
+      const prevDisabled = downloadTemplateBtn.disabled;
+      downloadTemplateBtn.disabled = true;
+      try {
+        if (downloadOverlay) { downloadOverlay.style.display = 'flex'; }
+        downloadLabel.textContent = 'Starting download...';
+        downloadBar.style.width = '0%'; downloadPct.textContent = '0%';
+
+        const resp = await fetch(endpoint, { credentials: 'same-origin' });
+        if (!resp.ok) throw new Error('Server returned ' + resp.status);
+
+        const contentLength = resp.headers.get('Content-Length');
+        const total = contentLength ? parseInt(contentLength, 10) : null;
+
+        if (!resp.body) {
+          const blob = await resp.blob();
+          const url = window.URL.createObjectURL(blob);
+          const disp = resp.headers.get('Content-Disposition');
+          let filename = 'DayPlanning_Template.xlsx';
+          if (disp) {
+            const m = disp.match(/filename\*=UTF-8''([^;\n]+)/i) || disp.match(/filename="?([^;\n"]+)"?/i);
+            if (m && m[1]) filename = decodeURIComponent(m[1].replace(/\"/g, ''));
+          }
+          const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
+          if (downloadOverlay) downloadLabel.textContent = 'Download complete';
+          if (typeof showToast === 'function') showToast('Download Complete','Template downloaded successfully to your local','success');
+          showDownloadSuccessVisual('Template downloaded successfully to your local');
+          setTimeout(()=>{ if (downloadOverlay) downloadOverlay.style.display='none'; downloadTemplateBtn.disabled = prevDisabled; },900);
+          return;
+        }
+
+        const reader = resp.body.getReader();
+        const chunks = [];
+        let received = 0;
+        while(true){
+          const {done, value} = await reader.read();
+          if (done) break;
+          chunks.push(value);
+          received += value.length;
+          if (total) {
+            const pct = Math.round((received/total)*100);
+            downloadBar.style.width = pct + '%';
+            downloadPct.textContent = pct + '%';
+            downloadLabel.textContent = 'Downloading...';
+          } else {
+            const approx = Math.min(98, Math.round((received/1024)/50));
+            downloadBar.style.width = approx + '%';
+            downloadPct.textContent = approx + '%';
+            downloadLabel.textContent = 'Downloading...';
+          }
+        }
+
+        const blob = new Blob(chunks);
+        const url = window.URL.createObjectURL(blob);
+        const disp = resp.headers.get('Content-Disposition');
+        let filename = 'DayPlanning_Template.xlsx';
+        if (disp) {
+          const m = disp.match(/filename\*=UTF-8''([^;\n]+)/i) || disp.match(/filename="?([^;\n"]+)"?/i);
+          if (m && m[1]) filename = decodeURIComponent(m[1].replace(/\"/g, ''));
+        }
+        const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
+
+        downloadBar.style.width = '100%'; downloadPct.textContent = '100%'; downloadLabel.textContent = 'Download complete';
+        if (typeof showToast === 'function') showToast('Download Complete','Template downloaded successfully to your local','success');
+        showDownloadSuccessVisual('Template downloaded successfully to your local');
+        setTimeout(()=>{ if (downloadOverlay) downloadOverlay.style.display='none'; downloadTemplateBtn.disabled = prevDisabled; },900);
+
+      } catch (err) {
+        if (downloadOverlay) downloadOverlay.style.display='none';
+        downloadTemplateBtn.disabled = prevDisabled;
+        const msg = err && err.message ? err.message : 'Download failed';
+        if (typeof showToast === 'function') {
+          showToast('Download Failed', msg, 'error');
+        } else {
+          alert('Download failed: ' + msg);
+        }
+      }
+    });
+  }
+
+  // ================= PER-TAB UPLOAD CONTROLLER =================
+  // Instantiated once per tab (Day Planning / Recovery). Each instance holds its own
+  // closed-over state (tableData/files/etc.) so the two tabs never interfere with
+  // each other, and posts its own `uploadType` to the shared bulk_upload endpoint.
+  function initUploadController(uploadType, idSuffix) {
+    const fileUploadInput = document.getElementById('file-upload' + idSuffix);
+    const addModelButton = document.getElementById('add-model-btn' + idSuffix);
+    const dataTableSection = document.getElementById('data-table-section' + idSuffix);
+    const dataTableContainer = document.getElementById('data-table-container' + idSuffix);
+    const fileUploadArea = document.getElementById('file-upload-area' + idSuffix);
+
+    let files = [];
+    let tableData = [];
+    let fileDataMap = new Map();
+    let columns = ['S.NO', 'Plating Stk No', 'Polishing Stk No', 'Plating Colour', 'Category', 'Input Qty', 'Source'];
+
+    function disableUploadControls() {
+      fileUploadArea.style.pointerEvents = 'none';
+      fileUploadArea.style.opacity = '0.5';
+      fileUploadArea.style.cursor = 'not-allowed';
+
+      fileUploadInput.disabled = true;
+
+      addModelButton.disabled = true;
+      addModelButton.style.opacity = '0.5';
+      addModelButton.style.cursor = 'not-allowed';
+      addModelButton.style.pointerEvents = 'none';
+
+      const uploadText = fileUploadArea.querySelector('p');
+      if (uploadText) {
+        uploadText.innerHTML = 'Upload disabled';
+        uploadText.style.color = '#6C757D';
+      }
+    }
+
+    function enableUploadControls() {
+      fileUploadArea.style.pointerEvents = 'auto';
+      fileUploadArea.style.opacity = '1';
+      fileUploadArea.style.cursor = 'pointer';
+
+      fileUploadInput.disabled = false;
+
+      addModelButton.disabled = false;
+      addModelButton.style.opacity = '1';
+      addModelButton.style.cursor = 'pointer';
+      addModelButton.style.pointerEvents = 'auto';
+
+      const uploadText = fileUploadArea.querySelector('p');
+      if (uploadText) {
+        uploadText.innerHTML = 'Drag and drop Excel files here or <span class="upload-link">Click to Select</span>';
+        uploadText.style.color = 'var(--clr-muted)';
+      }
+    }
+
+    function createEmptyRow() {
+      return {
+        'S.NO': String(tableData.length + 1),
+        'Plating Stk No': '',
+        'Polishing Stk No': '',
+        'Plating Colour': '',
+        'Category': '',
+        'Input Qty': '',
+        'Source': ''
+      };
+    }
+
+    function handleFileSelect(e) {
+      const selectedFiles = Array.from(e.target.files);
+      if (!selectedFiles.length) return;
+
+      const file = selectedFiles[0];
+
+      const validTypes = [
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel'
+      ];
+      if (!validTypes.includes(file.type) && !file.name.endsWith('.xls') && !file.name.endsWith('.xlsx')) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid file format',
+          text: 'Please upload only Excel files (.xlsx, .xls)',
+          width: '500px'
+        });
+        return;
+      }
+
+      files = [];
+      tableData = [];
+      fileDataMap.clear();
+
+      files.push(file);
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('/dayplanning/bulk_upload/preview/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        Swal.close();
+
+        if (data.success) {
+          fileDataMap.set(file.name, data.data);
+
+          const newRows = data.data.map((row, idx) => ({
+            ...row,
+            'S.NO': String(idx + 1),
+            _fileSource: file.name
+          }));
+          tableData = newRows;
+          dataTableSection.style.display = 'block';
+          renderTable();
+          renderFileList();
+
+          disableUploadControls();
+
+          if (data.warnings && data.warnings.length > 0) {
+            const warningText = data.warnings.slice(0, 5).join('<br>');
+            const moreWarnings = data.warnings.length > 5 ? `<br><br>... and ${data.warnings.length - 5} more warnings.` : '';
+
+            Swal.fire({
+              icon: 'warning',
+              title: '⚠️ File Loaded with Warnings',
+              html: `
+                <div style="text-align: left;">
+                  <p><strong>Excel data loaded successfully, but some rows have issues:</strong></p>
+                  <div style="margin-top: 10px; font-size: 14px;">
+                    ${warningText}${moreWarnings}
+                  </div>
+                  <p style="margin-top: 15px;"><strong>Please review and correct the data before submitting.</strong></p>
+                </div>
+              `,
+              width: '600px',
+              showConfirmButton: true
+            });
+          } else {
+            Swal.fire({
+              icon: 'success',
+              title: 'File Loaded Successfully!',
+              text: `${data.data.length} rows loaded for preview.`,
+              showConfirmButton: false,
+              timer: 2000
+            });
+          }
+        } else {
+          files = [];
+          tableData = [];
+          fileDataMap.clear();
+          renderFileList();
+
+          const isColumnError = data.error.includes('Column Name Mismatch') ||
+                               data.error.includes('Missing') && data.error.includes('column');
+
+          if (isColumnError) {
+            Swal.fire({
+              icon: 'error',
+              title: '❌ Excel Format Error',
+              html: `
+                <div style="text-align: left;">
+                  <div style="margin-bottom: 15px;">
+                    ${data.error.replace(/\n/g, '<br>')}
+                  </div>
+                  <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                    <strong>💡 How to fix:</strong><br>
+                    1. Ensure your Excel file has exactly 7 columns<br>
+                    2. Column names must match exactly (case-sensitive)<br>
+                    3. No extra spaces in column names<br>
+                    4. First row should be headers, data starts from row 2
+                  </div>
+                </div>
+              `,
+              width: '650px',
+              showConfirmButton: true
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'File Processing Error',
+              text: data.error || 'Could not read Excel file.',
+              width: '500px'
+            });
+          }
+        }
+      })
+      .catch(error => {
+        Swal.close();
+        console.error('Upload error:', error);
+
+        files = [];
+        tableData = [];
+        fileDataMap.clear();
+        renderFileList();
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Upload Failed',
+          text: 'Could not upload file. Please check your connection and try again.',
+          width: '500px'
+        });
+      });
+
+      e.target.value = '';
+    }
+
+    function handleAddModel() {
+      if (addModelButton.disabled) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Action Not Allowed',
+          text: 'Please clear the current table before adding new data.',
+          showConfirmButton: true
+        });
+        return;
+      }
+
+      tableData = [createEmptyRow()];
+      dataTableSection.style.display = 'block';
+      renderTable();
+
+      disableUploadControls();
+    }
+
+    function renderFileList() {
+      const chipsContainer = document.getElementById('dp-files-chips-container' + idSuffix);
+      chipsContainer.innerHTML = '';
+
+      if (files.length) {
+        files.forEach((file, index) => {
+          const chip = document.createElement('div');
+          chip.className = 'dp-file-chip';
+          chip.innerHTML = `
+            <span>${file.name} (${formatFileSize(file.size)})</span>
+            <button data-index="${index}" aria-label="Remove file" style="background: none; border: none; color: var(--clr-danger); cursor: pointer; padding: 0; font-size: 1.1rem; line-height: 1; transition: all 0.2s ease;">×</button>
+          `;
+          chipsContainer.appendChild(chip);
+
+          chip.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation();
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "Do you really want to remove this file? All data will be cleared.",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Yes, delete it!',
+              cancelButtonText: 'Cancel'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                handleRemoveFile(index);
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Deleted!',
+                  text: 'File has been removed successfully.',
+                  showConfirmButton: false,
+                  timer: 2000
+                });
+              }
+            });
+          });
+        });
+      }
+    }
+
+    function handleRemoveFile(index) {
+      files = [];
+      tableData = [];
+      fileDataMap.clear();
+
+      renderFileList();
+      renderTable();
+
+      enableUploadControls();
+    }
+
+    function renderTable() {
+      const emptyStateSection = document.getElementById('empty-state-section' + idSuffix);
+
+      if (!tableData.length) {
+        emptyStateSection.classList.add('show');
+        dataTableSection.style.display = 'none';
+        updateTopRecordCount();
+        return;
+      }
+
+      emptyStateSection.classList.remove('show');
+      dataTableSection.style.display = 'block';
+
+      const sortedData = [...tableData];
+
+      const table = document.createElement('table');
+      table.className = 'data-table';
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+
+      columns.forEach(column => {
+        const th = document.createElement('th');
+        th.textContent = column;
+        headerRow.appendChild(th);
+      });
+
+      const actionsTh = document.createElement('th');
+      actionsTh.className = 'actions';
+      actionsTh.textContent = 'Actions';
+      headerRow.appendChild(actionsTh);
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      sortedData.forEach((row, rowIndex) => {
+        const tr = document.createElement('tr');
+        tr.classList.add('table-row-animation');
+        columns.forEach(column => {
+          const td = document.createElement('td');
+          if (column === 'S.NO') {
+            td.textContent = row[column];
+          } else {
+            td.className = 'editable-cell';
+            td.textContent = row[column];
+
+            const isAutoFilled = row._autoFilled && row._autoFilled.includes(column);
+            const isReadOnlyField = (column === 'Polishing Stk No' || column === 'Plating Colour') && isAutoFilled;
+
+            if (isReadOnlyField) {
+              td.style.backgroundColor = '#e8f5e8';
+              td.style.borderLeft = '3px solid #28a745';
+              td.style.cursor = 'not-allowed';
+              td.style.opacity = '0.8';
+              td.title = 'Auto-filled (read-only) - based on Plating Stk No';
+            }
+
+            td.addEventListener('click', () => {
+              if (isReadOnlyField) {
+                Swal.fire({
+                  icon: 'info',
+                  title: 'Read-Only Field',
+                  html: `<strong>${column}</strong> is auto-filled from <strong>Plating Stk No</strong> and cannot be edited directly.<br><br>To change this value, modify the <strong>Plating Stk No</strong> field.`,
+                  confirmButtonText: 'OK',
+                  confirmButtonColor: '#126a83'
+                });
+                return;
+              }
+
+              const currentValue = row[column] || '';
+
+              if (column === 'Category' || column === 'Source') {
+                createSimpleDropdown(td, row, column, currentValue, uploadType);
+                return;
+              }
+
+              const input = document.createElement('input');
+              input.className = 'cell-input';
+              input.value = currentValue;
+
+              if (column !== 'Input Qty') {
+                input.addEventListener('input', function() {
+                  const start = this.selectionStart;
+                  const end = this.selectionEnd;
+                  this.value = this.value.toUpperCase();
+                  this.setSelectionRange(start, end);
+                });
+              }
+
+              if (column === 'Input Qty') {
+                input.type = 'number';
+                input.min = '0';
+                input.step = '1';
+                input.addEventListener('keypress', function(e) {
+                  if (!/[\d]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                });
+                input.addEventListener('paste', function(e) {
+                  const pasteData = e.clipboardData.getData('text');
+                  if (!/^\d+$/.test(pasteData)) {
+                    e.preventDefault();
+                  }
+                });
+              }
+
+              td.textContent = '';
+              td.appendChild(input);
+              input.focus();
+
+              input.addEventListener('click', function(e) {
+                e.stopPropagation();
+              });
+
+              if (column === 'Plating Stk No') {
+                input.addEventListener('blur', async () => {
+                  const platingStockNo = input.value.trim();
+                  if (platingStockNo) {
+                    try {
+                      const validation = await validatePlatingStockNo(platingStockNo);
+                      if (!validation.isValid) {
+                        showAutoFetchMessage(validation.message, 'error');
+                        input.style.borderColor = '#dc3545';
+                        input.style.backgroundColor = '#fff8f8';
+                        input.setAttribute('data-valid', 'false');
+                      } else {
+                        input.style.borderColor = '#28a745';
+                        input.style.backgroundColor = '#f8fff8';
+                        input.setAttribute('data-valid', 'true');
+                        await autoFetchRelatedFields(row, platingStockNo, renderTable);
+                      }
+                    } catch (error) {
+                      console.error('❌ Validation error on blur:', error);
+                      input.style.borderColor = '#ffc107';
+                      input.style.backgroundColor = '#fff8f0';
+                    }
+                  }
+                  handleBlur();
+                });
+              }
+
+              const handleBlur = () => {
+                let newValue = input.value.trim();
+
+                if (column !== 'Input Qty') {
+                  newValue = newValue.toUpperCase();
+                }
+
+                if (column === 'Input Qty' && newValue !== '') {
+                  if (!/^\d+$/.test(newValue) || parseInt(newValue) < 0) {
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Invalid Input',
+                      text: 'Input Qty must be a positive numeric value only.',
+                      showConfirmButton: true
+                    });
+                    td.textContent = currentValue;
+                    input.removeEventListener('blur', handleBlur);
+                    input.removeEventListener('keydown', handleKeydown);
+                    return;
+                  }
+                }
+
+                row[column] = newValue;
+                td.textContent = newValue;
+                input.removeEventListener('blur', handleBlur);
+                input.removeEventListener('keydown', handleKeydown);
+              };
+              const handleKeydown = async (e) => {
+                if (e.key === 'Enter') {
+                  if (column === 'Plating Stk No') {
+                    const platingStockNo = input.value.trim();
+                    if (platingStockNo) {
+                      try {
+                        const validation = await validatePlatingStockNo(platingStockNo);
+                        if (!validation.isValid) {
+                          showAutoFetchMessage(validation.message, 'error');
+                          input.style.borderColor = '#dc3545';
+                          input.style.backgroundColor = '#fff8f8';
+                          input.setAttribute('data-valid', 'false');
+                          return;
+                        } else {
+                          input.style.borderColor = '#28a745';
+                          input.style.backgroundColor = '#f8fff8';
+                          input.setAttribute('data-valid', 'true');
+                          await autoFetchRelatedFields(row, platingStockNo, renderTable);
+                        }
+                      } catch (error) {
+                        console.error('❌ Auto-fetch error on Enter:', error);
+                        input.style.borderColor = '#ffc107';
+                        input.style.backgroundColor = '#fff8f0';
+                        return;
+                      }
+                    }
+                  }
+                  handleBlur();
+                } else if (e.key === 'Escape') {
+                  td.textContent = currentValue;
+                }
+              };
+              input.addEventListener('blur', handleBlur);
+              input.addEventListener('keydown', handleKeydown);
+            });
+          }
+          tr.appendChild(td);
+        });
+
+        const actionsTd = document.createElement('td');
+        actionsTd.className = 'actions';
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn-delete';
+        deleteButton.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+             viewBox="0 0 24 24" fill="none" stroke="var(--clr-muted)" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" class="icon btn-delete-icon">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        `;
+
+        deleteButton.addEventListener('click', () => {
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this row?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+          }).then((result) => {
+            if (result.isConfirmed) {
+                const originalIndex = tableData.findIndex(r => r['S.NO'] === row['S.NO']);
+                if (originalIndex !== -1) {
+                handleDeleteRow(originalIndex);
+                }
+            }
+          });
+        });
+        actionsTd.appendChild(deleteButton);
+        tr.appendChild(actionsTd);
+        tbody.appendChild(tr);
+      });
+
+      const addRowTR = document.createElement('tr');
+      const addRowTD = document.createElement('td');
+      addRowTD.colSpan = columns.length + 1;
+      addRowTD.style.textAlign = 'left';
+      addRowTD.style.paddingLeft = '2rem';
+      addRowTD.style.cursor = 'pointer';
+      addRowTD.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+         stroke="var(--clr-primary)" stroke-width="2" stroke-linecap="round"
+         stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      `;
+      addRowTD.addEventListener('click', () => {
+        tableData.push(createEmptyRow());
+        renderTable();
+      });
+      addRowTR.appendChild(addRowTD);
+      tbody.appendChild(addRowTR);
+      table.appendChild(tbody);
+      dataTableContainer.innerHTML = '';
+      dataTableContainer.appendChild(table);
+
+      const tableActionsContainer = document.querySelector('#data-table-section' + idSuffix + ' .table-actions');
+      tableActionsContainer.innerHTML = '';
+
+      const submitButton = document.createElement('button');
+      submitButton.className = 'btn btn-outline';
+      submitButton.textContent = 'Submit';
+
+      submitButton.addEventListener('click', () => {
+        if (!tableData || tableData.length === 0) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'No Data',
+            text: 'Please add some data to the table before submitting.'
+          });
+          return;
+        }
+
+        const validRows = tableData.filter(row => {
+          const hasData = Object.keys(row).some(key => {
+            if (key === 'S.NO' || key === '_fileSource') return false;
+            return row[key] && row[key].toString().trim() !== '';
+          });
+          return hasData;
+        });
+
+        if (validRows.length === 0) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'No Valid Data',
+            text: 'Please ensure at least one row has complete data before submitting.'
+          });
+          return;
+        }
+
+        const cleanRows = validRows.map(row => {
+          const cleanRow = { ...row };
+          delete cleanRow._fileSource;
+          delete cleanRow._autoFilled;
+          return cleanRow;
+        });
+
+        fetch('/dayplanning/bulk_upload/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify({ rows: cleanRows, upload_type: uploadType })
+        })
+        .then(async response => {
+          const contentType = response.headers.get('content-type');
+          let data = {};
+
+          if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+          } else {
+            const text = await response.text();
+            try {
+              data = JSON.parse(text);
+            } catch (e) {
+              data = { error: text };
+            }
+          }
+
+          if (response.ok && data.success) {
+            let alertContent = data.message || 'Your data has been submitted successfully.';
+            let alertType = 'success';
+            let alertTitle = 'Success!';
+
+            if (data.failed_rows && data.failed_rows.length > 0) {
+              alertType = 'warning';
+              alertTitle = '⚠️ Partial Success';
+              const failedRowsText = data.failed_rows.slice(0, 10).join('<br>');
+              const moreErrors = data.failed_rows.length > 10
+                ? `<br><br>... and ${data.failed_rows.length - 10} more errors.`
+                : '';
+              alertContent = `
+                <div style="text-align:left;">
+                  <strong>${data.message}</strong><br><br>
+                  <strong>Details:</strong><br>
+                  ${failedRowsText}${moreErrors}
+                </div>
+              `;
+
+              const failedRowNumbers = new Set();
+              data.failed_rows.forEach(errorMsg => {
+                const match = errorMsg.match(/Row (\d+):/);
+                if (match) {
+                  failedRowNumbers.add(parseInt(match[1]));
+                }
+              });
+
+              if (failedRowNumbers.size > 0) {
+                const originalToCurrentMapping = new Map();
+                validRows.forEach((row, validIndex) => {
+                  const originalRowIndex = validIndex + 1;
+                  const currentIndex = tableData.findIndex(tableRow =>
+                    tableRow['S.NO'] === row['S.NO'] ||
+                    (tableRow['Plating Stk No'] === row['Plating Stk No'] &&
+                     tableRow['Polishing Stk No'] === row['Polishing Stk No'] &&
+                     tableRow['Plating Colour'] === row['Plating Colour'] &&
+                     tableRow['Category'] === row['Category'] &&
+                     tableRow['Input Qty'] === row['Input Qty'] &&
+                     tableRow['Source'] === row['Source'])
+                  );
+                  if (currentIndex !== -1) {
+                    originalToCurrentMapping.set(originalRowIndex, currentIndex);
+                  }
+                });
+
+                const failedRows = tableData.filter((row, index) => {
+                  for (let [originalIndex, currentIndex] of originalToCurrentMapping.entries()) {
+                    if (currentIndex === index && failedRowNumbers.has(originalIndex)) {
+                      return true;
+                    }
+                  }
+                  return false;
+                });
+
+                tableData = failedRows.map((row, index) => ({
+                  ...row,
+                  'S.NO': String(index + 1)
+                }));
+
+                renderTable();
+              }
+            } else {
+              tableData = [];
+              files = [];
+              fileDataMap.clear();
+              renderTable();
+              renderFileList();
+
+              enableUploadControls();
+            }
+
+            Swal.fire({
+              icon: alertType,
+              title: alertTitle,
+              html: alertContent,
+              width: '600px',
+              showConfirmButton: true
+            });
+          } else {
+            let errorHtml = '';
+            if (data.failed_rows && data.failed_rows.length > 0) {
+              errorHtml = '<div style="text-align:left;">' +
+                data.failed_rows.map(msg => `<div>${msg}</div>`).join('') +
+                '</div>';
+            }
+            Swal.fire({
+              icon: 'error',
+              title: 'Submission Failed',
+              html: (data.error ? `<div>${data.error}</div>` : '') + errorHtml,
+              width: '600px',
+              showConfirmButton: true
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Submission error:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Network Error',
+            text: 'Could not submit data. Please check your connection and try again.',
+            showConfirmButton: true
+          });
+        });
+      });
+
+      const cancelButton = document.createElement('button');
+      cancelButton.className = 'btn btn-outline';
+      cancelButton.textContent = 'Cancel';
+      cancelButton.style.borderColor = 'red';
+      cancelButton.style.color = 'red';
+
+      cancelButton.addEventListener('click', () => {
+        Swal.fire({
+          title: 'Are you sure?',
+          html: `
+            <div style="text-align: center;">
+              <p>Do you really want to cancel?</p>
+              <p style="color: #d33; font-weight: bold;">⚠️ All unsaved data will be lost and the table will be cleared.</p>
+            </div>
+          `,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, cancel it!',
+          cancelButtonText: 'No, keep editing',
+          reverseButtons: true,
+          width: '500px'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            tableData = [];
+            files = [];
+            fileDataMap.clear();
+            renderTable();
+            renderFileList();
+
+            enableUploadControls();
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Cancelled Successfully!',
+              text: 'The table has been cancelled and all data cleared.',
+              showConfirmButton: false,
+              timer: 2000
+            });
+          }
+        });
+      });
+
+      tableActionsContainer.appendChild(submitButton);
+      tableActionsContainer.appendChild(cancelButton);
+      updateTopRecordCount();
+    }
+
+    function handleDeleteRow(index) {
+      tableData.splice(index, 1);
+
+      if (tableData.length === 0) {
+        files = [];
+        fileDataMap.clear();
+        renderFileList();
+        renderTable();
+
+        enableUploadControls();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'All data cleared',
+          text: 'Table is empty. Upload controls are now enabled.',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      } else {
+        tableData = tableData.map((row, idx) => ({
+          ...row,
+          'S.NO': String(idx + 1)
+        }));
+        renderTable();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Row deleted',
+          text: 'Row removed successfully',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      }
+    }
+
+    function updateTopRecordCount() {
+      const countSpan = document.getElementById('top-record-count' + idSuffix);
+      if (!countSpan) return;
+      const validRowCount = tableData.filter(row => {
+        const hasData = Object.keys(row).some(key => {
+          if (key === 'S.NO' || key === '_fileSource' || key === '_autoFilled') return false;
+          return row[key] && row[key].toString().trim() !== '';
+        });
+        return hasData;
+      }).length;
+      countSpan.textContent = validRowCount;
+    }
+
+    addModelButton.addEventListener('click', handleAddModel);
+    fileUploadInput.addEventListener('change', handleFileSelect);
+
+    fileUploadArea.addEventListener('click', () => fileUploadInput.click());
+    fileUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUploadArea.classList.add('dragover');
+    });
+    fileUploadArea.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      fileUploadArea.classList.remove('dragover');
+    });
+    fileUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUploadArea.classList.remove('dragover');
+      const droppedFiles = e.dataTransfer.files;
+      fileUploadInput.files = droppedFiles;
+      const changeEvent = new Event('change');
+      fileUploadInput.dispatchEvent(changeEvent);
+    });
+
+    updateTopRecordCount();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchAllowedVersions();
+    attachDownloadTemplateHandler('download-template-btn');
+    attachDownloadTemplateHandler('download-template-btn-recovery');
+    initUploadController('day_planning', '');
+    initUploadController('recovery', '-recovery');
+  });
+</script>
+
+
+  
+{% endblock %}

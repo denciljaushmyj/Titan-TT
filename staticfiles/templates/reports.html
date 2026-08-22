@@ -1,0 +1,456 @@
+﻿{% extends "base.html" %} {% load static %} {% load custom_filters %} {% block content %}
+<style nonce="{{ csp_nonce }}">
+  
+  .reports-container {
+    min-height: calc(100vh - 60px);
+    padding: 0;
+    margin: 0 -15px 0 -15px;
+  }
+
+  /* ── Minimal header ─────────────────────────────────── */
+  .reports-header {
+    background: linear-gradient(
+      90deg,
+      #e0f7fa 0%,
+      #b2ebf2 33%,
+      #ffe0b2 66%,
+      #f8bbd0 100%
+    );
+    border-bottom: 1px solid #eaecef;
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .reports-header-text h1 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1a2332;
+    letter-spacing: 0.01em;
+  }
+  .reports-header-text p {
+    font-size: 0.74rem;
+    margin: 0;
+    color: #9aa5b4;
+  }
+
+  /* ── Content area ───────────────────────────────────── */
+  .reports-content {
+    background: #f5f6f8;
+    padding: 20px 24px;
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+  }
+  .reports-grid {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Main filter card ───────────────────────────────── */
+  .control-card {
+    background: #fff;
+    border: 1px solid #e4e7ea;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    padding: 18px 22px 14px;
+  }
+  .control-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .ctrl-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1 1 140px;
+    min-width: 0;
+  }
+  .ctrl-group label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #9aa5b4;
+  }
+  .form-control-sm {
+    border: 1px solid #dde1e7;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 0.86rem;
+    color: #1a2332;
+    background: #fff;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    width: 100%;
+    box-sizing: border-box;
+    height: 36px;
+  }
+  .form-control-sm:focus {
+    border-color: #028084;
+    box-shadow: 0 0 0 2px rgba(2,128,132,0.1);
+    outline: none;
+  }
+
+  /* "OR" separator pill */
+  .or-pill {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 2px;
+    flex: 0 0 auto;
+  }
+  .or-pill span {
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #b0bec5;
+    border: 1px solid #dde1e7;
+    border-radius: 10px;
+    padding: 3px 9px;
+    background: #f9fafb;
+    user-select: none;
+  }
+
+  /* Autocomplete */
+  .autocomplete-wrap { position: relative; }
+  .autocomplete-list {
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: #fff;
+    border: 1px solid #dde1e7;
+    border-top: none;
+    border-radius: 0 0 7px 7px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 50;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+  }
+  .autocomplete-list .ac-item {
+    padding: 7px 12px;
+    cursor: pointer;
+    font-size: 0.84rem;
+    color: #1a2332;
+    border-bottom: 1px solid #f4f5f7;
+  }
+  .autocomplete-list .ac-item:last-child { border-bottom: none; }
+  .autocomplete-list .ac-item:hover { background: #f0f8f8; color: #028084; }
+
+  /* Action buttons */
+  .ctrl-actions {
+    display: flex;
+    gap: 7px;
+    align-items: flex-end;
+    flex: 0 0 auto;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid #dde1e7;
+    color: #5a6a7a;
+    padding: 0 14px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    height: 36px;
+    white-space: nowrap;
+    transition: border-color 0.18s, color 0.18s;
+  }
+  .btn-ghost:hover { border-color: #028084; color: #028084; }
+  .btn-ghost i, .btn-primary-sm i { font-size: 0.8rem; margin-right: 5px; vertical-align: -1px; }
+
+  /* Reset — muted, turns red on hover (destructive-ish action) */
+  .btn-reset {
+    background: #f5f6f8;
+    border: 1px solid #dde1e7;
+    color: #7a8794;
+  }
+  .btn-reset:hover { border-color: #d9534f; color: #d9534f; background: #fdf3f2; }
+
+  /* Preview — teal outline (primary-adjacent action) */
+  .btn-preview-sm {
+    background: #f0f8f8;
+    border: 1px solid #028084;
+    color: #028084;
+  }
+  .btn-preview-sm:hover { background: #028084; color: #fff; }
+  .btn-primary-sm {
+    background: #028084;
+    border: none;
+    color: #fff;
+    padding: 0 18px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    height: 36px;
+    white-space: nowrap;
+    transition: background 0.18s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary-sm:hover { background: #026669; }
+  .btn-primary-sm:disabled { background: #a8c4c4; cursor: not-allowed; }
+
+  /* Download mode hint */
+  .dl-hint {
+    margin-top: 9px;
+    font-size: 0.72rem;
+    color: #9aa5b4;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dl-mode-badge {
+    background: #eef7f7;
+    color: #028084;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* Success strip */
+  .success-strip {
+    background: #f3fbf3;
+    border-left: 3px solid #4caf50;
+    padding: 6px 14px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 10px;
+    display: none;
+    color: #2e7d32;
+    font-size: 0.8rem;
+    font-weight: 500;
+    animation: fadeUp 0.22s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .small-text { color: #9aa5b4; font-size: 0.76rem; }
+
+  /* ── Preview results card ───────────────────────────── */
+  .preview-section {
+    background: #fff;
+    border: 1px solid #e4e7ea;
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    padding: 16px 20px;
+    display: none;
+  }
+  .preview-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .preview-section-header h4 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #9aa5b4;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .preview-table-inner { overflow-x: auto; }
+  .preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .preview-table th {
+    background: #f8f9fa;
+    color: #6b7a8d;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 8px 10px;
+    border-bottom: 2px solid #eaecef;
+    white-space: nowrap;
+    text-align: left;
+  }
+  .preview-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f2f4f6;
+    color: #2c3e50;
+    vertical-align: top;
+    white-space: pre-line;
+  }
+  .preview-table tbody tr:hover { background: #fafcfc; }
+  .preview-pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .preview-pagination button {
+    border: 1px solid #dde1e7;
+    background: #fff;
+    color: #5a6a7a;
+    border-radius: 5px;
+    padding: 3px 11px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: border-color 0.18s, color 0.18s;
+  }
+  .preview-pagination button:hover:not(:disabled) { border-color: #028084; color: #028084; }
+  .preview-pagination button:disabled { opacity: 0.35; cursor: not-allowed; }
+</style>
+
+<div class="reports-container">
+  <!-- Header -->
+  <div class="reports-header">
+    <img src="{% static 'assets/icons/report.png' %}" alt="" style="height:1.5rem;opacity:.65">
+    <div class="reports-header-text">
+      <h1>Reports</h1>
+      <p>Export manufacturing data as Excel reports</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="reports-content">
+    <div class="reports-grid">
+
+      <!-- Single control card: smart download + consolidated filters -->
+      <div class="control-card">
+        <div class="control-row"
+          id="consolidatedFilters"
+          data-preview-url="{% url 'reports_module:consolidated_report_preview' %}"
+          data-consolidated-url="{% url 'reports_module:consolidated_report_download' %}"
+          data-autocomplete-url="{% url 'reports_module:plating_stock_autocomplete' %}">
+
+          <!-- Module -->
+          <div class="ctrl-group" style="flex: 1 1 190px; max-width: 240px">
+            <label for="module">Module</label>
+            <select class="form-control-sm" id="module" name="module">
+              <option value="">— Select module —</option>
+              <option value="day-planning">Day Planning</option>
+              <option value="input-screening">Input Screening</option>
+              <option value="brass-qc">Brass QC</option>
+              <option value="iqf">IQF</option>
+              <option value="brass-audit">Brass Audit</option>
+              <option value="jig-loading">Jig Loading</option>
+              <option value="inprocess-inspection">IP Inspection</option>
+              <option value="jig-unloading-z1">Jig Unloading Z1</option>
+              <option value="jig-unloading-z2">Jig Unloading Z2</option>
+              <option value="nickel-inspection-z1">Nickel Wiping Z1</option>
+              <option value="nickel-inspection-z2">Nickel Wiping Z2</option>
+              <option value="nickel-audit-z1">Nickel Audit Z1</option>
+              <option value="nickel-audit-z2">Nickel Audit Z2</option>
+              <option value="spider-spindle-z1">Spider Spindle Z1</option>
+              <option value="spider-spindle-z2">Spider Spindle Z2</option>
+            </select>
+          </div>
+
+          <!-- OR pill -->
+          <div class="or-pill"><span>OR</span></div>
+
+          <!-- From -->
+          <div class="ctrl-group" style="flex: 0 0 136px">
+            <label for="consFromDate">From</label>
+            <input type="date" id="consFromDate" class="form-control-sm" />
+          </div>
+
+          <!-- To -->
+          <div class="ctrl-group" style="flex: 0 0 136px">
+            <label for="consToDate">To</label>
+            <input type="date" id="consToDate" class="form-control-sm" />
+          </div>
+
+          <!-- Plating Stock autocomplete -->
+          <div class="ctrl-group autocomplete-wrap" style="flex: 1 1 160px">
+            <label for="consPlatingStock">Plating Stock No.</label>
+            <input
+              type="text"
+              id="consPlatingStock"
+              class="form-control-sm"
+              placeholder="Search…"
+              autocomplete="off"
+            />
+            <div id="consAutocompleteList" class="autocomplete-list"></div>
+          </div>
+
+          <!-- Actions -->
+          <div class="ctrl-actions">
+            <button type="button" id="consResetBtn" class="btn-ghost btn-reset" title="Clear all filters">
+              <i class="ti-reload"></i>Reset
+            </button>
+            <button type="button" id="consPreviewBtn" class="btn-ghost btn-preview-sm">
+              <i class="ti-eye"></i>Preview
+            </button>
+            <button type="button" id="smartDownloadBtn"
+              data-module-url="{% url 'reports_module:download_report' %}"
+              data-consolidated-url="{% url 'reports_module:consolidated_report_download' %}"
+              class="btn-primary-sm">
+              <i class="ti-download"></i>Download
+            </button>
+          </div>
+        </div>
+
+        <!-- Download mode indicator -->
+        <div class="dl-hint">
+          Will download: <span class="dl-mode-badge" id="downloadModeBadge">Consolidated Report</span>
+        </div>
+
+        <!-- Success strip -->
+        <div id="successMessage" class="success-strip">
+          ✓ Report downloaded successfully
+        </div>
+      </div>
+
+      <!-- Preview results (appears after Preview click) -->
+      <div id="consPreviewWrap" class="preview-section">
+        <div class="preview-section-header">
+          <h4>Consolidated Report Preview</h4>
+          <span id="consPageInfo" class="small-text"></span>
+        </div>
+        <div class="preview-table-inner">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Plating Stock No.</th>
+                <th>Lot Qty</th>
+                <th>Day Planning</th>
+                <th>Input Screening</th>
+                <th>Brass QC</th>
+                <th>IQF</th>
+                <th>Brass Audit</th>
+                <th>Jig Loading</th>
+                <th>IP Inspection</th>
+                <th>Jig Unloading Z1</th>
+                <th>Jig Unloading Z2</th>
+                <th>Nickel Wiping Z1</th>
+                <th>Nickel Wiping Z2</th>
+                <th>Nickel Audit Z1</th>
+                <th>Nickel Audit Z2</th>
+                <th>Spider Spindle Z1</th>
+                <th>Spider Spindle Z2</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody id="consPreviewBody"></tbody>
+          </table>
+        </div>
+        <div class="preview-pagination">
+          <button type="button" id="consPrevPage">&laquo; Prev</button>
+          <button type="button" id="consNextPage">Next &raquo;</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="{% static_v 'js/reports.js' %}" nonce="{{ csp_nonce }}"></script>
+{% endblock %}

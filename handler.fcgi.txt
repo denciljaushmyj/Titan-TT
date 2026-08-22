@@ -1,0 +1,15 @@
+import os
+import sys
+
+# Add project paths
+sys.path.insert(0, r"D:\TT-Watch_tracker")  # project root
+sys.path.insert(0, r"D:\TT-Watch_tracker\watchcase_tracker\watchcase_tracker")  # your Django project folder
+
+# Set Django settings module
+os.environ['DJANGO_SETTINGS_MODULE'] = 'watchcase_tracker.settings'  # replace with your project settings name
+
+# WSGI
+from django.core.wsgi import get_wsgi_application
+from wfastcgi import WSGIServer
+
+WSGIServer(get_wsgi_application()).run()

@@ -1,0 +1,3673 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+{% load stock_filters %} 
+
+<style nonce="{{ csp_nonce }}">
+/* ========== Tablet override — paste at file end (after other table styles) ========== */
+/* --- Tablet: freeze first 3 columns consistently with desktop --- */
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+
+*{
+  font-size: var(--ttt-font-size-tablet) !important; /* Increase font size for better readability */
+}
+
+:root { --app-font-size: var(--ttt-font-size-tablet); }
+.rounded-circle{
+  padding: 17px !important;
+}
+.model-image-tooltip{
+  transform: translateX(-25%) !important;
+  top: 45% !important;
+  z-index: 10010 !important; /* high so it sits above table & scrollbar */
+
+}
+
+
+  /* Core layout blocks */
+  .content-wrapper,
+  .card, .card-body,
+  .table-responsive,
+  #order-listing,
+  #trayScanModal_DayPlanning,
+  .tray-scan-modal-DayPlanning,
+  .pagination-wrapper {
+    font-size: var(--app-font-size) !important;
+    line-height: 1.35 !important;
+  }
+
+  /* Table headings / cells / icons */
+  #order-listing th,
+  #order-listing td,
+  #order-listing thead th {
+    font-size: var(--app-font-size) !important;
+    vertical-align: middle !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  /* Ensure heading/title and date controls match */
+  h4.text-left.mt-0.mb-3,
+  .calendar-bar .date-input-group label,
+  .calendar-bar .date-input-group input,
+  #search-date-range-simple,
+  #clear-date-filter-simple,
+  .calendar-btn,
+  #trayScanModal_DayPlanning input.form-control,#trayValidateBtn,
+  #trayScanModal_DayPlanning table th, #trayScanModal_DayPlanning table td,
+  #modalModelNo_DayPlanning
+ {
+    font-size: var(--app-font-size) !important;
+  }  
+
+  /* Reserve space for filter icons in header cells */
+#order-listing th {
+  position: relative;
+  overflow: visible !important;
+  white-space: normal !important; /* allow wrapping */
+}
+
+/* Ensure filter icons always stay to the right */
+#order-listing th .fa-filter {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px !important;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+  /* Column 1 */
+  #order-listing th:nth-child(1),
+  #order-listing td:nth-child(1) {
+    position: sticky;
+    left: 0 !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+    background: #f7fafd;
+    z-index: 30;
+  }
+
+  /* Column 2 */
+  #order-listing th:nth-child(2),
+  #order-listing td:nth-child(2) {
+    position: sticky;
+    left: 90px !important;   /* = width of col1 */
+    min-width: 125px !important;
+    max-width: 125px !important;
+    background: #f7fafd;
+    z-index: 25;
+  }
+
+  /* Column 3 */
+  #order-listing th:nth-child(3),
+  #order-listing td:nth-child(3) {
+    position: sticky;
+    left: 215px !important;  /* 75 (col1) + 100 (col2 min) */
+    min-width: 140px !important;
+    max-width: 140px !important;
+    background: #f7fafd;
+    z-index: 20;
+  }
+
+  /* Sticky header */
+  #order-listing thead th {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: #028084 !important;
+    color: #e5fcff !important;
+  }
+}
+
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+  .table-container {
+    overflow-x: auto;
+  }
+
+  /* Other columns (fit remaining space) */
+  #order-listing th:nth-child(4)  { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(5)  { min-width: 120px !important; max-width: 120px !important; }
+  #order-listing th:nth-child(6)  { min-width: 135px !important; max-width: 135px !important; }
+  #order-listing th:nth-child(7)  { min-width: 115px !important; max-width: 125px !important; }
+  #order-listing th:nth-child(8)  { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(9)  { min-width: 140px !important; max-width: 145px !important; }
+  #order-listing th:nth-child(10) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(11) { min-width: 120px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(12) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(13) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(14) { min-width: 120px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(15) { min-width: 115px !important; max-width: 115px !important; }
+  #order-listing th:nth-child(16) { min-width: 130px !important; max-width: 150px !important; }
+  #order-listing th:nth-child(17) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(18) { min-width: 130px !important; max-width: 130px !important; }
+  #order-listing th:nth-child(19) { min-width: 140px !important; max-width: 140px !important; }
+  #order-listing th:nth-child(20) { min-width: 130px !important; max-width: 130px !important; }
+
+
+  /* Prevent overlap */
+  #order-listing th:nth-child(-n+3),
+  #order-listing td:nth-child(-n+3) {
+    z-index: 45 !important;
+  }
+
+  /* Hide hidden columns */
+  #order-listing th[hidden],
+  #order-listing td[hidden] {
+    display: none !important;
+  }
+}
+/* Add to your CSS file for Excel-like grid lines */
+.table-bordered th, .table-bordered td {
+  border: 1px solid #d9dedf !important;
+}
+  /* Make the table header sticky */
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: white; /* or your table header bg color */
+  z-index: 5; /* ensure it stays above the table rows */
+  
+}
+
+#order-listing thead th {
+  height: 38px !important; /* Increase as needed */
+  background: #028084 !important;
+  color: #e5fcff !important;
+  vertical-align: middle !important;
+  border-bottom: 2.5px solid #bdbdbd !important; /* Thicker grey line below heading */
+}
+/* style for hol/unhold row - blurred bg */
+#order-listing tr:last-child td {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  /* background: #f4f3f3 !important; */
+}
+/* Gird line color combination */
+#order-listing th,
+#order-listing td {
+  border-right: 1.5px solid #bababa !important; /* Vertical lines: blue */
+  border-bottom: 1.5px solid #121413 !important; /* Horizontal lines: green */
+}
+
+  
+/* Default: Desktop/Laptop (wider columns for larger font) - server */
+/* #order-listing th:nth-child(1) {
+  min-width: 90px;
+  max-width: 90px;
+} */ /* S.No */
+/* #order-listing th:nth-child(2) {
+  min-width: 90px;
+  max-width: 100px;
+} */ /* Last Updated */
+/* #order-listing th:nth-child(3) {
+  min-width: 90px;
+  max-width: 120px;
+} */ /* Plating */
+#order-listing th:nth-child(4) {
+  min-width: 110px;
+  max-width: 120px;
+} /* Polishing Stk No */
+#order-listing th:nth-child(5) {
+  min-width: 90px;
+  max-width: 100px;
+} /* Plating Color */
+#order-listing th:nth-child(6) {
+  min-width: 75px;
+  max-width: 80px;
+} /* Category */
+#order-listing th:nth-child(7) {
+  min-width: 85px;
+  max-width: 95px;
+} /* Polish Finish */
+#order-listing th:nth-child(8) {
+  min-width: 85px;
+  max-width: 110px;
+} /* Version */
+#order-listing th:nth-child(9) {
+  min-width: 80px;
+  max-width: 105px;
+} /* Tray Cate-Capacity */
+#order-listing th:nth-child(10) {
+  min-width: 90px;
+  max-width: 100px;
+} /* Source */
+#order-listing th:nth-child(11) {
+  min-width: 80px;
+  max-width: 80px;
+} /* No of Trays */
+#order-listing th:nth-child(12) {
+  min-width: 100px;
+  max-width: 105px;
+} /* Input Qty */
+#order-listing th:nth-child(13) {
+  min-width: 95px;
+  max-width: 100px;
+} /* Process Status */
+#order-listing th:nth-child(14) {
+  min-width: 90px;
+  max-width: 100px;
+} /*  Action */
+#order-listing th:nth-child(15) {
+  min-width: 90px;
+  max-width: 100px;
+} /* Lot Status */
+#order-listing th:nth-child(16) {
+  min-width: 100px;
+  max-width: 100px;
+} /* Current Stage */
+#order-listing th:nth-child(17) {
+  min-width: 110px;
+  max-width: 100px;
+} /* Remarks */
+#order-listing th:nth-child(18) {
+  min-width: 110px;
+  max-width: 110px;
+}
+
+@media (min-width: 600px) and (max-width: 900px) {
+  #order-listing {
+    table-layout: auto !important; /* Let columns auto-fit content */
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: 100vw !important;
+  }
+  /* Adjust width for all headings (th) and cells (td) */
+  #order-listing th,
+  #order-listing td {
+    min-width: 160px !important;
+    max-width: 260px !important;
+    width: 180px !important;
+  }
+  #order-listing th {
+    position: relative;
+    padding-right: 48px !important; /* More space for filter icon */
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: ellipsis;
+  }
+  #order-listing th .fa-filter {
+    position: absolute;
+    right: 18px !important;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: transparent;
+    pointer-events: auto;
+  }
+}
+/* Right-align filter icons */
+#order-listing th .fa-filter {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+#order-listing th .fa-filter:hover {
+  opacity: 1;
+}
+
+
+  
+#order-listing th:last-child,
+#order-listing td:last-child {
+  border-right: none;
+  max-width: 95px;
+  min-width: 100px;
+}
+/* Overall Table Shrink */
+#order-listing tr,
+#order-listing td,
+#order-listing th {
+  height: 20px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+/* Table heading font size */
+/* Add this at the end of your <style> block in DP_PickTable.html */
+
+/* Professional table header styling with proper text wrapping */
+#order-listing th {
+  position: relative;
+  padding: 8px 12px 8px 16px !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  white-space: normal !important;
+  line-height: 1.3 !important;
+  word-break: keep-all !important;
+  hyphens: none !important;
+  /* font-size: 13px; */
+  /* font-weight: 600 !important; */
+  background: #028084 !important;
+  color: #e5fcff !important;
+  border-bottom: 2.5px solid #bdbdbd !important;
+  /* min-width: 80px;
+  max-width: 140px; */
+   overflow-wrap: break-word;
+  word-wrap: break-word;
+   z-index: 20 !important;
+}
+
+/* Make sure header cells for sticky columns are always above body cells */
+/* Fix: Prevent shadow/rows from showing behind sticky columns while scrolling */
+#order-listing th:nth-child(-n+3),
+#order-listing td:nth-child(-n+3) {
+  z-index: 30 !important; 
+box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+}
+
+/* Prevent sticky columns from overlapping sticky header */
+#order-listing td:nth-child(-n+3) {
+  z-index: 11 !important;
+}
+  /* Make the first column sticky and opaque */
+#order-listing td:first-child,
+#order-listing th:first-child {
+  position: sticky;
+  left: 0;
+  background: #fff;      /* Or match your table background */
+  z-index: 2;            /* Above blurred rows */
+  box-shadow: 2px 0 4px rgba(0,0,0,0.03); /* Optional: subtle shadow */
+}
+/* Force specific table headers to wrap onto two lines */
+#order-listing th:nth-child(4),   /* Polishing Stk No */
+#order-listing th:nth-child(5),   /* Plating Color */
+#order-listing th:nth-child(7),   /* Polish Finish */
+#order-listing th:nth-child(9),   /* Tray Cate-Capacity */
+#order-listing th:nth-child(11),  /* No of Tray */
+#order-listing th:nth-child(12),  /* Input Qty */
+#order-listing th:nth-child(13)   /* Process Status */ {
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  word-break: break-word !important;
+
+  text-align: center;
+  vertical-align: middle;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+/* Freeze style for 1st - 3 columns */
+/* --- Freeze first 3 columns and table header for #order-listing --- */
+#order-listing {
+  position: relative;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: #fff;
+  /* Ensure enough left padding for sticky columns */
+}
+
+#order-listing th,
+#order-listing td {
+  background-clip: padding-box;
+  /* Prevent overlap artifacts */
+  z-index: 1;
+}
+
+/* Sticky header */
+#order-listing thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #028084 !important;
+  color: #e5fcff !important;
+}
+
+/* Freeze 1st column */
+#order-listing th:nth-child(1),
+#order-listing td:nth-child(1) {
+  position: sticky;
+  left: 0 !important;
+  z-index: 12; /* Above header */
+  background: #f7fafd;
+  min-width: 75px;
+  max-width: 75px;
+}
+
+/* Freeze 2nd column - Last Updated*/
+#order-listing th:nth-child(2),
+#order-listing td:nth-child(2) {
+  position: sticky;
+  left: 75px; /* Match min-width of 1st col */
+  z-index: 12;
+  background: #f7fafd;
+  min-width: 100px; /* Increased width */
+  max-width: 110px; /* Increased width */
+}
+
+/* Freeze 3rd column */
+#order-listing th:nth-child(3),
+#order-listing td:nth-child(3) {
+  position: sticky;
+  left: 175px; /* 100px (1st) + 90px (2nd) */
+  z-index: 12;
+  background: #f7fafd;
+  min-width: 130px; /* Increased width 100 - old value*/
+  max-width: 140px; /* Increased width  110 - old value*/
+}
+
+/* ...existing code... */
+
+/* Prevent sticky columns from overlapping sticky header */
+#order-listing th:nth-child(-n + 3) {
+  z-index: 12;
+}
+#order-listing td:nth-child(-n + 3) {
+  z-index: 11;
+}
+
+/* Ensure sticky columns and header work together */
+#order-listing th,
+#order-listing td {
+  box-sizing: border-box;
+  /* Prevent content shake */
+  /* overflow: hidden; */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+
+    .blurred-heading, .blurred-cell {
+    filter: blur(2px) grayscale(0.7) opacity(0.6);
+    pointer-events: none !important;
+    user-select: none;
+    cursor: not-allowed;
+    background: #f5f5f5 !important;
+  }
+    /* Show remark tooltip above the trigger instead of below */
+  .remark-tooltip {
+    top: auto !important;
+    bottom: 110% !important;
+  }
+#trayScanDetails.table-grid {
+  display: grid !important;
+  grid-template-columns: 94px 175px 150px !important;
+  gap: 0px !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+}
+
+#trayScanDetails.table-grid::-webkit-scrollbar {
+  width: 8px;
+}
+ 
+#trayScanDetails.table-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+ 
+#trayScanDetails.table-grid::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+ 
+#trayScanDetails.table-grid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+ 
+ 
+.tray-scan-modal.open {
+  width:500px !important;
+}
+/* For the 4-column layout (with validation status) */
+#trayScanDetails.table-grid.four-column {
+  grid-template-columns: 50px 1fr 100px 140px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+ 
+/* Styling individual grid cells, only inside trayScanDetails */
+#trayScanDetails.table-grid > div {
+  background: #f7f7f7;
+  padding: 8px 12px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  margin: 0; /* reset any margin from <p> or others */
+}
+ 
+/* S.no column specific styling */
+#trayScanDetails.table-grid > div:nth-child(3n+1):not(:nth-child(-n+4)) {
+  text-align: center;
+  font-weight: 600;
+  padding: 8px 4px; /* Reduced horizontal padding for S.no */
+}
+ 
+/* For mobile responsiveness */
+@media (max-width: 768px) {
+  #trayScanDetails.table-grid {
+    grid-template-columns: 45px 1fr 1fr !important; /* Even smaller S.no column on mobile */
+  }
+  #trayScanDetails.table-grid.four-column {
+    grid-template-columns: 40px 1fr 80px 100px !important;
+  }
+  #trayScanDetails.table-grid > div:nth-child(3n+1):not(:nth-child(-n+4)) {
+    padding: 6px 2px; /* Further reduced padding on mobile */
+    font-size: 11px;
+  }
+}
+ 
+/* For very small screens */
+@media (max-width: 480px) {
+  #trayScanDetails.table-grid {
+    grid-template-columns: 35px 1fr 80px !important; /* Minimal S.no column */
+  }
+  #trayScanDetails.table-grid.four-column {
+    grid-template-columns: 30px 1fr 70px 90px !important;
+  }
+}
+
+/* ====================================================
+   UNIFIED Nickel Wiping Zone I ACTION BUTTON THEME (matches Brass QC)
+   ==================================================== */
+.btn-accept-is {
+  background-color: #1ba878 !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  height: 28px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease !important;
+}
+.btn-accept-is:hover:not(:disabled) {
+  background-color: #0b8a6a !important;
+}
+.btn-accept-is:disabled,
+.btn-accept-is[disabled] {
+  background-color: #1ba878 !important;
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+.btn-reject-is {
+  background-color: #e57373 !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  height: 28px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease !important;
+}
+.btn-reject-is:hover:not(:disabled) {
+  background-color: #a93226 !important;
+}
+.btn-reject-is:disabled,
+.btn-reject-is[disabled] {
+  background-color: #e57373 !important;
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+.nq-reject-modal-shell {
+  width: 1120px;
+  max-width: 98vw;
+}
+.nq-alloc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.nq-alloc-col {
+  min-width: 0;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.nq-alloc-reject { border: 1px solid #ffcdd2; background: #fff8f8; }
+.nq-alloc-delink { border: 1px solid #ffe0b2; background: #fffaf0; }
+.nq-alloc-accept { border: 1px solid #c8e6c9; background: #f9fdf9; }
+.nq-alloc-col h6 {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 32px;
+}
+.nq-alloc-col h6 span {
+  float: none !important;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.nq-alloc-body,
+.nq-alloc-body > div {
+  min-width: 0;
+}
+.nq-alloc-body input {
+  min-width: 0;
+  width: 100%;
+}
+
+/* ================================================================
+   NICKEL WIPING ZONE 1 — model hover trigger positioning context
+   (Trigger must stay position:relative so the tooltip's position:
+   absolute anchors correctly. Appearance now matches Day Planning
+   via inline styles on the tooltip markup itself — see below.)
+   ================================================================ */
+.content-wrapper .model-hover-trigger {
+  position: relative !important;
+}
+
+</style>
+
+<div class="content-wrapper">
+
+  <div class="row">
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body" style="padding-bottom:12px;">
+          <div class="mb-4" style="position: relative;">
+            <h5 class="text-left mt-0 mb-0 d-inline-block" style="font-weight:700;">Nickel Wiping Pick Table Zone I
+              <!--<button type="button" class="btn btn-primary btn-sm ms-3" id="scanButton"
+                      style="background-color: #028084; border-color: #028084; font-weight: 600; vertical-align: middle;">
+                <i class="fa fa-qrcode" style="margin-right: 6px;"></i>
+                Scan
+              </button> -->
+              <span id="scanStatusMessage" style="display: none; margin-left: 12px; vertical-align: middle; color: #28a745; font-size: 15px; font-weight: 700;">PLEASE SCAN</span>
+            </h5>
+            <input type="text" id="scanHiddenInput" style="position: absolute; left: -9999px; opacity: 0;" autocomplete="off" />
+          </div>
+
+          
+            <!-- Table Section -->
+            <div class="table-responsive">
+              <table id="order-listing" class="table" data-lock-module="NICKEL_INSPECTION">
+                <thead>
+                  <tr>
+                    <th>
+                      S.No <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Last<br>Updated
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Plating <br>Stk No
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Action <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      No of Trays <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Lot Qty
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Accept <br> Qty
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Reject Qty<i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Lot Status
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th style="cursor: pointer;min-width: 95px;max-width: 95px;">
+                      Current <br> Stage
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Process Status
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Polishing Stk No
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Plating Color
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Polish Finish
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Input Source
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Type of Input
+                      <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th>
+                      Remarks <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                    <th style="display:none;">
+                      Version <i class="fa fa-filter" aria-hidden="true"></i>
+                    </th>
+                   
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data rows -->
+                   {% for data in master_data %}
+                  <tr 
+                      data-stock-lot-id="{{ data.lot_id }}"
+                      data-model-no="{{ data.plating_stk_no }}"
+                      data-available-qty="{{ data.available_qty }}" 
+                      data-brass-onhold-picking="{{ data.nq_onhold_picking }}"
+                      data-brass-batch-rejection="{{ data.nq_qc_rejection|yesno:'True,False' }}"
+                      data-brass-qc-accptance="{{ data.nq_qc_accptance|yesno:'True,False' }}"
+                      data-brass-qc-rejection="{{ data.nq_qc_rejection|yesno:'True,False' }}"
+                      data-brass-qc-few-cases-accptance="{{ data.nq_qc_few_cases_accptance|yesno:'True,False' }}"
+                      data-accepted-ip-stock="{{ data.accepted_Ip_stock|yesno:'True,False' }}"
+                      data-rejected-ip-stock="{{ data.rejected_ip_stock|yesno:'True,False' }}"
+                      data-few-cases-accepted-ip-stock="{{ data.few_cases_accepted_Ip_stock|yesno:'True,False' }}"
+                      data-brass-physical-qty="{{ data.nq_physical_qty|default:0 }}"
+                      data-brass-missing-qty="{{ data.nq_missing_qty|default:0 }}"
+                      data-brass-qc-accepted-qty-verified="{{ data.nq_qc_accepted_qty_verified|yesno:'True,False' }}">
+                      <td {% if data.nq_hold_lot %} class="row-inactive-blur"{% endif %}>
+                    <span style="display:flex; align-items:center; gap:3px;">
+                      {% if can_hold_release %}
+                        <!-- Admin users: Show toggle switch -->
+                        <label class="hold-toggle-switch" style="margin-bottom:0;">
+                          {% if not data.nq_hold_lot %}
+                            <input type="checkbox" class="hold-toggle-btn" checked />
+                            <span class="hold-slider"></span>
+                          {% else %}
+                            <input type="checkbox" class="hold-toggle-btn" />
+                            <span class="hold-slider"></span>
+                          {% endif %}
+                        </label>
+                        <!-- Hold remark icon -->
+                        <span class="hold-remark-icon" 
+                              style="display:{% if data.nq_hold_lot or data.nq_release_lot or data.nq_holding_reason or data.nq_release_reason %}inline-block{% else %}none{% endif %}; cursor:pointer;" 
+                              title="{% if data.nq_holding_reason %}Holding Reason: {{ data.nq_holding_reason }} (by {{ data.nq_hold_by }} on {{ data.nq_hold_at }}){% endif %}{% if data.nq_holding_reason and data.nq_release_reason %}&#10;{% endif %}{% if data.nq_release_reason %}Release Reason: {{ data.nq_release_reason }} (by {{ data.nq_release_by }} on {{ data.nq_release_at }}){% endif %}">
+                          {% if data.nq_hold_lot or data.nq_release_lot or data.nq_holding_reason or data.nq_release_reason %}
+                            <img src="{% static 'assets/icons/view2.png' %}" alt="Remark" style="width:12px; height:12px;" />
+                          {% endif %}
+                        </span>
+                      {% else %}
+                        <!-- Non-admin: Only show view icon if there's a holding/release reason -->
+                        {% if data.nq_hold_lot or data.nq_release_lot or data.nq_holding_reason or data.nq_release_reason %}
+                          <span class="hold-remark-icon" 
+                                style="display:inline-block; cursor:pointer;" 
+                                title="{% if data.nq_holding_reason %}Holding Reason: {{ data.nq_holding_reason }} (by {{ data.nq_hold_by }} on {{ data.nq_hold_at }}){% endif %}{% if data.nq_holding_reason and data.nq_release_reason %}&#10;{% endif %}{% if data.nq_release_reason %}Release Reason: {{ data.nq_release_reason }} (by {{ data.nq_release_by }} on {{ data.nq_release_at }}){% endif %}">
+                            <img src="{% static 'assets/icons/view2.png' %}" alt="View Reason" style="width:18px; height:18px;" />
+                          </span>
+                        {% endif %}
+                      {% endif %}
+                      <span class="sno-value">{{ page_obj.start_index|add:forloop.counter0 }}</span>
+                    </span>
+                    {% if data.send_to_nickel_brass %}
+                      <i class="fa fa-times-circle" style="color: #028084; font-size:13px;" data-bs-toggle="tooltip" data-placement="right" data-bs-original-title="Audit"></i>
+                      {% elif data.rejected_ip_stock %}
+                      <i class="fa fa-info-circle" style="color: #f39c12; font-size:13px;" data-bs-toggle="tooltip" data-placement="right" data-bs-original-title="NA"></i>
+                      {% endif %}
+                  </td>
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %} style="white-space:normal;word-break:break-all;">
+                      {% if data.send_to_nickel_brass %}
+                        {{ data.na_last_process_date_time|date:"d-M-y" }}<br>
+                        <span style="display:inline-block; margin-top:4px;word-break: break-all;">
+                          {{ data.na_last_process_date_time|date:"h:i A" }}
+                        </span>
+                      {% else %}
+                        {{ data.last_process_date_time|date:"d-M-y" }}<br>
+                        <span style="display:inline-block; margin-top:4px;word-break: break-all;">
+                          {{ data.last_process_date_time|date:"h:i A" }}
+                        </span>
+                      {% endif %}
+                    </td>
+                    <!-- Col 3: Plating Stk No -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      <span class="model-hover-trigger" data-plating-stk-no="{{ data.plating_stk_no }}" style="cursor: pointer; word-break: break-all;">
+                        {{ data.plating_stk_no|highlight_plating_color|safe_html }}
+                        <div class="model-image-tooltip" style="position: absolute; left: 80%; top: 110%; transform: translateX(-50%); background: #fff; border: 1px solid #ccc; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 48px 18px 18px; z-index: 10010; display: flex; justify-content:center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; box-sizing:border-box;">
+
+                          <button class="close-btn" type="button" style="position:absolute; top:14px; right:16px; z-index:2; background: #dc3545; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
+                             Close
+                          </button>
+
+                          <button type="button" class="info-btn" style="position:absolute; top:14px; left:16px; z-index:2; background: #007bff; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
+                             Info
+                          </button>
+
+                          <button class="img-scroll-left" style="display:none; background: none; border: none; font-size: 20px; cursor: pointer;">&#8592;</button>
+
+                          <div class="img-gallery" style="display: flex; justify-content: center; align-items: center; overflow: hidden; width: 260px; height: 210px; min-height: 210px; box-sizing:border-box;">
+                            <span class="model-preview-loading" style="font-size:12px;color:#777;text-align:center;">Loading...</span>
+                          </div>
+
+                          <button class="img-scroll-right" style="display:none; background: none; border: none; font-size: 20px; cursor: pointer;">&#8594;</button>
+                        </div>
+                      </span>
+                    </td>
+                    <!-- Col 4: Action -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      
+                      {% if not data.nq_qc_accptance and not data.nq_qc_rejection and not data.nq_accepted_tray_scan_status and not data.nq_qc_few_cases_accptance and data.nq_qc_accepted_qty_verified %}                       
+
+                      <a href="#" class="delete-batch-btn" title="Delete" data-batch-id="{{ data.batch_id }}" data-stock-lot-id="{{ data.lot_id }}">
+                        <img src="{% static 'assets/icons/bin.png' %}" alt="Delete" style="width: 20px; margin-right: 8px; height: auto" />
+                      </a>
+                      {% else %}
+
+                        <span title="Delete Disabled" style="opacity: 0.5; pointer-events: none;">
+                          <img src="{% static 'assets/icons/bin.png' %}" alt="Delete Disabled" style="width: 20px; margin-right: 8px; height: auto; filter: grayscale(1) opacity(0.5);" />
+                        </span>
+                      {% endif %}
+                      {% if data.iqf_acceptance %}
+                        <!-- IQF Acceptance - Show buttons as ACTIVE/CLICKABLE -->
+                        <button type="button" class="btn btn-social-icon-text btn-twitter btn-accept-is"
+                                data-lot-id="{{ data.stock_lot_id }}"
+                          {% if not data.nq_qc_accepted_qty_verified %}disabled{% endif %}>
+                         Accept
+                        </button>
+                        <button type="button" class="btn btn-social-icon-text btn-youtube tray-scan-btn btn-reject-is{% if data.nq_draft %} draft-resume-btn{% endif %}"
+                                data-stock-lot-id="{{ data.lot_id }}"
+                                data-batch-id="{{ data.batch_id }}">
+                          Reject
+                        </button>
+                        {% elif data.nq_onhold_picking %}
+                          <!-- Brass Draft Picking -->
+                          <button type="button" class="btn btn-social-icon-text btn-twitter btn-accept-is"
+                                  style="opacity: 0.6; cursor: not-allowed; pointer-events: none;"
+                                  data-lot-id="{{ data.stock_lot_id }}"
+                                  disabled>
+                           Accept
+                          </button>
+                          <!-- ✅ UPDATED: Conditional button text and styling -->
+                        {% if data.nq_onhold_picking %}
+                          {% if data.is_delink_only %}
+                            <button type="button" class="btn btn-social-icon-text btn-youtube tray-scan-btn{% if data.nq_draft %} draft-resume-btn{% endif %}"
+                                    style="background-color: #e57373;"
+                                    data-stock-lot-id="{{ data.lot_id }}"
+                                    data-batch-id="{{ data.batch_id }}"
+                                    data-is-delink-only="false">
+                              Set Delink
+                            </button>
+                          {% else %}
+                            <!-- Normal case: Some pieces available for top tray -->
+                            <button type="button" class="btn btn-social-icon-text btn-youtube tray-scan-btn{% if data.nq_draft %} draft-resume-btn{% endif %}"
+                                    style="background-color: #e57373;"
+                                    data-stock-lot-id="{{ data.lot_id }}"
+                                    data-batch-id="{{ data.batch_id }}"
+                                    data-is-delink-only="false">
+                              Set Top Tray
+                            </button>
+                          {% endif %}
+                        {% endif %}
+
+                      {% elif data.send_to_nickel_ip %}
+                        <!-- Brass QC Acceptance (disabled) -->
+                        <button type="button" class="btn btn-social-icon-text btn-twitter btn-accept-is"
+                                data-lot-id="{{ data.stock_lot_id }}"
+                          {% if not data.nq_qc_accepted_qty_verified %}disabled{% endif %}>
+                         Accept
+                        </button>
+                        <button type="button" class="btn btn-social-icon-text btn-youtube tray-scan-btn btn-reject-is{% if data.nq_draft %} draft-resume-btn{% endif %}"
+                                data-stock-lot-id="{{ data.lot_id }}"
+                                data-batch-id="{{ data.batch_id }}"
+                                {% if not data.nq_qc_accepted_qty_verified and not data.nq_draft %}disabled{% endif %}>
+                          Reject
+                        </button>
+
+                      {% elif data.nq_onhold_picking %}
+                        <!-- Brass Draft Picking -->
+                        <button type="button" class="btn btn-social-icon-text btn-twitter btn-accept-is"
+                                style="opacity: 0.6; cursor: not-allowed; pointer-events: none;"
+                                data-lot-id="{{ data.stock_lot_id }}"
+                                disabled>
+                         Accept
+                        </button>
+                        <button type="button" class="btn btn-social-icon-text btn-youtube tray-scan-btn btn-reject-is{% if data.nq_draft %} draft-resume-btn{% endif %}"
+                                data-stock-lot-id="{{ data.lot_id }}"
+                                data-batch-id="{{ data.batch_id }}">
+                          Reject
+                        </button>
+
+                      {% elif data.nq_qc_rejection or data.nq_qc_few_cases_accptance %}
+                        <!-- Brass QC Rejection or Few Cases Acceptance (disabled) -->
+                        <button type="button" class="btn btn-social-icon-text btn-twitter btn-accept-is"
+                                style="opacity: 0.6; cursor: not-allowed; pointer-events: none;"
+                                disabled>
+                         Accept
+                        </button>
+                        <span class="btn btn-social-icon-text btn-youtube btn-reject-is"
+                              style="opacity: 0.8; cursor: not-allowed; pointer-events: none;">
+                          Rejected
+                        </span>
+
+                      {% else %}
+                        <!-- Default state - Both buttons enabled -->
+                        <button type="button" class="btn btn-social-icon-text btn-twitter btn-accept-is"
+                                data-lot-id="{{ data.lot_id }}"
+                                {% if not data.nq_qc_accepted_qty_verified %}disabled{% endif %}>
+                         Accept
+                        </button>
+                        <button type="button" class="btn btn-social-icon-text btn-youtube tray-scan-btn btn-reject-is{% if data.nq_draft %} draft-resume-btn{% endif %}"
+                                data-stock-lot-id="{{ data.lot_id }}"
+                                data-batch-id="{{ data.batch_id }}"
+                                {% if not data.nq_qc_accepted_qty_verified and not data.nq_draft %}disabled{% endif %}>
+                          Reject
+                        </button>
+                      {% endif %}
+                      <!-- Eye icon to view submitted "Tray Scan Table" -->
+                          <a href="#"
+                          title="View"
+                          class="text-primary tray-scan-btn-BQ-view tray-scan-btn-Jig"
+                          style="text-decoration: underline"
+                          data-stock-lot-id="{{ data.lot_id }}"
+                          data-batch-id="{{ data.batch_id }}"
+                          data-model-no="{{ data.plating_stk_no }}"
+                          data-no-of-trays="{{ data.no_of_trays }}"
+                          data-tray-capacity="{{ data.tray_capacity|default:'0' }}"
+                          data-moved-to-d-picker="{{ data.Moved_to_D_Picker }}"
+                          data-model-image="{{ data.model_images.0|default:'' }}"
+                          data-plating-stk-no="{{ data.plating_stk_no }}"
+                          data-tray-qty-list="{{ data.tray_qty_list|default:'[]'|safe }}"
+                            data-total-batch-quantity="{{ data.display_accepted_qty|default:0 }}"
+                            data-brass-missing-qty="{{ data.nq_missing_qty|default:0 }}">
+
+                          <img src="{% static 'assets/icons/view.png' %}"
+                              alt="View"
+                              style="width: 20px; margin-right: 8px; height: auto; cursor:pointer;" />
+                        </a>
+                    </td>
+                    <!-- Col 6: No of Trays -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>{{data.no_of_trays}}</td>
+                    <!-- Col 7: Lot Qty -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      <span class="lot-qty" style="min-width: 30px; text-align: right">{{ data.display_accepted_qty }}</span>
+                      <span style="display: inline-flex; align-items: center; gap: 4px;">
+                        {% if not data.nq_qc_accepted_qty_verified %}
+                          <!-- Show checkbox before save -->
+                          <input type="checkbox"
+                            class="brass-checkbox"
+                            data-lot-id="{{ data.stock_lot_id }}"
+                            style="width: 15px; height: 15px"
+                            {% if data.nq_qc_accepted_qty_verified %}checked disabled{% endif %} />
+                          {% else %}
+                          <!-- Show green tick after save -->
+                          <span style="
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 19px;
+                            height: 19px;
+                            border-radius: 50%;
+                            background: #0c8249;
+                            color: white;
+                            font-size: 14px;
+                            font-weight: bold;
+                            margin-left: 2px;
+                          ">
+                            &#10003;
+                          </span>
+                        {% endif %}
+                        <!-- <input type="text"
+                          class="missing-qty-input"
+                          value="{{ data.nq_missing_qty|default_if_none:'' }}"
+                          style="width: 36px; padding: 1px 3px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px;"
+                          {% if data.nq_qc_accepted_qty_verified %}disabled{% endif %} /> -->
+                      </span>
+                    </td>
+                    <!-- Physical Qty column hidden per requirement
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                        {{ data.nq_physical_qty|default:0 }}
+                    </td>
+                    -->
+                    <!-- Col 8: Accept Qty -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                        {{ data.nq_qc_accepted_qty|default:0 }}    
+                    </td>
+                    <!-- Col 9: Reject Qty -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                        {{ data.brass_rejection_total_qty|default:0 }}
+                    </td>
+                    <!-- Col 10: Lot Status -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      {% if data.nq_onhold_picking or data.nq_draft %}
+                        <div
+                          class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="
+                            border: 1px solid #4997ac;
+                            background-color: #d1f2f3;
+                            color: #03425d;
+                            font-size: clamp(0.75rem, 2vw, 0.875rem);
+                            white-space: nowrap;
+                            padding: 5px;
+                          "
+                        >
+                          Draft
+                        </div>
+                      {% elif data.nq_hold_lot %}
+                       <div
+                          class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                          style="
+                            border: 1px solid #dc3545;
+                            background-color: #f8d7da;
+                            color: #721c24;
+                            font-size: 13px;
+                            white-space: nowrap;
+                            padding: 5px;
+                          "
+                        >
+                          On Hold
+                        </div>
+
+                      {% elif data.nq_qc_rejection or data.nq_qc_few_cases_accptance or data.nq_qc_accptance or data.nq_qc_accepted_qty_verified %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                            style="border: 1px solid #0d5d17; background-color: #c5f9c2; color: #2f801b; font-size: 13px; white-space: nowrap; padding: 5px;">
+                          Yet to Release
+                        </div>
+                      
+                      {% else %}
+                        <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                            style="border: 1px solid #f9a825; background-color: #fff8e1; color: #b26a00; font-size:13px; white-space: nowrap; padding: 5px;">
+                          Yet to Start
+                        </div>
+                      {% endif %} 
+                    </td>
+                    <!-- Col 11: Current Stage -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      <div class="d-inline-block px-3 fw-semibold text-center rounded-pill"
+                           style="border: 1px solid #d1edf3; background-color: #d1edf3; color: #033b5d; font-size: 13px; white-space: nowrap; padding: 5px;">
+                        {{ data.last_process_module|default:"N/A" }}
+                      </div>
+                    </td>
+                    <!-- Col 12: Process Status -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+                      <div class="d-flex">
+                        <!-- Q: Green if nq_qc_accepted_qty_verified, else gray -->
+                        <div
+                          title="Tray Scan"
+                          class="d-flex align-items-center justify-content-center rounded-circle ms-1"
+                          style="
+                            width: 25px;
+                            height: 25px;
+                            background-color: {% if data.nq_qc_accepted_qty_verified %}#0c8249{% else %}#bdbdbd{% endif %};
+                            color: white;
+                            font-weight: bold;
+                            line-height: 20px;
+                            text-align: center;
+                            padding-top: 1px;
+                            padding-right: 1px;
+                          "
+                        >
+                          Q
+                        </div>
+                        <!-- QC: Green if nq_qc_rejection or nq_qc_accptance, else gray -->
+                        <div
+                          title="Tray Scan"
+                          class="d-flex align-items-center justify-content-center rounded-circle ms-1"
+                          style="
+                            width: 25px;
+                            height: 25px;
+                            background:
+                              {% if data.nq_onhold_picking or data.nq_draft %}
+                                linear-gradient(to right, #0c8249 50%, #bdbdbd 50%);
+                              {% elif data.nq_qc_rejection or data.nq_qc_accptance or data.nq_qc_few_cases_accptance %}
+                                #0c8249;
+                              {% else %}
+                                #bdbdbd;
+                              {% endif %}
+                            color: white;
+                            font-weight: bold;
+                            line-height: 20px;
+                            text-align: center;
+                            padding-top: 1px;
+                            padding-right: 1px;
+                          "
+                        >
+                          QC
+                        </div>
+                      </div>
+                    </td>
+                    <!-- Col 13: Polishing Stk No -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>{{ data.polishing_stk_no|default:"N/A"|highlight_polish_finish|safe_html }}</td>
+                    <!-- Col 14: Plating Color -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>{{ data.plating_color }}</td>
+                    <!--<td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>{{ data.category }}</td>-->
+                    <!-- Col 15: Polish Finish -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>{{data.polish_finish}}</td>
+                    <!-- Hidden Version -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %} style="display:none">{{data.version__version_name}}</td>
+                    <!-- Col 16: Input Source -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>{{data.location__location_name}}</td>
+                    <!-- Type of Input -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>{% include 'partials/_type_of_input_cell.html' with type_of_input=data.type_of_input %}</td>
+                    <!-- Col 17: Remarks -->
+                    <td {% if data.nq_hold_lot %} class="row-inactive-blur" {% endif %}>
+
+                      <!-- VoiceRec with tooltip (audio remark) -->
+                          <a href="#" title="Add Audio Remark" class="remark-tooltip-trigger" style="display: inline-flex; align-items: center; height: 28px; margin-left: 0; position: relative; cursor: pointer;">
+                            <img src="{% static 'assets/icons/rec.png' %}" alt="VoiceRec" style="width: 20px; height: 20px"/>
+                            <div class="remark-tooltip" style="position: absolute; top: 110%; left: 50%; transform: translateX(-50%); width: 265px; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 10px; z-index: 1000;">
+                              <!-- Audio recording UI placeholder -->
+                              <div style="display: flex; align-items: center; gap: 10px;">
+                                <button type="button" style="background: #28a745; color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; display: flex; align-items: center; justify-content: center;">
+                                  <i class="fa fa-microphone"></i>
+                                </button>
+                                <span style="font-size: 14px; color: #333;">Hold to record audio</span>
+                                  <div style="text-align: right; margin-top: 10px;">
+                                <button type="button" style="background-color: #007bff; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                                  <i class="fa fa-send"></i>
+                                </button>
+                              </div>
+                              </div>
+                            
+                            </div>
+                          </a>
+                          <a
+                              href="#"
+                              title="{% if data.nq_pick_remarks %}{% else %}Add Remark{% endif %}"
+                              class="remark-tooltip-trigger"
+                              data-jig-lot-id="{{ data.lot_id }}"
+                              style="display: inline-flex; align-items: center; height: 20px; margin-left: 5px; position: relative; cursor: pointer;"
+                            >
+                              <img
+                                src="{% static 'assets/icons/chat_icon.png' %}"
+                                alt="Chat"
+                                style="width: 20px; height: 20px; {% if data.nq_pick_remarks %}filter: grayscale(0) brightness(1.1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2); opacity: 1;{% endif %}"
+                              />
+                              <div
+                                class="remark-tooltip"
+                                style="position: absolute; top: 110%; left: 50%; transform: translateX(-50%); width: 300px; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 15px; z-index: 1000;"
+                              >
+                                <textarea
+                                  placeholder="Type your remark..."
+                                  style="width: 85%; height: 40px; resize: vertical; border: 1px solid #ccc; padding: 5px; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px;"
+                                  {% if data.nq_pick_remarks %}readonly{% endif %}
+                                >{{ data.nq_pick_remarks|default_if_none:"" }}</textarea>
+                                <div style="text-align: right; margin-top: -35px">
+                                  {% if not data.nq_pick_remarks %}
+                                  <button
+                                    type="button"
+                                    class="remark-send-btn"
+                                    style="background-color: #007bff; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;"
+                                  >
+                                    <i class="fa fa-send"></i>
+                                  </button>
+                                  {% else %}
+                                  <div style="margin-top: 40px; color: #31708f; background: #d9edf7; border: 1px solid #bce8f1; border-radius: 4px; padding: 8px 12px; font-size: 10px; text-align: left;">
+                                    <i class="fa fa-info-circle" style="margin-right: 6px;"></i>
+                                    Remark already saved and cannot be edited.
+                                  </div>
+                                  {% endif %}
+                                </div>
+                              </div>
+                          </a>
+                          <a href="#"
+                             title="{{ data.previous_module_remark|default:'No previous remark available.' }}"
+                             class="prev-remark-tooltip-trigger"
+                             style="margin-left: 5px; color: #007bff; font-size: 16px; display: inline-flex; align-items: center;">
+                            <i class="fa fa-info-circle"></i>
+                          </a>
+                          <a href="#" class="remark-history-btn" data-lot-id="{{ data.stock_lot_id }}" title="View full remark history" style="margin-left: 5px; color: #6c757d; font-size: 15px; display: inline-flex; align-items: center;">
+                            <i class="fa fa-history"></i>
+                          </a>
+                 
+                    </td>
+                   
+                  </tr>
+                  {% endfor%}
+              
+                </tbody>
+              </table>
+
+
+                                    <div
+  id="trayScanModal_DayPlanning"
+  class="tray-scan-modal-DayPlanning"
+  style="display:none"
+>
+  <div class="tray-scan-modal-DayPlanning-content">
+    <span id="closeTrayScanModal_DayPlanning" class="tray-scan-close-readonly">&times;</span>
+    
+    <div class="modal-top-header" style="display: flex; align-items: center; gap: 20px; padding-bottom: 10px;">
+      <div class="user-profile" style="display: flex; align-items: center; gap: 8px">
+        <div id="modalModelImages_DayPlanning" style="display: flex; gap: 6px;">
+            <!-- Model images will be injected here by JS -->
+            <img id="modalUserImg_DayPlanning" src="{% static 'assets/images/imagePlaceholder.png' %}" alt="Model Image" style="border-radius: 50%; width: 50px; height: 50px; object-fit: contain; object-position: center;" />
+          </div>  
+        <!-- Model No and Lot Qty in same line -->
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: bold; color: #666;">Model No:</span>
+              <h6 id="modalModelNo_DayPlanning" style="margin: 0; color: #028084; font-weight: bold;">(Fetch Dynamically)</h6>
+            </div>
+
+          </div>
+                      <p style="margin: 0 0 0 2px;">
+              Lot Qty: <span id="modalLotQty" style="font-weight:bold; color:#e67e22;"></span>
+            
+            </p>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+      <h5 style="text-align: center; margin: 0; flex: 1; font-weight: 600; color:#595959">
+        Nickel Wiping Zone I - Tray Scan 
+      </h5>
+      <button id="trayValidateBtn" type="button" style="display: flex; align-items: center; gap: 6px; background: #f5faff; border: 1px solid #023E4DCC; color: #023E4DCC; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 500; cursor: pointer;">
+        Tray Validate
+      </button>
+      <input id="trayValidateInput" type="text" placeholder="Enter validation info..." style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" />
+      <img src="{% static 'assets/icons/redo2.png' %}" alt="Redo" id="trayScanRedoBtn" style="width: 24px; height: 24px; cursor: pointer; margin-left: 8px;" title="Clear Tray IDs" />
+    </div>
+    <div id="trayErrorMessage" style="display: none; background-color: #ffebee; border: 1px solid #f44336; color: #c62828; padding: 8px 12px; border-radius: 4px; margin-bottom: 10px; font-size: 12px; text-align: center;">
+      <span id="trayErrorText"></span>
+    </div>
+    <div id="trayScanDetails_DayPlanning" class="table-grid">
+      <!-- Headers and dynamic content will be injected here -->
+    </div>
+  </div>
+</div>
+              <!-- Tray Scan Details Modal (Left Popup) -->
+              <div id="trayScanModal" class="tray-scan-modal">
+                <div class="tray-scan-modal-content">
+                  <span id="closeTrayScanModal" class="tray-scan-close-readonly"
+                    >&times;</span
+                  >
+                  <h3>
+                    Nickel Wiping Zone I / <span id="trayScanModalHeaderModelNo" style="font-weight:bold; color:#028084;"></span> / Rejection Window
+                  </h3>
+                  <p style="margin: 0 0 0 2px;">
+                    Lot Qty: <span id="trayScanModalLotQty" style="font-weight:bold; color:#e67e22;"></span> /
+                    Missing Qty: <span id="trayScanModalMissingQty" style="font-weight:bold; color:#d32f2f;"></span> /
+                    Physical Qty: <span id="trayScanModalPhysicalQty" style="font-weight:bold; color:#388e3c;"></span>
+                  </p>       
+                             <div id="trayScanDetails">
+                    <!-- Dynamic content will be loaded here -->
+                  </div>
+                </div>
+              </div>
+              <!-- ══════════ Nickel Wiping Zone I REJECTION MODAL (Brass QC Style) ══════════ -->
+              <div id="nickelRejectModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:20000; align-items:center; justify-content:center;">
+                <div class="nq-reject-modal-shell" style="background:#fff; border-radius:12px; width:1120px; max-width:98vw; max-height:90vh; overflow:auto; box-shadow:0 8px 32px rgba(0,0,0,0.22); position:relative;">
+
+                  <!-- Header -->
+                  <div style="padding:18px 24px 12px; border-bottom:1px solid #e8edf2;">
+                    <span id="nickelRejectModalClose" style="position:absolute; top:10px; right:18px; font-size:22px; font-weight:bold; color:#d9534f; cursor:pointer;">&times;</span>
+                    <h5 style="margin:0 0 8px; color:#028084; font-weight:700;">Nickel Wiping Zone I - Rejection Window</h5>
+                    <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:13px;">
+                      <span>Plating Stk No: <strong id="nqRejectModalPlatingStk" style="color:#028084;"></strong></span>
+                      <span>Total Lot Qty: <strong id="nqRejectModalTotalQty" style="color:#e67e22;"></strong></span>
+                      <label style="margin-left:auto; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                        <input type="checkbox" id="nqFullLotRejectionCb" />
+                        <span style="font-weight:600; color:#c62828;">Full Lot Rejection</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Rejection Reasons — 2-column layout -->
+                  <div style="padding:14px 24px 0;">
+                    <h6 style="margin:0 0 8px; font-weight:600; color:#444;">Rejection Reasons</h6>
+                    <div id="nqRejectReasonsGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:0 16px;">
+                    </div>
+                    <div style="margin-top:10px; background:#f8f9fa; border:1px solid #dee2e6; border-radius:8px; padding:8px 14px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                      <span style="font-size:13px;">Total Reject Qty: <strong id="nqRejectTotalQtyDisplay" style="color:#c62828; font-size:15px;">0</strong></span>
+                      <span style="font-size:13px;">Accept Qty: <strong id="nqRejectRemainingQtyDisplay" style="color:#388e3c; font-size:15px;">0</strong></span>
+                      <span style="font-size:12px; color:#555; margin-left:auto;">Original Trays <span style="font-size:11px; color:#888;">(click to assign)</span></span>
+                    </div>
+                  </div>
+
+                  <!-- Tray Allocation Section (Reject + Delink + Accept) -->
+                  <div id="nqTrayAllocationSection" style="display:none; padding:10px 24px;">
+                    <div style="margin-bottom:10px;">
+                      <div id="nqOriginalTraysContainer" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+                    </div>
+                    <div class="nq-alloc-grid">
+                      <!-- REJECT Section -->
+                      <div class="nq-alloc-col nq-alloc-reject">
+                        <h6 style="margin:0 0 4px; font-weight:600; color:#c62828; font-size:13px;">
+                           Reject Trays
+                          <span style="float:right; font-size:12px; color:#b71c1c;">Qty: <strong id="nqRejectTotalQtyLabel">0</strong></span>
+                        </h6>
+                        <p style="margin:0 0 6px; font-size:10px; color:#999; font-style:italic;">Rejected -> Nickel Audit</p>
+                        <div id="nqRejectSlotsContainer" class="nq-alloc-body"></div>
+                      </div>
+                      <!-- Delink Section -->
+                      <div id="nqDelinkSection" class="nq-alloc-col nq-alloc-delink" style="display:none;">
+                        <h6 style="margin:0 0 6px; font-weight:600; color:#f57c00; font-size:13px;">
+                          <i class="fa fa-unlink"></i> Delink Trays
+                        </h6>
+                        <p id="nqRejectReuseInfo" style="margin:0 0 6px; font-size:11px; color:#e65100; display:none;"></p>
+                        <div id="nqDelinkListContainer" class="nq-alloc-body" style="font-size:12px;"></div>
+                      </div>
+                      <!-- ACCEPT Section -->
+                      <div class="nq-alloc-col nq-alloc-accept">
+                        <h6 style="margin:0 0 4px; font-weight:600; color:#388e3c; font-size:13px;">
+                          Accept Trays (Scan only Top Tray)
+                          <span style="float:right; font-size:12px; color:#2e7d32;">Qty: <strong id="nqAcceptTotalQtyLabel">0</strong></span>
+                        </h6>
+                        <p style="margin:0 0 6px; font-size:10px; color:#999; font-style:italic;">Accepted -> Nickel Audit</p>
+                        <p id="nqAcceptLockInfo" style="margin:0 0 6px; font-size:11px; color:#e65100; display:none;"></p>
+                        <div id="nqAcceptSlotsContainer" class="nq-alloc-body"></div>
+                      </div>
+                    </div>
+                    <!-- Summary -->
+                    <div style="margin-top:8px; font-size:12px; display:flex; gap:16px; color:#555;">
+                      <span>Accepted: <strong id="nqCombinedAcceptQty" style="color:#388e3c;">0</strong></span>
+                      <span>Rejected: <strong id="nqCombinedRejectQty" style="color:#c62828;">0</strong></span>
+                      <span>Delinked: <strong id="nqCombinedDelinkQty" style="color:#f57c00;">0</strong></span>
+                    </div>
+                  </div>
+
+                  <!-- Footer: Remarks + Buttons -->
+                  <div style="padding:12px 24px 18px; border-top:1px solid #e8edf2;">
+                    <textarea id="nqRejectRemarksInput" maxlength="255" rows="2" placeholder="Enter remarks (optional, mandatory for full lot rejection)" style="width:100%; border:1px solid #ccc; border-radius:6px; padding:8px; font-size:13px; resize:none; margin-bottom:10px;" autocomplete="off"></textarea>
+                    <div id="nqRejectModalError" style="color:#c62828; font-size:13px; min-height:18px; margin-bottom:6px;"></div>
+                    <div style="display:flex; justify-content:flex-end; gap:10px;">
+                      <button id="nqDraftSaveBtn" type="button" style="background:#f0ad4e; color:#fff; border:none; border-radius:20px; padding:8px 22px; font-size:14px; font-weight:600; cursor:pointer;"><i class="fa fa-save"></i> Draft</button>
+                      <button id="nqRejectSubmitBtn" type="button" style="background:#28a745; color:#fff; border:none; border-radius:20px; padding:8px 22px; font-size:14px; font-weight:600; cursor:pointer;">Submit</button>
+                      <button type="button" id="nqGlobalClearAllBtn" style="background:#f5f5f5; border:1px solid #ccc; border-radius:20px; padding:8px 22px; font-size:14px; color:#666; cursor:pointer;">Clear All</button>
+                      <button id="nqRejectCancelBtn" type="button" style="background:#6c757d; color:#fff; border:none; border-radius:20px; padding:8px 22px; font-size:14px; cursor:pointer;">Cancel</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <!-- ══════════ END Nickel Wiping Zone I REJECTION MODAL ══════════ -->
+
+              <!-- New Popup Modal (Right Popup) -->
+              <div id="newPopupModal" class="new-popup-modal">
+                <div class="tray-scan-modal-content">
+                  <span id="closeNewPopupModal" class="tray-scan-close"
+                    >&times;</span
+                  >
+                  <!-- New top header container: title + user profile aligned left -->
+                  <div
+                    class="modal-top-header"
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 20px;
+                      padding-bottom: 10px;
+                    "
+                  >
+                  
+                  </div>
+                  <!-- Existing centered h3 title -->
+                  <!-- Redo icon for clearing "tray ID" -->
+                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <h5 style="text-align: center; margin: 0; flex: 1; font-weight: 600; color:#595959">
+                      Nickel Wiping Zone I - Accepted case tray scan table
+                    </h5>
+                    <img
+                      src="{% static 'assets/icons/redo2.png' %}"
+                      alt="Redo"
+                      id="trayScanRedoBtn"
+                      style="width: 24px; height: 24px; cursor: pointer; margin-right: 14px;"
+                      title="Clear Tray IDs"
+                    />
+                  </div>
+                  <!-- Accepted Case Tray Scan Table - Grid View with Visible Borders -->
+                  <div id="trayScanDetails" class="table-grid">
+
+                    <!-- NEW BUTTONS SECTION -->
+                    <div class="tray-scan-modal-buttons" style="grid-column: 1 / -1; display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+                       <button
+                    style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 30px;">
+                    Draft
+                  </button>
+                  <button
+                    style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 30px;">
+                    Submit
+                  </button>
+                  <button
+                    style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 30px;">
+                    Cancel
+                  </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            
+           
+          
+         <!-- Pagination Section -->
+
+            <div class="pagination-wrapper">
+              <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-end mb-0">
+                  {# Previous button #}
+                  {% if page_obj.has_previous %}
+                    <li>
+                      <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true"><i class="fa fa-chevron-left"></i></span>
+                      </a>
+                    </li>
+                  {% else %}
+                    <li class="disabled">
+                      <span aria-hidden="true"><i class="fa fa-chevron-left"></i></span>
+                    </li>
+                  {% endif %}
+                
+                  {# Always show first page #}
+                  {% if page_obj.number > 3 %}
+                    <li><a href="?page=1">1</a></li>
+                    {% if page_obj.number > 4 %}
+                      <li class="disabled"><span>…</span></li>
+                    {% endif %}
+                  {% endif %}
+                
+                  {# Show pages around current page #}
+                  {% for num in page_obj.paginator.page_range %}
+                    {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                      {% if num == page_obj.number %}
+                        <li class="active"><span>{{ num }}</span></li>
+                      {% else %}
+                        <li><a href="?page={{ num }}">{{ num }}</a></li>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                
+                  {# Show ellipsis and last page if needed #}
+                  {% if page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+                    {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+                      <li class="disabled"><span>…</span></li>
+                    {% endif %}
+                    <li><a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a></li>
+                  {% endif %}
+                
+                  {# Next button #}
+                  {% if page_obj.has_next %}
+                    <li>
+                      <a href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true"><i class="fa fa-chevron-right"></i></span>
+                      </a>
+                    </li>
+                  {% else %}
+                    <li class="disabled">
+                      <span aria-hidden="true"><i class="fa fa-chevron-right"></i></span>
+                    </li>
+                  {% endif %}
+                </ul>
+              </nav>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Image Slider Modal (popup) -->
+  <div id="imageSliderModal" class="image-slider-modal">
+    <span id="closeImageSliderModal" class="modal-close-BQ">&times;</span>
+    <h3>Visual Aid</h3>
+    <div class="slider" id="slider">
+      <div class="slides" id="slidesContainer">
+        <div class="slide active">
+          <img src="{% static 'assets/images/carousel/banner_1.jpg' %}" alt="Slide 1">
+        </div>
+        <div class="slide">
+          <img src="{% static 'assets/images/carousel/banner_2.jpg' %}" alt="Slide 2">
+        </div>
+        <div class="slide">
+          <img src="{% static 'assets/images/carousel/banner_3.jpg' %}" alt="Slide 3">
+        </div>
+      </div>
+      <button class="prev" id="prevBtn">&#10094;</button>
+      <button class="next" id="nextBtn">&#10095;</button>
+    </div>
+  </div>
+  <!-- Image Slider Modal -->
+  <div id="imageSliderModal" class="image-slider-modal">
+    <span id="closeImageSliderModal" class="modal-close-BQ">&times;</span>
+    <div class="slider" id="slider">
+      <button class="prev" id="prevBtn">&#8592;</button>
+      <div class="slides"></div>
+      <button class="next" id="nextBtn">&#8594;</button>
+    </div>
+  </div>
+
+  <!-- Hold Remark Modal -->
+<div id="holdRemarkModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.18); z-index:20000; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:10px; padding:28px 32px 18px 32px; min-width:320px; max-width:90vw; box-shadow:0 4px 24px rgba(0,0,0,0.18); position:relative;">
+    <span id="closeHoldRemarkModal" style="position:absolute; top:8px; right:16px; font-size:22px; font-weight:bold; color:#d9534f; cursor:pointer;">&times;</span>
+    <h5 style="margin-bottom:16px; color:#028084;">Row Hold Remark</h5>
+    <textarea id="holdRemarkInput" maxlength="50" style="width:100%; height:60px; border:1px solid #ccc; border-radius:6px; padding:8px; font-size:15px; resize:none;" placeholder="Enter remark (max 50 chars)"></textarea>
+    <div style="text-align:right; margin-top:10px;">
+      <button id="saveHoldRemarkBtn" style="background:#007bff; color:#fff; border:none; border-radius:20px; padding:6px 18px; font-size:15px; cursor:pointer;">Save</button>
+    </div>
+    <div id="holdRemarkError" style="color:red; font-size:13px; min-height:18px; margin-top:6px;"></div>
+  </div>
+</div>
+</div>
+       
+{% block script %}
+
+
+<!-- Active table row highlight -->
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function() {
+  if (!document.getElementById('dp-row-action-highlight-style')) {
+    var style = document.createElement('style');
+    style.id = 'dp-row-action-highlight-style';
+    style.innerHTML = `
+      .dp-row-action-highlight {
+        transition: box-shadow 1.3s;
+        background-color: #fff5bd !important;
+        animation: highlightAnimation 2s ease-in-out;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  let movedRow = null;
+  let placeholderRow = null;
+
+  function restoreRowPosition() {
+    if (movedRow && placeholderRow && placeholderRow.parentNode) {
+      placeholderRow.parentNode.insertBefore(movedRow, placeholderRow);
+      placeholderRow.parentNode.removeChild(placeholderRow);
+    }
+    document.querySelectorAll('tbody tr').forEach(function(row) {
+      row.classList.remove('dp-row-action-highlight');
+      row.classList.remove('highlighted-tray-scan');
+    });
+    movedRow = null;
+    placeholderRow = null;
+    if (window.GlobalShortcutManager && typeof window.GlobalShortcutManager.clear === 'function') {
+      window.GlobalShortcutManager.clear();
+    }
+    try {
+      sessionStorage.removeItem('globalScanModule');
+      sessionStorage.removeItem('globalScanTrayId');
+      sessionStorage.removeItem('globalScanLotId');
+    } catch (e) {}
+  }
+
+  function highlightRow(row) {
+    if (!row || !row.parentNode) return;
+    restoreRowPosition();
+    var tbody = row.parentNode;
+    movedRow = row;
+    if (tbody.firstElementChild !== row) {
+      placeholderRow = document.createElement('tr');
+      placeholderRow.style.display = 'none';
+      for (var i = 0; i < row.children.length; i += 1) {
+        placeholderRow.appendChild(document.createElement('td'));
+      }
+      tbody.insertBefore(placeholderRow, row);
+      tbody.insertBefore(row, tbody.firstElementChild);
+    }
+    row.classList.add('dp-row-action-highlight');
+  }
+
+  function actionTarget(target) {
+    return target.closest(
+      '.hold-toggle-btn, .hold-remark-icon, .tray-scan-btn, .tray-scan-btn-Jig, .tray-scan-btn-BQ-view, .btn-accept-is:not(:disabled), .btn-reject-is:not(:disabled), .delete-batch-btn, .remark-send-btn, .rejection-popup-trigger, #delink-selected-btn'
+    );
+  }
+
+  document.addEventListener('click', function(event) {
+    if (event.target.closest('.model-hover-trigger') || event.target.closest('.model-image-tooltip')) return;
+    var action = actionTarget(event.target);
+    if (!action) return;
+    highlightRow(action.closest('tr'));
+  }, true);
+
+  document.addEventListener('change', function(event) {
+    if (event.target.matches('.hold-toggle-btn')) {
+      highlightRow(event.target.closest('tr'));
+    }
+  }, true);
+
+  [
+    'closeTrayScanModal',
+    'closeTrayScanModal_DayPlanning',
+    'closeNewPopupModal',
+    'closetrayScanModal_Jig',
+    'closeHoldRemarkModal',
+    'closeRejectionPopup'
+  ].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', restoreRowPosition);
+  });
+
+  [
+    'trayScanModal',
+    'trayScanModal_DayPlanning',
+    'newPopupModal',
+    'holdRemarkModal',
+    'rejectionPopupModal'
+  ].forEach(function(id) {
+    var modal = document.getElementById(id);
+    if (modal) {
+      modal.addEventListener('click', function(event) {
+        if (event.target === modal) restoreRowPosition();
+      });
+    }
+  });
+
+  document.addEventListener('click', function(event) {
+    if (
+      event.target &&
+      (event.target.classList.contains('swal2-cancel') ||
+       event.target.classList.contains('swal2-close') ||
+       event.target.id === 'cancelButton')
+    ) {
+      restoreRowPosition();
+    }
+  });
+
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') restoreRowPosition();
+  });
+
+  window.nqRestoreRowPosition = restoreRowPosition;
+});
+</script>
+
+<!-- Plating Stk - Image hover - fixed position while hitting the Plating Stk No -->
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function () {
+  "use strict";
+
+  const triggers = Array.from(
+    document.querySelectorAll(
+      ".model-hover-trigger[data-plating-stk-no]"
+    )
+  );
+
+  if (!triggers.length) return;
+
+  const previewCache =
+    window.NickelModelPreviewCache instanceof Map
+      ? window.NickelModelPreviewCache
+      : new Map();
+
+  const requestCache =
+    window.NickelModelPreviewRequestCache instanceof Map
+      ? window.NickelModelPreviewRequestCache
+      : new Map();
+
+  window.NickelModelPreviewCache = previewCache;
+  window.NickelModelPreviewRequestCache = requestCache;
+
+  let openTooltip = null;
+  let pinnedTrigger = null;
+  let hideTimer = null;
+
+  function getStockNo(trigger) {
+    return String(
+      trigger && trigger.dataset
+        ? trigger.dataset.platingStkNo || ""
+        : ""
+    ).trim();
+  }
+
+  function getStockCacheKey(stockNo) {
+    return String(stockNo || "").trim().toUpperCase();
+  }
+
+  function getTooltip(trigger) {
+    return trigger
+      ? trigger.querySelector(".model-image-tooltip")
+      : null;
+  }
+
+  function normalizeImageUrl(rawUrl) {
+    const value = String(rawUrl || "").trim();
+    if (!value) return "";
+
+    try {
+      const parsed = new URL(value, window.location.origin);
+      const hostname = String(parsed.hostname || "").toLowerCase();
+      const isLoopbackHost =
+        hostname === "127.0.0.1" ||
+        hostname === "localhost" ||
+        hostname === "::1" ||
+        hostname === "[::1]";
+      const isApplicationAsset =
+        parsed.pathname.startsWith("/media/") ||
+        parsed.pathname.startsWith("/static/");
+
+      if (
+        parsed.origin === window.location.origin ||
+        (isLoopbackHost && isApplicationAsset)
+      ) {
+        return parsed.pathname + parsed.search + parsed.hash;
+      }
+
+      return parsed.href;
+    } catch (error) {
+      return value;
+    }
+  }
+
+  function normalizePreviewPayload(payload) {
+    if (!payload) return null;
+    payload.preview_image = normalizeImageUrl(payload.preview_image);
+    if (Array.isArray(payload.images)) {
+      payload.images = payload.images.map(function (image) {
+        if (!image) return image;
+        return Object.assign({}, image, {
+          url: normalizeImageUrl(image.url || image.image_url || image.src || image.image || "")
+        });
+      });
+    }
+    return payload;
+  }
+
+  function getPlaceholderImageUrl(payload) {
+    const images = Array.isArray(payload && payload.images) ? payload.images : [];
+    const placeholder = images.find(function (image) {
+      const viewCode = String(image && image.view_code || "").toUpperCase();
+      return viewCode === "NO_IMAGE" || image && image.is_placeholder === true;
+    });
+    return normalizeImageUrl(placeholder && (placeholder.url || placeholder.image_url || placeholder.src || placeholder.image));
+  }
+
+  window.normalizeStockImageUrl = normalizeImageUrl;
+  window.NickelNormalizeImageUrl = normalizeImageUrl;
+
+  function getDefaultVisualAidUrl(stockNo) {
+    return "/adminportal/dp_visualaid/?plating_stk_no=" + encodeURIComponent(stockNo);
+  }
+
+  function setTriggerVisualAidUrl(trigger, stockNo, payload) {
+    if (!trigger || !stockNo) return;
+    trigger.dataset.visualAidUrl = payload && payload.visual_aid_url
+      ? payload.visual_aid_url
+      : getDefaultVisualAidUrl(stockNo);
+  }
+
+  function prepareTooltip(tooltip) {
+    if (!tooltip || tooltip.dataset.dynamicPreviewReady === "1") return;
+
+    tooltip.dataset.dynamicPreviewReady = "1";
+    tooltip.innerHTML =
+      '<button class="close-btn" type="button" style="position:absolute;top:14px;right:16px;z-index:2;background:#dc3545;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;">Close</button>' +
+      '<button type="button" class="info-btn" style="position:absolute;top:14px;left:16px;z-index:2;background:#007bff;color:#fff;border:none;border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;">Info</button>' +
+      '<button class="img-scroll-left" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8592;</button>' +
+      '<div class="img-gallery" style="display:flex;justify-content:center;align-items:center;overflow:hidden;width:260px;height:210px;min-height:210px;box-sizing:border-box;">' +
+        '<span class="model-preview-loading" style="font-size:12px;color:#777;text-align:center;">Loading...</span>' +
+      '</div>' +
+      '<button class="img-scroll-right" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8594;</button>';
+  }
+
+  function getGallery(trigger) {
+    const tooltip = getTooltip(trigger);
+    return tooltip ? tooltip.querySelector(".img-gallery") : null;
+  }
+
+  function renderLoading(trigger) {
+    const gallery = getGallery(trigger);
+    if (!gallery) return;
+
+    gallery.innerHTML =
+      '<span class="model-preview-loading" style="font-size:12px;color:#777;text-align:center;">Loading...</span>';
+  }
+
+  function renderMessage(trigger, message) {
+    const gallery = getGallery(trigger);
+    if (!gallery) return;
+
+    gallery.textContent = "";
+
+    const messageElement = document.createElement("span");
+    messageElement.textContent = message;
+    messageElement.style.cssText =
+      "font-size:12px;color:#777;text-align:center;padding:12px;";
+    gallery.appendChild(messageElement);
+  }
+
+  function renderPreview(trigger, payload) {
+    const gallery = getGallery(trigger);
+    if (!gallery) return;
+
+    const rawUrl = payload && payload.preview_image;
+    const imageUrl = normalizeImageUrl(rawUrl);
+
+    if (!imageUrl) {
+      renderMessage(trigger, "Coming Soon");
+      return;
+    }
+
+    gallery.textContent = "";
+
+    const image = document.createElement("img");
+    image.className = "nickel-preview-img";
+    image.alt =
+      payload && (payload.is_placeholder || payload.is_fallback)
+        ? "No image available"
+        : "Model IV preview";
+    image.loading = "eager";
+    image.decoding = "async";
+    image.style.cssText =
+      "display:block;width:auto;height:auto;max-width:240px;max-height:190px;" +
+      "object-fit:contain;object-position:center;margin:auto;" +
+      "border-radius:6px;background:#fff;";
+
+    image.addEventListener("error", function () {
+      const placeholderUrl = getPlaceholderImageUrl(payload);
+      if (placeholderUrl && image.src !== placeholderUrl) {
+        image.src = placeholderUrl;
+        image.alt = "No image available";
+        return;
+      }
+      console.error(
+        "[Nickel Wiping Z1] Preview image failed:",
+        rawUrl,
+        "Normalized URL:",
+        imageUrl
+      );
+      renderMessage(trigger, "Image could not be loaded");
+    });
+
+    gallery.appendChild(image);
+    image.src = imageUrl;
+  }
+
+  function requestPreview(stockNo, cacheKey) {
+    if (previewCache.has(cacheKey)) {
+      return Promise.resolve(previewCache.get(cacheKey));
+    }
+
+    if (requestCache.has(cacheKey)) {
+      return requestCache.get(cacheKey);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(function () {
+      controller.abort();
+    }, 10000);
+
+    const request = fetch(
+      "/adminportal/api/model-hover-preview/?stock_no=" +
+        encodeURIComponent(stockNo) +
+        "&_ts=" +
+        Date.now(),
+      {
+        method: "GET",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: {
+          "Accept": "application/json",
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        signal: controller.signal
+      }
+    )
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+        return response.json();
+      })
+      .then(function (payload) {
+        const normalizedPayload = normalizePreviewPayload(payload);
+        previewCache.set(cacheKey, normalizedPayload);
+        return normalizedPayload;
+      })
+      .finally(function () {
+        window.clearTimeout(timeoutId);
+        requestCache.delete(cacheKey);
+      });
+
+    requestCache.set(cacheKey, request);
+    return request;
+  }
+
+  function loadPreview(trigger) {
+    const stockNo = getStockNo(trigger);
+    const cacheKey = getStockCacheKey(stockNo);
+
+    if (!stockNo) {
+      renderMessage(trigger, "Stock number unavailable");
+      return;
+    }
+
+    setTriggerVisualAidUrl(trigger, stockNo);
+
+    if (previewCache.has(cacheKey)) {
+      const cached = previewCache.get(cacheKey);
+      setTriggerVisualAidUrl(trigger, stockNo, cached);
+      renderPreview(trigger, cached);
+      return;
+    }
+
+    renderLoading(trigger);
+
+    requestPreview(stockNo, cacheKey)
+      .then(function (payload) {
+        // Always complete the tooltip that initiated this request. This avoids
+        // a permanent Loading state if the pointer briefly leaves the cell.
+        setTriggerVisualAidUrl(trigger, stockNo, payload);
+        renderPreview(trigger, payload);
+      })
+      .catch(function (error) {
+        console.error(
+          "[Nickel Wiping Z1] Model preview request failed:",
+          stockNo,
+          error
+        );
+
+        if (error && error.name === "AbortError") {
+          renderMessage(trigger, "Image request timed out");
+        } else {
+          renderMessage(trigger, "Coming Soon");
+        }
+      });
+  }
+
+  function positionTooltip(trigger) {
+    const tooltip = getTooltip(trigger);
+    if (!tooltip) return;
+
+    tooltip.style.left = "80%";
+    tooltip.style.right = "auto";
+    tooltip.style.top = "110%";
+    tooltip.style.transform = "translateX(-50%)";
+
+    const rect = tooltip.getBoundingClientRect();
+
+    if (rect.right > window.innerWidth - 8) {
+      tooltip.style.left = "auto";
+      tooltip.style.right = "0";
+      tooltip.style.transform = "none";
+    }
+
+    if (rect.left < 8) {
+      tooltip.style.left = "0";
+      tooltip.style.right = "auto";
+      tooltip.style.transform = "none";
+    }
+  }
+
+  function closeTrigger(trigger, force) {
+    if (!trigger) return;
+    if (!force && pinnedTrigger === trigger) return;
+
+    const tooltip = getTooltip(trigger);
+
+    if (tooltip) {
+      tooltip.classList.remove("is-visible", "pinned");
+      tooltip.style.opacity = "0";
+      tooltip.style.visibility = "hidden";
+      tooltip.style.pointerEvents = "none";
+      tooltip.style.display = "none";
+
+      const infoButton = tooltip.querySelector(".info-btn");
+      const closeButton = tooltip.querySelector(".close-btn");
+      if (infoButton) infoButton.style.display = "none";
+      if (closeButton) closeButton.style.display = "none";
+    }
+
+    trigger.style.backgroundColor = "";
+    trigger.style.borderRadius = "";
+
+    if (openTooltip === tooltip) openTooltip = null;
+    if (force && pinnedTrigger === trigger) pinnedTrigger = null;
+  }
+
+  function closeOthers(currentTrigger) {
+    triggers.forEach(function (trigger) {
+      if (trigger !== currentTrigger) {
+        closeTrigger(trigger, true);
+      }
+    });
+  }
+
+  function openTrigger(trigger, pinTooltip) {
+    window.clearTimeout(hideTimer);
+    closeOthers(trigger);
+
+    const tooltip = getTooltip(trigger);
+    if (!tooltip) return;
+
+    prepareTooltip(tooltip);
+
+    if (pinTooltip) {
+      pinnedTrigger = trigger;
+      tooltip.classList.add("pinned");
+      trigger.style.backgroundColor = "#e3f2fd";
+      trigger.style.borderRadius = "4px";
+    }
+
+    openTooltip = tooltip;
+    tooltip.classList.add("is-visible");
+    tooltip.style.display = "flex";
+    tooltip.style.visibility = "visible";
+    tooltip.style.opacity = "1";
+    tooltip.style.pointerEvents = "auto";
+
+    const infoButton = tooltip.querySelector(".info-btn");
+    const closeButton = tooltip.querySelector(".close-btn");
+    if (infoButton) infoButton.style.display = "block";
+    if (closeButton) closeButton.style.display = "block";
+
+    positionTooltip(trigger);
+    loadPreview(trigger);
+  }
+
+  triggers.forEach(function (trigger) {
+    const tooltip = getTooltip(trigger);
+
+    if (!tooltip || trigger.dataset.nickelDynamicHoverBound === "1") {
+      return;
+    }
+
+    trigger.dataset.nickelDynamicHoverBound = "1";
+    prepareTooltip(tooltip);
+
+    const infoButton = tooltip.querySelector(".info-btn");
+    const closeButton = tooltip.querySelector(".close-btn");
+
+    if (infoButton) infoButton.style.display = "none";
+    if (closeButton) closeButton.style.display = "none";
+
+    trigger.addEventListener("mouseenter", function () {
+      window.clearTimeout(hideTimer);
+      if (pinnedTrigger !== trigger) {
+        openTrigger(trigger, false);
+      }
+    });
+
+    trigger.addEventListener("mouseleave", function () {
+      hideTimer = window.setTimeout(function () {
+        if (
+          pinnedTrigger !== trigger &&
+          !trigger.matches(":hover") &&
+          !tooltip.matches(":hover")
+        ) {
+          closeTrigger(trigger, false);
+        }
+      }, 180);
+    });
+
+    tooltip.addEventListener("mouseenter", function () {
+      window.clearTimeout(hideTimer);
+    });
+
+    tooltip.addEventListener("mouseleave", function () {
+      hideTimer = window.setTimeout(function () {
+        if (
+          pinnedTrigger !== trigger &&
+          !trigger.matches(":hover") &&
+          !tooltip.matches(":hover")
+        ) {
+          closeTrigger(trigger, false);
+        }
+      }, 180);
+    });
+
+    trigger.addEventListener("click", function (event) {
+      if (
+        event.target.closest(".info-btn") ||
+        event.target.closest(".close-btn")
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (pinnedTrigger === trigger) {
+        closeTrigger(trigger, true);
+        return;
+      }
+
+      openTrigger(trigger, true);
+    });
+
+    if (infoButton) {
+      infoButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const stockNo = getStockNo(trigger);
+        if (!stockNo) return;
+
+        window.location.href = trigger.dataset.visualAidUrl || getDefaultVisualAidUrl(stockNo);
+      });
+    }
+
+    if (closeButton) {
+      closeButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        closeTrigger(trigger, true);
+      });
+    }
+  });
+
+  document.addEventListener("click", function (event) {
+    if (
+      pinnedTrigger &&
+      !event.target.closest(".model-image-tooltip") &&
+      !event.target.closest(".model-hover-trigger")
+    ) {
+      closeTrigger(pinnedTrigger, true);
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && pinnedTrigger) {
+      closeTrigger(pinnedTrigger, true);
+    }
+  });
+});
+</script>
+
+<script nonce="{{ csp_nonce }}" src="{% static 'js/nickel_qc_shortcuts.js' %}"></script>
+
+<!-- NQ Checkbox + Reject Modal JS -->
+<script nonce="{{ csp_nonce }}">
+(function () {
+  'use strict';
+  var API_BASE = '/nickle_inspection/api/';
+  var csrf = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+  function post(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+      body: JSON.stringify(body),
+    }).then(function (r) { return r.json(); });
+  }
+
+  function showRemarkSavedModal() {
+    if (window.Swal && typeof Swal.fire === 'function') {
+      return Swal.fire({
+        icon: 'success',
+        title: 'Remark saved!',
+        timer: 1200,
+        showConfirmButton: false
+      });
+    }
+    alert('Remark saved!');
+    return Promise.resolve();
+  }
+
+  function closeNqRemarkTooltip(trigger) {
+    var tooltip = trigger ? trigger.querySelector('.remark-tooltip') : null;
+    if (!tooltip) return;
+    tooltip.classList.remove('pinned');
+    tooltip.style.opacity = '0';
+    tooltip.style.pointerEvents = 'none';
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.display = 'none';
+  }
+
+  if (!window.__nqZone1RemarkHandlerBound) {
+    window.__nqZone1RemarkHandlerBound = true;
+    document.addEventListener('click', function (event) {
+      var sendBtn = event.target.closest('.remark-send-btn');
+      if (!sendBtn) return;
+
+      var trigger = sendBtn.closest('.remark-tooltip-trigger');
+      if (!trigger || !trigger.querySelector('textarea')) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (sendBtn.disabled || sendBtn.dataset.saving === 'true') return;
+
+      var row = sendBtn.closest('tr');
+      var textarea = trigger.querySelector('textarea');
+      var remark = textarea ? textarea.value.trim() : '';
+
+      if (!remark) {
+        alert('Please enter a remark before sending.');
+        return;
+      }
+
+      var lotId = row ? (row.getAttribute('data-stock-lot-id') || row.getAttribute('data-lot-id') || '') : '';
+      if (!lotId) {
+        alert('Could not identify the lot for this remark.');
+        return;
+      }
+
+      sendBtn.disabled = true;
+      sendBtn.dataset.saving = 'true';
+
+      fetch(API_BASE + 'action/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+        body: JSON.stringify({
+          action: 'SAVE_REMARK',
+          lot_id: lotId,
+          remark: remark
+        })
+      })
+        .then(function (response) {
+          var contentType = response.headers.get('content-type') || '';
+          if (contentType.indexOf('application/json') !== -1) {
+            return response.json().then(function (data) {
+              if (!response.ok) {
+                throw new Error(data.error || ('HTTP ' + response.status + ' while saving remark.'));
+              }
+              return data;
+            });
+          }
+          return response.text().then(function (text) {
+            console.error('Unexpected non-JSON remark response:', text);
+            throw new Error('HTTP ' + response.status + ' while saving remark. The server returned a non-JSON response.');
+          });
+        })
+        .then(function (data) {
+          if (!data.success) {
+            throw new Error(data.error || 'Failed to save remark.');
+          }
+          if (textarea) textarea.readOnly = true;
+          var img = trigger ? trigger.querySelector('img[alt="Chat"]') : null;
+          if (img) {
+            img.style.filter = 'grayscale(0) brightness(1.1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2)';
+            img.style.opacity = '1';
+          }
+          if (sendBtn.parentElement) {
+            sendBtn.parentElement.innerHTML = '<div style="margin-top: 40px; color: #31708f; background: #d9edf7; border: 1px solid #bce8f1; border-radius: 4px; padding: 8px 12px; font-size: 10px; text-align: left;"><i class="fa fa-info-circle" style="margin-right: 6px;"></i>Remark already saved and cannot be edited.</div>';
+          }
+          return showRemarkSavedModal().then(function () {
+            closeNqRemarkTooltip(trigger);
+          });
+        })
+        .catch(function (error) {
+          sendBtn.disabled = false;
+          sendBtn.dataset.saving = 'false';
+          alert(error.message || 'Failed to save remark.');
+        });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    /* ── 1. Lot Qty Checkbox ── */
+    document.querySelectorAll('.brass-checkbox').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        if (!this.checked) return;
+        var lotId = this.dataset.lotId;
+        var row = this.closest('tr');
+        cb.disabled = true;
+        post(API_BASE + 'toggle-verified/', { lot_id: lotId })
+          .then(function (data) {
+            if (data.success) {
+              var wrap = cb.parentElement;
+              cb.remove();
+              var tick = document.createElement('span');
+              tick.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;background:#0c8249;color:white;font-size:14px;font-weight:bold;margin-left:2px;';
+              tick.innerHTML = '&#10003;';
+              wrap.insertBefore(tick, wrap.firstChild);
+              if (row) {
+                var qCircle = row.querySelector('.d-flex .rounded-circle');
+                if (qCircle) qCircle.style.backgroundColor = '#0c8249';
+                row.querySelectorAll('.btn-reject-is[disabled], .tray-scan-btn[disabled]').forEach(function (b) {
+                  b.removeAttribute('disabled');
+                });
+              }
+              setTimeout(function () { location.reload(); }, 500);
+            } else {
+              cb.checked = false;
+              cb.disabled = false;
+              alert(data.error || 'Failed to verify');
+            }
+          })
+          .catch(function () {
+            cb.checked = false;
+            cb.disabled = false;
+            alert('Server error');
+          });
+      });
+    });
+
+    /* ── 2. View Icon — tray snapshot modal ── */
+    var viewModal = document.getElementById('trayScanModal_DayPlanning');
+    var viewDetails = document.getElementById('trayScanDetails_DayPlanning');
+    var closeViewBtn = document.getElementById('closeTrayScanModal_DayPlanning');
+
+    function closeViewModal() {
+      if (viewModal) viewModal.classList.remove('open');
+    }
+    if (closeViewBtn) closeViewBtn.addEventListener('click', closeViewModal);
+
+    /* IV-only model image for the modal header — reuses the same shared
+       hover-preview endpoint/cache/normalizer as the plating-stk-no hover,
+       so this stays a single source of truth for image selection. */
+    var modalImgEl = document.getElementById('modalUserImg_DayPlanning');
+    var modalImgDefaultSrc = modalImgEl ? modalImgEl.getAttribute('src') : '';
+
+    function resetModalModelImage() {
+      if (!modalImgEl) return;
+      modalImgEl.onerror = null;
+      modalImgEl.src = modalImgDefaultSrc;
+      modalImgEl.alt = 'Model Image';
+    }
+
+    function applyModalModelImagePayload(payload) {
+      if (!modalImgEl) return;
+      var normalize = window.NickelNormalizeImageUrl || function (u) { return u || ''; };
+      var url = normalize(payload && payload.preview_image);
+      if (!url && payload && Array.isArray(payload.images)) {
+        var insideView = payload.images.find(function (image) {
+          return String(image && image.view_code || '').toUpperCase() === 'IV';
+        });
+        url = normalize(insideView && (insideView.url || insideView.image_url || insideView.src || insideView.image));
+      }
+      if (!url && payload && Array.isArray(payload.images)) {
+        var noImage = payload.images.find(function (image) {
+          var viewCode = String(image && image.view_code || '').toUpperCase();
+          return viewCode === 'NO_IMAGE' || image && image.is_placeholder === true;
+        });
+        url = normalize(noImage && (noImage.url || noImage.image_url || noImage.src || noImage.image));
+      }
+      if (!url) { resetModalModelImage(); return; }
+      modalImgEl.onerror = function () {
+        modalImgEl.onerror = null;
+        resetModalModelImage();
+      };
+      modalImgEl.alt = (payload && (payload.is_placeholder || payload.is_fallback))
+        ? 'No image available'
+        : 'Model IV preview';
+      modalImgEl.src = url;
+    }
+
+    function renderModalModelImage(stockNo) {
+      if (!modalImgEl) return;
+      if (!stockNo) { resetModalModelImage(); return; }
+
+      var cache = window.NickelModelPreviewCache;
+      var cacheKey = String(stockNo || '').trim().toUpperCase();
+      if (cache instanceof Map && cache.has(cacheKey)) {
+        applyModalModelImagePayload(cache.get(cacheKey));
+        return;
+      }
+
+      fetch('/adminportal/api/model-hover-preview/?stock_no=' + encodeURIComponent(stockNo) + '&_ts=' + Date.now(), {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'no-store'
+      })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('Request failed')); })
+        .then(function (payload) {
+          if (cache instanceof Map) cache.set(cacheKey, payload);
+          applyModalModelImagePayload(payload);
+        })
+        .catch(function () {
+          resetModalModelImage();
+        });
+    }
+
+    document.querySelectorAll('.tray-scan-btn-BQ-view').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var lotId = btn.dataset.stockLotId || '';
+        var modelNo = btn.dataset.modelNo || '';
+        var stockNo = btn.dataset.platingStkNo || '';
+        var totalQty = btn.dataset.totalBatchQuantity || '0';
+        var missingQty = btn.dataset.brassMissingQty || '0';
+        var physQty = (parseInt(totalQty, 10) || 0) - (parseInt(missingQty, 10) || 0);
+
+        var elModel = document.getElementById('modalModelNo_DayPlanning');
+        var elLotQty = document.getElementById('modalLotQty');
+        var elMisQty = document.getElementById('modalMissingQty');
+        var elPhysQty = document.getElementById('modalPhysicalQty');
+        if (elModel) elModel.textContent = modelNo || lotId;
+        if (elLotQty) elLotQty.textContent = totalQty;
+        if (elMisQty) elMisQty.textContent = missingQty;
+        if (elPhysQty) elPhysQty.textContent = physQty;
+
+        // Clear any previously-loaded row's image before showing this row's IV image.
+        resetModalModelImage();
+        renderModalModelImage(stockNo);
+
+        if (viewDetails) viewDetails.innerHTML = '<span style="color:#888;font-size:13px;">Loading tray data...</span>';
+        if (viewModal) viewModal.classList.add('open');
+
+        if (!lotId) {
+          if (viewDetails) viewDetails.innerHTML = '<span style="color:red;">No lot ID found.</span>';
+          return;
+        }
+        post(API_BASE + 'action/', { action: 'GET_TRAYS', lot_id: lotId })
+          .then(function (data) {
+            if (!data.success) {
+              viewDetails.innerHTML = '<span style="color:red;">Failed to load tray data.</span>';
+              return;
+            }
+            var trays = data.trays || [];
+            var html = '<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+            html += '<thead><tr style="background:#f0f4f8;">';
+            html += '<th style="padding:6px 10px;text-align:center;border-bottom:2px solid #dee2e6;width:50px;">S.No</th>';
+            html += '<th style="padding:6px 10px;text-align:left;border-bottom:2px solid #dee2e6;">Tray ID</th>';
+            html += '<th style="padding:6px 10px;text-align:center;border-bottom:2px solid #dee2e6;width:80px;">Qty</th>';
+            html += '</tr></thead><tbody>';
+            if (trays.length === 0) {
+              html += '<tr><td colspan="3" style="text-align:center;padding:16px;color:#888;">No tray data available for this lot.</td></tr>';
+            } else {
+              trays.forEach(function (t, i) {
+                var snoCell = (i === 0)
+                  ? (i + 1) + ' <span style="color:#028084;font-weight:600;">(Top Tray)</span>'
+                  : (i + 1);
+                html += '<tr style="background:' + (i % 2 === 0 ? '#fff' : '#f8f9fa') + ';">';
+                html += '<td style="padding:6px 10px;text-align:center;">' + snoCell + '</td>';
+                html += '<td style="padding:6px 10px;font-weight:600;">' + t.tray_id + '</td>';
+                html += '<td style="padding:6px 10px;text-align:center;">' + t.qty + '</td>';
+                html += '</tr>';
+              });
+            }
+            html += '</tbody></table>';
+            html += '<p style="margin:8px 0 0;font-size:11px;color:#888;">Total Lot Qty: <strong>' + (data.total_qty || 0) + '</strong> | Tray Type: <strong>' + (data.tray_type || 'N/A') + '</strong> | Capacity: <strong>' + (data.tray_capacity || 0) + '</strong></p>';
+            if (viewDetails) viewDetails.innerHTML = html;
+          })
+          .catch(function () {
+            if (viewDetails) viewDetails.innerHTML = '<span style="color:red;">Server error while loading tray data.</span>';
+          });
+      });
+    });
+
+    /* ── 3. Accept Button — full accept with confirmation ── */
+    document.querySelectorAll('.btn-accept-is').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var lotId = btn.dataset.lotId || btn.dataset.stockLotId || '';
+        if (!lotId) return;
+        Swal.fire({
+          title: 'Confirm Full Accept',
+          text: 'Accept this lot with current quantity and tray info?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, Accept',
+          cancelButtonText: 'Cancel',
+          focusCancel: true,
+          confirmButtonColor: '#0c8249',
+          cancelButtonColor: '#6c757d',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        }).then(function (result) {
+          if (!result.isConfirmed) return;
+          btn.disabled = true;
+          btn.textContent = 'Saving...';
+          post(API_BASE + 'action/', { action: 'FULL_ACCEPT', lot_id: lotId })
+            .then(function (data) {
+              if (data.success) {
+                Swal.fire({ title: 'Accepted!', icon: 'success', timer: 1200, showConfirmButton: false });
+                setTimeout(function () { location.reload(); }, 1200);
+              } else {
+                Swal.fire('Error', data.error || 'Failed to accept lot', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Accept';
+              }
+            })
+            .catch(function () {
+              Swal.fire('Error', 'Server error. Please try again.', 'error');
+              btn.disabled = false;
+              btn.textContent = 'Accept';
+            });
+        });
+      });
+    });
+
+    /* ── 4. Reject Modal ── */
+    var overlay = document.getElementById('nickelRejectModalOverlay');
+    var modalClose = document.getElementById('nickelRejectModalClose');
+    var cancelBtn = document.getElementById('nqRejectCancelBtn');
+    var reasonsGrid = document.getElementById('nqRejectReasonsGrid');
+    var totalQtyDisp = document.getElementById('nqRejectTotalQtyDisplay');
+    var remainingDisp = document.getElementById('nqRejectRemainingQtyDisplay');
+    var allocSection = document.getElementById('nqTrayAllocationSection');
+    var origContainer = document.getElementById('nqOriginalTraysContainer');
+    var rejectSlotsCont = document.getElementById('nqRejectSlotsContainer');
+    var acceptSlotsCont = document.getElementById('nqAcceptSlotsContainer');
+    var delinkSection = document.getElementById('nqDelinkSection');
+    var delinkList = document.getElementById('nqDelinkListContainer');
+    var reuseInfo = document.getElementById('nqRejectReuseInfo');
+    var acceptLockInfo = document.getElementById('nqAcceptLockInfo');
+    var rejectQtyLabel = document.getElementById('nqRejectTotalQtyLabel');
+    var acceptQtyLabel = document.getElementById('nqAcceptTotalQtyLabel');
+    var combAccept = document.getElementById('nqCombinedAcceptQty');
+    var combReject = document.getElementById('nqCombinedRejectQty');
+    var combDelink = document.getElementById('nqCombinedDelinkQty');
+    var submitBtn = document.getElementById('nqRejectSubmitBtn');
+    var draftBtn = document.getElementById('nqDraftSaveBtn');
+    var errDiv = document.getElementById('nqRejectModalError');
+    var fullRejCb = document.getElementById('nqFullLotRejectionCb');
+    var clearAllBtn = document.getElementById('nqGlobalClearAllBtn');
+    if (!overlay) return;
+
+    var state = {
+      lotId: '', platingStk: '', totalQty: 0, trayCapacity: 20, trayType: '',
+      rejPrefix: 'NB', rejCap: 16,
+      reasons: [], origTrays: [], rejectSlots: [], acceptSlots: [],
+      reuseTrays: [], allocDone: false, acceptAutoTrays: [], autoDelinkIds: [], delinkSlots: [],
+      origAllTrays: [],
+      pendingRestore: null,
+    };
+    var lastFocusedTrayInput = null;
+
+    document.addEventListener('focusin', function (event) {
+      var target = event.target;
+      if (target && target.classList && (target.classList.contains('nq-delink-tray-input') || target.classList.contains('nq-acc-tray-input'))) {
+        lastFocusedTrayInput = target;
+      }
+    });
+
+    function getFocusedTrayInput(selector, container) {
+      var activeInput = document.activeElement;
+      if (activeInput && activeInput.matches && activeInput.matches(selector) && container.contains(activeInput)) {
+        return activeInput;
+      }
+      if (lastFocusedTrayInput && lastFocusedTrayInput.matches && lastFocusedTrayInput.matches(selector) && container.contains(lastFocusedTrayInput)) {
+        return lastFocusedTrayInput;
+      }
+      return null;
+    }
+
+    function closeModal() {
+      overlay.style.display = 'none';
+      errDiv.textContent = '';
+      state.allocDone = false;
+      allocSection.style.display = 'none';
+      if (window.GlobalShortcutManager && typeof window.GlobalShortcutManager.clear === 'function') {
+        window.GlobalShortcutManager.clear();
+      }
+      try {
+        sessionStorage.removeItem('globalScanModule');
+        sessionStorage.removeItem('globalScanTrayId');
+        sessionStorage.removeItem('globalScanLotId');
+      } catch (e) {}
+      if (typeof window.nqRestoreRowPosition === 'function') {
+        window.nqRestoreRowPosition();
+      }
+    }
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+    document.querySelectorAll('.tray-scan-btn.btn-reject-is').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var row = btn.closest('tr');
+        if (!row) return;
+        state.lotId = btn.dataset.stockLotId || btn.dataset.lotId || '';
+        state.platingStk = btn.dataset.platingStk || '';
+        state.totalQty = parseInt(btn.dataset.totalQty || 0, 10) || 0;
+        if (!state.lotId) {
+          var cb2 = row.querySelector('.brass-checkbox');
+          if (cb2) state.lotId = cb2.dataset.lotId || '';
+        }
+        if (!state.lotId) return;
+        openRejectModal();
+      });
+    });
+
+    function openRejectModal() {
+      errDiv.textContent = '';
+      allocSection.style.display = 'none';
+      state.allocDone = false;
+      state.pendingRestore = null;
+      reasonsGrid.innerHTML = '<span style="color:#888;font-size:13px;">Loading...</span>';
+      overlay.style.display = 'flex';
+      var initialRemarksInput = document.getElementById('nqRejectRemarksInput');
+      if (initialRemarksInput) initialRemarksInput.value = '';
+      if (fullRejCb) fullRejCb.checked = false;
+      Promise.all([
+        post(API_BASE + 'action/', { action: 'GET_REASONS' }),
+        post(API_BASE + 'action/', { action: 'GET_TRAYS', lot_id: state.lotId }),
+        post(API_BASE + 'action/', { action: 'GET_DRAFT', lot_id: state.lotId }),
+      ]).then(function (results) {
+        var rData = results[0], tData = results[1], draftRes = results[2];
+        if (!rData.success || !tData.success) {
+          reasonsGrid.innerHTML = '<span style="color:red;">Failed to load data</span>';
+          return;
+        }
+        state.reasons = rData.reasons;
+        state.origTrays = tData.trays;
+        state.totalQty = tData.total_qty || state.totalQty;
+        state.trayCapacity = tData.tray_capacity || 20;
+        state.trayType = tData.tray_type || '';
+        state.platingStk = tData.plating_stk_no || state.platingStk;
+        document.getElementById('nqRejectModalPlatingStk').textContent = state.platingStk;
+        document.getElementById('nqRejectModalTotalQty').textContent = state.totalQty;
+        totalQtyDisp.textContent = '0';
+        remainingDisp.textContent = state.totalQty;
+        renderReasons();
+        // Restore draft if exists
+        if (draftRes && draftRes.success && draftRes.has_draft && draftRes.draft_data) {
+          var dd = draftRes.draft_data;
+          state.pendingRestore = dd;
+          state.totalQty = parseInt(dd.total_lot_qty || dd.total_qty || state.totalQty, 10) || state.totalQty;
+          state.platingStk = dd.plating_stk_no || state.platingStk;
+          document.getElementById('nqRejectModalPlatingStk').textContent = state.platingStk;
+          document.getElementById('nqRejectModalTotalQty').textContent = state.totalQty;
+          reasonsGrid.querySelectorAll('.nq-reason-qty').forEach(function (inp) { inp.max = state.totalQty; });
+          // Restore remarks
+          var remarksInp = document.getElementById('nqRejectRemarksInput');
+          if (remarksInp) remarksInp.value = dd.remarks || '';
+          if (fullRejCb) fullRejCb.checked = !!dd.full_lot_rejection;
+          // Restore reason qty inputs
+          var totalRej = parseInt(dd.rejected_qty, 10) || 0;
+          if (dd.reason_qtys && dd.reason_qtys.length > 0) {
+            dd.reason_qtys.forEach(function (rq) {
+              var inp = reasonsGrid.querySelector('[data-reason-id="' + rq.reason_id + '"]');
+              if (inp) inp.value = rq.qty;
+            });
+            if (!totalRej) dd.reason_qtys.forEach(function (rq) { totalRej += (parseInt(rq.qty, 10) || 0); });
+          }
+          if (totalRej > 0 && totalRej <= state.totalQty) {
+            totalQtyDisp.textContent = totalRej;
+            remainingDisp.textContent = Math.max(0, state.totalQty - totalRej);
+            fetchAllocation(totalRej);
+          }
+        }
+      }).catch(function () {
+        reasonsGrid.innerHTML = '<span style="color:red;">Server error</span>';
+      });
+    }
+
+    function renderReasons() {
+      reasonsGrid.innerHTML = '';
+      state.reasons.forEach(function (r) {
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #f0f0f0;';
+        row.innerHTML =
+          '<label style="flex:1;font-size:13px;color:#333;">' + r.rejection_reason + '</label>' +
+          '<input type="number" class="nq-reason-qty" min="0" max="' + state.totalQty + '" ' +
+          'style="width:64px;border:1px solid #ccc;border-radius:4px;padding:2px 5px;font-size:13px;" ' +
+          'placeholder="Qty" data-reason-id="' + r.id + '">';
+        reasonsGrid.appendChild(row);
+      });
+      reasonsGrid.querySelectorAll('.nq-reason-qty').forEach(function (inp) {
+        inp.addEventListener('input', debounce(onReasonQtyChange, 350));
+      });
+      if (fullRejCb) {
+        fullRejCb.onchange = function () {
+          if (fullRejCb.checked) {
+            reasonsGrid.querySelectorAll('.nq-reason-qty').forEach(function (inp) { inp.value = ''; });
+            // Full lot rejection: do NOT auto-fill lot qty into reason fields; directly allocate
+            totalQtyDisp.textContent = state.totalQty;
+            remainingDisp.textContent = '0';
+            fetchAllocation(state.totalQty);
+          } else {
+            totalQtyDisp.textContent = '0';
+            remainingDisp.textContent = state.totalQty;
+            allocSection.style.display = 'none';
+            state.allocDone = false;
+          }
+        };
+      }
+    }
+
+    function getTotalRejectQty() {
+      if (fullRejCb && fullRejCb.checked) { return state.totalQty; }
+      var total = 0;
+      reasonsGrid.querySelectorAll('.nq-reason-qty').forEach(function (inp) {
+        total += parseInt(inp.value, 10) || 0;
+      });
+      return total;
+    }
+
+    function onReasonQtyChange() {
+      var total = getTotalRejectQty();
+      totalQtyDisp.textContent = total;
+      remainingDisp.textContent = Math.max(0, state.totalQty - total);
+      if (total > 0 && total <= state.totalQty) {
+        fetchAllocation(total);
+      } else {
+        allocSection.style.display = 'none';
+        state.allocDone = false;
+      }
+    }
+
+    function fetchAllocation(rejQty) {
+      allocSection.style.display = 'none';
+      post(API_BASE + 'action/', { action: 'ALLOCATE', lot_id: state.lotId, rejected_qty: rejQty })
+        .then(function (data) {
+          if (!data.success) return;
+          state.rejectSlots = data.reject_slots;
+          state.acceptSlots = data.accept_slots;
+          state.acceptAutoTrays = data.accept_auto_trays || [];
+          state.autoDelinkIds = data.auto_delink_tray_ids || [];
+          state.delinkSlots = data.delink_slots || [];
+          state.origAllTrays = data.original_trays || [];
+          state.reuseTrays = [];
+          state.rejPrefix = data.rej_prefix || 'NB';
+          state.rejCap = data.rej_cap || 16;
+          renderAllocation(data);
+        });
+    }
+
+    // Freed original trays (delink-required) that were instead scanned directly
+    // into a reject slot — they no longer need a separate delink scan.
+    function getRejectReuseTrayIds() {
+      var ids = [];
+      var autoDelinkIdsUpper = (state.autoDelinkIds || []).map(function (id) { return (id || '').toUpperCase(); });
+      rejectSlotsCont.querySelectorAll('.nq-rej-tray-input').forEach(function (inp) {
+        var v = inp.value.trim().toUpperCase();
+        if (v && autoDelinkIdsUpper.indexOf(v) !== -1) ids.push(v);
+      });
+      return ids;
+    }
+
+    function activeDelinkInputs() {
+      var reused = getRejectReuseTrayIds();
+      return Array.from(delinkList.querySelectorAll('.nq-delink-tray-input')).filter(function (inp) {
+        return reused.indexOf((inp.dataset.expectedTrayId || '').toUpperCase()) === -1;
+      });
+    }
+
+    function getDelinkRows() {
+      var reused = getRejectReuseTrayIds();
+      delinkList.querySelectorAll('.nq-delink-tray-input').forEach(function (inp) {
+        var wrap = inp.closest('div');
+        var isReused = reused.indexOf((inp.dataset.expectedTrayId || '').toUpperCase()) !== -1;
+        if (isReused) inp.value = '';
+        inp.disabled = isReused;
+        if (wrap) wrap.style.display = isReused ? 'none' : '';
+      });
+      // Qty must come from the tray actually scanned into the slot, not the
+      // slot's originally-expected tray — an operator may scan a different
+      // (skipped-over) original tray into a delink slot, and that tray can
+      // carry a different quantity than the one the backend guessed for it.
+      var origQtyById = {};
+      (state.origAllTrays || []).forEach(function (t) { origQtyById[t.tray_id] = t.qty; });
+      return activeDelinkInputs().map(function (inp) {
+        var tid = inp.value.trim().toUpperCase();
+        var qty = origQtyById.hasOwnProperty(tid) ? origQtyById[tid] : (parseInt(inp.dataset.qty, 10) || 0);
+        return { tray_id: tid, qty: qty };
+      }).filter(function (row) { return row.tray_id && row.qty > 0; });
+    }
+
+    function setChipDelinkState(trayId, selected) {
+      var chip = origContainer.querySelector('span[data-tray-id="' + trayId + '"]');
+      if (!chip) return;
+      chip.dataset.selected = selected ? '1' : '0';
+      chip.style.background = selected ? '#fff3e0' : '#e3f2fd';
+      chip.style.borderColor = selected ? '#e65100' : (chip.dataset.isTop === '1' ? '#1565c0' : '#90caf9');
+      chip.style.textDecoration = selected ? 'line-through' : 'none';
+      chip.style.opacity = selected ? '0.7' : '1';
+    }
+
+    // A tray ID may occupy only one slot across the whole reject/accept/delink
+    // form. Collect everything currently filled in (excluding the slot being
+    // checked) so duplicates are caught before they ever reach the backend.
+    function collectUsedTrayIds(excludeInput) {
+      var ids = [];
+      Array.from(rejectSlotsCont.querySelectorAll('.nq-rej-tray-input'))
+        .concat(Array.from(acceptSlotsCont.querySelectorAll('.nq-acc-tray-input')))
+        .concat(Array.from(delinkList.querySelectorAll('.nq-delink-tray-input')))
+        .forEach(function (inp) {
+          if (inp === excludeInput) return;
+          var v = inp.value.trim().toUpperCase();
+          if (v) ids.push(v);
+        });
+      return ids;
+    }
+
+    function isDuplicateTrayId(trayId, excludeInput) {
+      var val = (trayId || '').trim().toUpperCase();
+      return !!val && collectUsedTrayIds(excludeInput).indexOf(val) !== -1;
+    }
+
+    function clearDuplicateTrayValue(trayId, currentInput) {
+      if (!isDuplicateTrayId(trayId, currentInput)) return false;
+      currentInput.value = '';
+      errDiv.textContent = 'Tray ' + (trayId || '').trim().toUpperCase() + ' is already used in another slot.';
+      return true;
+    }
+
+    function fillRejectSlotFromTap(trayId) {
+      if (!(trayId || '').trim().toUpperCase().startsWith(state.rejPrefix)) {
+        errDiv.textContent = 'Reject tray must start with ' + state.rejPrefix + ' — ' + trayId + ' cannot be used as a reject tray.';
+        return false;
+      }
+      var rejInputs = Array.from(rejectSlotsCont.querySelectorAll('.nq-rej-tray-input'));
+      // Prefer the next open slot over a stale focused/last-focused input so a
+      // tap always advances into empty slots instead of overwriting one that's
+      // already filled.
+      var targetInput = rejInputs.find(function (inp) { return !inp.value.trim(); }) || getFocusedTrayInput('.nq-rej-tray-input', rejectSlotsCont) || rejInputs[0];
+      if (!targetInput) return false;
+      if (isDuplicateTrayId(trayId, targetInput)) {
+        errDiv.textContent = 'Tray ' + trayId + ' is already used in another slot.';
+        return false;
+      }
+      targetInput.value = trayId;
+      targetInput.style.borderColor = '#4caf50';
+      var statusEl = targetInput.nextElementSibling;
+      if (statusEl) { statusEl.textContent = '✓'; statusEl.style.color = '#4caf50'; }
+      errDiv.textContent = '';
+      lastFocusedTrayInput = targetInput;
+      updateDelinkSection();
+      var nextInput = rejInputs.find(function (inp) { return !inp.value.trim(); });
+      if (nextInput) { nextInput.focus(); lastFocusedTrayInput = nextInput; }
+      return true;
+    }
+
+    function fillDelinkSlotFromTap(trayId) {
+      var delinkInputs = Array.from(delinkList.querySelectorAll('.nq-delink-tray-input'));
+      if (!delinkInputs.length) return false;
+      var targetInput = delinkInputs.find(function (inp) { return !inp.value.trim(); }) || getFocusedTrayInput('.nq-delink-tray-input', delinkList) || delinkInputs[0];
+      if (isDuplicateTrayId(trayId, targetInput)) {
+        errDiv.textContent = 'Tray ' + trayId + ' is already used in another slot.';
+        return false;
+      }
+      targetInput.value = trayId;
+      lastFocusedTrayInput = targetInput;
+      updateDelinkSection();
+      var nextInput = delinkInputs.find(function (inp) { return !inp.value.trim(); });
+      if (nextInput) {
+        nextInput.focus();
+        lastFocusedTrayInput = nextInput;
+      } else {
+        var acceptTopInput = acceptSlotsCont.querySelector('.nq-acc-tray-input');
+        if (acceptTopInput) {
+          acceptTopInput.focus();
+          lastFocusedTrayInput = acceptTopInput;
+        } else {
+          targetInput.focus();
+        }
+      }
+      return true;
+    }
+
+    function fillAcceptSlotFromTap(trayId) {
+      var accInputs = Array.from(acceptSlotsCont.querySelectorAll('.nq-acc-tray-input'));
+      if (!accInputs.length) return false;
+      // Prefer the next open slot over a stale focused/last-focused input so a
+      // tap always advances into empty slots instead of overwriting one that's
+      // already filled — this is what left the last slots blank while re-taps
+      // kept landing back on an earlier, already-filled slot.
+      var targetInput = accInputs.find(function (inp) { return !inp.value.trim(); }) || getFocusedTrayInput('.nq-acc-tray-input', acceptSlotsCont) || accInputs[0];
+      if (isDuplicateTrayId(trayId, targetInput)) {
+        errDiv.textContent = 'Tray ' + trayId + ' is already used in another slot.';
+        return false;
+      }
+      targetInput.value = trayId;
+      lastFocusedTrayInput = targetInput;
+      var targetIndex = accInputs.indexOf(targetInput);
+      if (targetIndex === 0) {
+        targetInput.dispatchEvent(new Event('input'));
+      }
+      var nextInput = accInputs.slice(targetIndex + 1).find(function (inp) { return !inp.value.trim(); });
+      if (nextInput) nextInput.focus();
+      else targetInput.focus();
+      applyScanLockAndOrder();
+      return true;
+    }
+
+    function updateDelinkSection() {
+      var delinkRows = getDelinkRows();
+      state.reuseTrays = delinkRows;
+      combDelink.textContent = delinkRows.length;
+
+      var requiredDelinkCount = (state.delinkSlots || []).length - getRejectReuseTrayIds().length;
+      if (requiredDelinkCount > 0) {
+        delinkSection.style.display = '';
+        reuseInfo.textContent = 'Scan or tap delink trays: ' + delinkRows.length + '/' + requiredDelinkCount;
+        reuseInfo.style.display = '';
+      } else {
+        delinkSection.style.display = 'none';
+        reuseInfo.style.display = 'none';
+      }
+
+      // A Delink Tray ID that gets scanned and then removed (input cleared or
+      // swapped) invalidates any Accept top-tray already scanned against the
+      // now-stale Delink state — clear it so no stale accept data survives.
+      if (requiredDelinkCount > 0 && delinkRows.length < requiredDelinkCount) {
+        var topAccInput = acceptSlotsCont.querySelector('.nq-acc-tray-input');
+        if (topAccInput) topAccInput.value = '';
+      }
+
+      var delinkedIdSet = delinkRows.map(function (row) { return row.tray_id; });
+      // Auto-fill candidates must track the trays actually scanned into Delink,
+      // not blindly replay the backend's static ascending-order guess
+      // (state.acceptAutoTrays) — that guess assumed a specific original tray
+      // (e.g. NB-A00002) would be delinked. If the operator instead delinks a
+      // different original tray, NB-A00002 was effectively "skipped": it must
+      // fall back into the accept pool instead of vanishing, while whatever
+      // tray was actually scanned for delink must never appear as an accept
+      // candidate, however the backend originally planned it.
+      var reusedRejectIds = getRejectReuseTrayIds();
+      var expectedDelinkIds = (state.delinkSlots || []).map(function (slot) { return slot.tray_id; });
+      var skippedExpectedDelinkIds = expectedDelinkIds.filter(function (id) {
+        return delinkedIdSet.indexOf(id) === -1 && reusedRejectIds.indexOf(id) === -1;
+      });
+      var origById = {};
+      (state.origAllTrays || []).forEach(function (t) { origById[t.tray_id] = t; });
+      var filteredAutoTrays = (state.acceptAutoTrays || [])
+        .filter(function (t) { return delinkedIdSet.indexOf(t.tray_id) === -1; })
+        .concat(
+          skippedExpectedDelinkIds
+            .filter(function (id) { return origById.hasOwnProperty(id); })
+            .map(function (id) { return { tray_id: id, qty: origById[id].qty }; })
+        );
+      var accInputs = Array.from(acceptSlotsCont.querySelectorAll('.nq-acc-tray-input'));
+      var slot0Val = accInputs.length > 0 ? accInputs[0].value.trim().toUpperCase() : '';
+      if (!slot0Val) {
+        // Top tray not scanned yet — leave slot 0 empty, clear remaining
+        for (var j = 1; j < accInputs.length; j++) accInputs[j].value = '';
+      } else {
+        // Top tray scanned — preserve slot 0, re-fill slots 1+ excluding the slot-0 tray
+        var filteredForRest = filteredAutoTrays.filter(function (t) { return t.tray_id !== slot0Val; });
+        var availSlotsDS = accInputs.length - 1;
+        filteredForRest.slice(0, availSlotsDS).forEach(function (t, i) {
+          accInputs[i + 1].value = t.tray_id;
+        });
+        for (var j = Math.min(filteredForRest.length, availSlotsDS) + 1; j < accInputs.length; j++) {
+          accInputs[j].value = '';
+        }
+      }
+
+      // Strike out every original-tray chip that is currently accounted for
+      // anywhere in the form — delinked, reused as its own reject container,
+      // or auto-filled/typed into an accept slot — so the chip list always
+      // mirrors what's actually been allocated instead of only showing delink.
+      var usedOriginalIds = delinkedIdSet
+        .concat(Array.from(rejectSlotsCont.querySelectorAll('.nq-rej-tray-input')).map(function (inp) { return inp.value.trim().toUpperCase(); }))
+        .concat(Array.from(accInputs).map(function (inp) { return inp.value.trim().toUpperCase(); }))
+        .filter(Boolean);
+      origContainer.querySelectorAll('span[data-tray-id]').forEach(function (chip) {
+        setChipDelinkState(chip.dataset.trayId, usedOriginalIds.indexOf(chip.dataset.trayId) !== -1);
+      });
+
+      applyScanLockAndOrder();
+    }
+
+    // Two valid scan sequences are supported:
+    //   A) Delink -> Accept -> Reject
+    //   B) Reject -> Delink -> Accept
+    // Reject is never gated — it may be scanned first (B) or last (A). The one
+    // fixed invariant is that Accept must always be associated with a completed
+    // Delink scan, so Accept stays locked until every required Delink slot is
+    // filled (trivially satisfied when no delink is required for this lot).
+    function applyScanLockAndOrder() {
+      var rejInputs = Array.from(rejectSlotsCont.querySelectorAll('.nq-rej-tray-input'));
+      var accInputs = Array.from(acceptSlotsCont.querySelectorAll('.nq-acc-tray-input'));
+      var delinkInputs = activeDelinkInputs();
+
+      function isSectionComplete(inputs) {
+        return inputs.every(function (inp) { return inp.value.trim(); });
+      }
+
+      var rejectComplete = isSectionComplete(rejInputs);
+      var delinkComplete = isSectionComplete(delinkInputs);
+      var lockDelink = false;
+      var lockAccept = !delinkComplete;
+      state.lockDelink = lockDelink;
+      state.lockAccept = lockAccept;
+
+      if (acceptLockInfo) {
+        if (lockAccept && delinkInputs.length > 0) {
+          acceptLockInfo.textContent = 'Complete the Delink Tray scan before scanning Accept trays.';
+          acceptLockInfo.style.display = '';
+        } else {
+          acceptLockInfo.textContent = '';
+          acceptLockInfo.style.display = 'none';
+        }
+      }
+
+      function styleInput(inp, locked) {
+        inp.disabled = locked;
+        inp.style.background = locked ? '#eeeeee' : '';
+        inp.style.opacity = locked ? '0.55' : '1';
+        inp.style.cursor = locked ? 'not-allowed' : '';
+      }
+
+      function applySection(inputs, sectionLocked) {
+        var blockedByOrder = false;
+        inputs.forEach(function (inp) {
+          styleInput(inp, sectionLocked || blockedByOrder);
+          if (!inp.value.trim()) blockedByOrder = true;
+        });
+      }
+
+      applySection(rejInputs, false);
+      applySection(delinkInputs, lockDelink);
+      applySection(accInputs, lockAccept);
+
+      // Chips only go inert once every section is fully scanned — with Reject
+      // and Delink both always tappable (per the two supported sequences),
+      // there's nothing left for a tap to route to at that point.
+      var chipsLocked = rejectComplete && delinkComplete && isSectionComplete(accInputs);
+      origContainer.querySelectorAll('span[data-tray-id]').forEach(function (chip) {
+        chip.style.pointerEvents = chipsLocked ? 'none' : '';
+        chip.style.filter = chipsLocked ? 'grayscale(1)' : '';
+        chip.style.opacity = chipsLocked ? '0.45' : (chip.dataset.selected === '1' ? '0.7' : '1');
+      });
+    }
+
+    function renderAllocation(data) {
+      origContainer.innerHTML = '';
+      rejectSlotsCont.innerHTML = '';
+      acceptSlotsCont.innerHTML = '';
+      delinkList.innerHTML = '';
+      state.reuseTrays = [];
+
+      // Original tray chips — required delink trays fill delink slots; others fill accept slots
+      (data.original_trays || []).forEach(function (t) {
+        var chip = document.createElement('span');
+        chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:#e3f2fd;border:1px solid #90caf9;border-radius:14px;padding:3px 12px;font-size:12px;cursor:pointer;user-select:none;margin:2px;transition:all 0.15s;';
+        chip.textContent = t.tray_id + ' (' + t.qty + ')';
+        if (t.is_top) chip.style.borderColor = '#1565c0';
+        chip.title = 'Tap to scan this tray';
+        chip.dataset.trayId = t.tray_id;
+        chip.dataset.qty = t.qty;
+        chip.dataset.isTop = t.is_top ? '1' : '0';
+        chip.dataset.selected = '0';
+        chip.addEventListener('click', function () {
+          // Reject, Delink and Accept can each be the starting section
+          // (Sequence A: Delink -> Accept -> Reject; Sequence B: Reject ->
+          // Delink -> Accept), so whichever input is actually focused gets
+          // the tap first.
+          var focusedRej = getFocusedTrayInput('.nq-rej-tray-input', rejectSlotsCont);
+          var focusedDelinkInp = getFocusedTrayInput('.nq-delink-tray-input', delinkList);
+          var focusedAcc = getFocusedTrayInput('.nq-acc-tray-input', acceptSlotsCont);
+          if (focusedRej) { fillRejectSlotFromTap(t.tray_id); return; }
+          if (!state.lockDelink && focusedDelinkInp) { fillDelinkSlotFromTap(t.tray_id); return; }
+          if (!state.lockAccept && focusedAcc) { fillAcceptSlotFromTap(t.tray_id); return; }
+
+          // Nothing focused — route by what still needs this tray.
+          if (!state.lockDelink && (state.autoDelinkIds || []).indexOf(t.tray_id) !== -1) {
+            fillDelinkSlotFromTap(t.tray_id);
+            return;
+          }
+          var hasEmptyRejSlotNow = Array.from(rejectSlotsCont.querySelectorAll('.nq-rej-tray-input')).some(function (inp) { return !inp.value.trim(); });
+          if (hasEmptyRejSlotNow) {
+            fillRejectSlotFromTap(t.tray_id);
+            return;
+          }
+          if (!state.lockAccept) {
+            fillAcceptSlotFromTap(t.tray_id);
+          } else if (!state.lockDelink) {
+            fillDelinkSlotFromTap(t.tray_id);
+          }
+        });
+        origContainer.appendChild(chip);
+      });
+
+      // Reject slots
+      (data.reject_slots || []).forEach(function (slot, i) {
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px;';
+        wrap.innerHTML =
+          '<span style="font-size:11px;color:#888;min-width:24px;">' + (i + 1) + '.</span>' +
+          '<input class="nq-rej-tray-input" type="text" placeholder="' + state.rejPrefix + 'xxxx" ' +
+          'maxlength="9" ' +
+          'style="flex:1;border:1px solid #ef9a9a;border-radius:4px;padding:3px 6px;font-size:12px;text-transform:uppercase;" ' +
+          'data-qty="' + slot.qty + '" data-is-top="' + (slot.is_top ? '1' : '0') + '" data-slot-idx="' + i + '">' +
+          '<span class="nq-rej-tray-status" style="font-size:11px;min-width:16px;"></span>' +
+          '<span style="font-size:12px;color:#c62828;">× ' + slot.qty + (slot.is_top ? ' Top' : '') + '</span>';
+        rejectSlotsCont.appendChild(wrap);
+      });
+
+      // Accept slots — empty by default; top tray scanned by user, rest auto-fill on input
+      var acceptAutoTrays = state.acceptAutoTrays;
+      ;(data.accept_slots || []).forEach(function (slot, i) {
+        var autoTray = '';
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px;';
+        wrap.innerHTML =
+          '<span style="font-size:11px;color:#888;min-width:24px;">' + (i + 1) + '.</span>' +
+          '<input class="nq-acc-tray-input" type="text" placeholder="Tray ID" ' +
+          'value="' + autoTray + '" ' +
+          'style="flex:1;border:1px solid #a5d6a7;border-radius:4px;padding:3px 6px;font-size:12px;" ' +
+          'data-qty="' + slot.qty + '" data-is-top="' + (slot.is_top ? '1' : '0') + '" data-slot-idx="' + i + '">' +
+          '<span style="font-size:12px;color:#388e3c;">× ' + slot.qty + '</span>';
+        acceptSlotsCont.appendChild(wrap);
+      });
+
+      (data.delink_slots || []).forEach(function (slot, i) {
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px;';
+        wrap.innerHTML =
+          '<span style="font-size:11px;color:#888;min-width:24px;">' + (i + 1) + '.</span>' +
+          '<input class="nq-delink-tray-input" type="text" placeholder="Tray ID" ' +
+          'style="flex:1;border:1px solid #ffcc80;border-radius:4px;padding:3px 6px;font-size:12px;text-transform:uppercase;" ' +
+          'data-qty="' + slot.qty + '" data-expected-tray-id="' + slot.tray_id + '" data-slot-idx="' + i + '">' +
+          '<span style="font-size:12px;color:#e65100;">× ' + slot.qty + '</span>';
+        delinkList.appendChild(wrap);
+      });
+
+      delinkList.querySelectorAll('.nq-delink-tray-input').forEach(function (inp) {
+        inp.addEventListener('input', function () {
+          inp.value = inp.value.trim().toUpperCase();
+          var val = inp.value;
+          clearDuplicateTrayValue(val, inp);
+          updateDelinkSection();
+        });
+      });
+
+      // Slot 0 input: user scans/types top accept tray, backend-plan fills the rest
+      var allAccSlotInputs = Array.from(acceptSlotsCont.querySelectorAll('.nq-acc-tray-input'));
+      if (allAccSlotInputs.length >= 1) {
+        allAccSlotInputs[0].addEventListener('input', function () {
+          var topVal = allAccSlotInputs[0].value.trim().toUpperCase();
+          allAccSlotInputs[0].value = topVal;
+          if (topVal && clearDuplicateTrayValue(topVal, allAccSlotInputs[0])) {
+            for (var k = 1; k < allAccSlotInputs.length; k++) { allAccSlotInputs[k].value = ''; }
+            updateDelinkSection();
+            return;
+          }
+          if (topVal) {
+            // Auto-fill remaining slots from acceptAutoTrays (excluding the typed tray)
+            // Clamp to available slots: slot 0 is taken by user, so only N-1 slots remain.
+            var otherTrays = (state.acceptAutoTrays || []).filter(function (t) { return t.tray_id !== topVal; });
+            var availSlots = allAccSlotInputs.length - 1;
+            otherTrays.slice(0, availSlots).forEach(function (t, idx) {
+              allAccSlotInputs[idx + 1].value = t.tray_id;
+            });
+            for (var k = Math.min(otherTrays.length, availSlots) + 1; k < allAccSlotInputs.length; k++) {
+              allAccSlotInputs[k].value = '';
+            }
+            updateDelinkSection();
+          } else {
+            for (var k = 1; k < allAccSlotInputs.length; k++) { allAccSlotInputs[k].value = ''; }
+            updateDelinkSection();
+          }
+        });
+      }
+
+      updateDelinkSection();
+
+      rejectQtyLabel.textContent = data.rejected_qty || 0;
+      acceptQtyLabel.textContent = data.accepted_qty || 0;
+      combReject.textContent = data.rejected_qty || 0;
+      combAccept.textContent = data.accepted_qty || 0;
+      allocSection.style.display = '';
+      state.allocDone = true;
+
+      // Restore draft tray inputs if a draft was loaded
+      if (state.pendingRestore) {
+        var pd = state.pendingRestore;
+        state.pendingRestore = null;
+        function restoreAcceptInputs() {
+          if (pd.accept_trays && pd.accept_trays.length > 0) {
+            var allAccInputsR = Array.from(acceptSlotsCont.querySelectorAll('.nq-acc-tray-input'));
+            pd.accept_trays.forEach(function (at, i) {
+              if (allAccInputsR[i] && at.tray_id) allAccInputsR[i].value = at.tray_id;
+            });
+          }
+        }
+        // Restore reject trays
+        if (pd.reject_trays && pd.reject_trays.length > 0) {
+          var allRejInputs = Array.from(rejectSlotsCont.querySelectorAll('.nq-rej-tray-input'));
+          pd.reject_trays.forEach(function (rt, i) {
+            if (allRejInputs[i] && rt.tray_id) allRejInputs[i].value = rt.tray_id;
+          });
+          updateDelinkSection();
+        }
+        // Restore accept trays
+        restoreAcceptInputs();
+        if (pd.delink_trays && pd.delink_trays.length > 0) {
+          var allDelinkInputsR = Array.from(delinkList.querySelectorAll('.nq-delink-tray-input'));
+          pd.delink_trays.forEach(function (dt, i) {
+            var tid = (typeof dt === 'string' ? dt : dt.tray_id || '').trim().toUpperCase();
+            var input = tid ? delinkList.querySelector('.nq-delink-tray-input[data-expected-tray-id="' + tid + '"]') : null;
+            if (!input) input = allDelinkInputsR[i];
+            if (input) input.value = tid;
+          });
+          updateDelinkSection();
+          restoreAcceptInputs();
+        }
+      }
+
+      // Validate reject tray inputs on blur and live oninput
+      rejectSlotsCont.querySelectorAll('.nq-rej-tray-input').forEach(function (inp) {
+        var statusEl = inp.nextElementSibling;
+        function validateTrayInput() {
+          inp.value = inp.value.toUpperCase();
+          var val = inp.value.trim();
+          if (!val) { inp.style.borderColor = '#ef9a9a'; if (statusEl) statusEl.textContent = ''; errDiv.textContent = ''; updateDelinkSection(); return; }
+          if (isDuplicateTrayId(val, inp)) {
+            inp.style.borderColor = '#f44336';
+            if (statusEl) { statusEl.textContent = '✗'; statusEl.style.color = '#f44336'; }
+            errDiv.textContent = 'Tray ' + val + ' is already used in another slot.';
+            if (val.length >= 9) inp.select();
+            return;
+          }
+          if (!val.startsWith(state.rejPrefix)) {
+            inp.style.borderColor = '#f44336';
+            if (statusEl) { statusEl.textContent = '✗'; statusEl.style.color = '#f44336'; }
+            errDiv.textContent = 'Reject tray must start with ' + state.rejPrefix;
+            if (val.length >= 9) inp.select();
+            return;
+          }
+          if ((state.origTrays || []).some(function (ot) { return (ot.tray_id || '').toUpperCase() === val; })) {
+            // Reusing an original tray directly as its own reject container —
+            // only valid once it already carries the required NB/JB prefix
+            // (checked above), so skip the free-tray/occupancy check that
+            // applies to a brand-new tray. Final eligibility is still decided
+            // by the backend on submit.
+            inp.style.borderColor = '#4caf50';
+            if (statusEl) { statusEl.textContent = '✓'; statusEl.style.color = '#4caf50'; }
+            errDiv.textContent = '';
+            updateDelinkSection();
+            var reuseRejInputs = Array.from(rejectSlotsCont.querySelectorAll('.nq-rej-tray-input'));
+            var reuseIdx = reuseRejInputs.indexOf(inp);
+            if (reuseIdx >= 0 && reuseIdx < reuseRejInputs.length - 1) reuseRejInputs[reuseIdx + 1].focus();
+            return;
+          }
+          post(API_BASE + 'action/', { action: 'CHECK_TRAY', tray_id: val })
+            .then(function (res) {
+              if (res.valid) {
+                inp.style.borderColor = '#4caf50';
+                if (statusEl) { statusEl.textContent = '✓'; statusEl.style.color = '#4caf50'; }
+                errDiv.textContent = '';
+                // Move cursor to next reject tray input
+                var allRejInputs = Array.from(rejectSlotsCont.querySelectorAll('.nq-rej-tray-input'));
+                var idx = allRejInputs.indexOf(inp);
+                if (idx >= 0 && idx < allRejInputs.length - 1) {
+                  allRejInputs[idx + 1].focus();
+                } else if (idx === allRejInputs.length - 1) {
+                  var firstDelinkInput = Array.from(delinkList.querySelectorAll('.nq-delink-tray-input')).find(function (input) {
+                    return !input.value.trim();
+                  });
+                  var firstAccInput = acceptSlotsCont.querySelector('.nq-acc-tray-input');
+                  if (firstDelinkInput) firstDelinkInput.focus();
+                  else if (firstAccInput) firstAccInput.focus();
+                }
+              } else {
+                inp.style.borderColor = '#f44336';
+                if (statusEl) { statusEl.textContent = '✗'; statusEl.style.color = '#f44336'; }
+                errDiv.textContent = res.message || 'Tray not found in master';
+                // If at max length, select all so user can retype
+                if (val.length >= 9) inp.select();
+              }
+            }).catch(function () {
+              inp.style.borderColor = '#ef9a9a';
+              if (statusEl) statusEl.textContent = '';
+            });
+        }
+        var debouncedValidate = debounce(validateTrayInput, 200);
+        inp.addEventListener('input', function () {
+          inp.value = inp.value.toUpperCase();
+          // Trigger immediately at full length, otherwise debounce
+          if (inp.value.length >= parseInt(inp.getAttribute('maxlength') || '9', 10)) {
+            validateTrayInput();
+          } else {
+            debouncedValidate();
+          }
+        });
+        inp.addEventListener('blur', validateTrayInput);
+      });
+
+      rejectSlotsCont.querySelectorAll('.nq-rej-tray-input').forEach(function (inp) {
+        inp.addEventListener('input', updateDelinkSection);
+      });
+      acceptSlotsCont.querySelectorAll('.nq-acc-tray-input').forEach(function (inp) {
+        inp.addEventListener('input', applyScanLockAndOrder);
+      });
+      applyScanLockAndOrder();
+    }
+
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener('click', function () {
+        // Clear rejection reason inputs and qty displays
+        reasonsGrid.querySelectorAll('.nq-reason-qty').forEach(function (i) { i.value = ''; });
+        totalQtyDisp.textContent = '0';
+        remainingDisp.textContent = state.totalQty;
+        if (state.allocDone) {
+          // Clear all accept tray inputs
+          acceptSlotsCont.querySelectorAll('.nq-acc-tray-input').forEach(function (inp) { inp.value = ''; });
+          // Clear all reject tray inputs and reset their border/status
+          rejectSlotsCont.querySelectorAll('.nq-rej-tray-input').forEach(function (inp) {
+            inp.value = '';
+            inp.style.borderColor = '#ef9a9a';
+            var statusEl = inp.nextElementSibling;
+            if (statusEl) statusEl.textContent = '';
+          });
+          delinkList.querySelectorAll('.nq-delink-tray-input').forEach(function (inp) { inp.value = ''; });
+          // Un-strike ALL chips (auto-delink and manually selected)
+          origContainer.querySelectorAll('span[data-tray-id]').forEach(function (chip) {
+            chip.dataset.selected = '0';
+            chip.style.background = '#e3f2fd';
+            chip.style.borderColor = chip.dataset.isTop === '1' ? '#1565c0' : '#90caf9';
+            chip.style.textDecoration = 'none';
+            chip.style.opacity = '1';
+          });
+          updateDelinkSection();
+          applyScanLockAndOrder();
+        }
+      });
+    }
+
+    function buildPayload() {
+      var reasonIds = [];
+      reasonsGrid.querySelectorAll('.nq-reason-qty').forEach(function (inp) {
+        var rid = parseInt(inp.dataset.reasonId, 10);
+        if ((parseInt(inp.value, 10) || 0) > 0) {
+          reasonIds.push(rid);
+        }
+      });
+      var rejTrays = [];
+      rejectSlotsCont.querySelectorAll('.nq-rej-tray-input').forEach(function (inp) {
+        var tid = inp.value.trim();
+        var qty = parseInt(inp.dataset.qty, 10) || 0;
+        if (tid && qty > 0) rejTrays.push({ tray_id: tid, qty: qty });
+      });
+      var accTrays = [];
+      acceptSlotsCont.querySelectorAll('.nq-acc-tray-input').forEach(function (inp) {
+        var tid = inp.value.trim();
+        var qty = parseInt(inp.dataset.qty, 10) || 0;
+        var isTop = inp.dataset.isTop === '1';
+        if (tid && qty > 0) accTrays.push({ tray_id: tid, qty: qty, is_top: isTop });
+      });
+      return {
+        reason_ids: reasonIds,
+        rejected_qty: getTotalRejectQty(),
+        reject_trays: rejTrays,
+        accept_trays: accTrays,
+        delink_trays: state.reuseTrays,
+        remarks: document.getElementById('nqRejectRemarksInput').value.trim(),
+        lot_id: state.lotId,
+      };
+    }
+
+    if (submitBtn) {
+      submitBtn.addEventListener('click', function () {
+        errDiv.textContent = '';
+        var payload = buildPayload();
+        payload.action = 'SUBMIT_REJECT';
+        // Full Lot Rejection intentionally skips per-reason quantity entry (see fullRejCb
+        // handler above) — only a partial rejection needs a reason to justify the split.
+        if (!(fullRejCb && fullRejCb.checked) && !payload.reason_ids.length) {
+          errDiv.textContent = 'Select at least one rejection reason.';
+          return;
+        }
+        if (!payload.rejected_qty) { errDiv.textContent = 'Enter rejected quantity.'; return; }
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...';
+        post(API_BASE + 'action/', payload)
+          .then(function (data) {
+            if (data.success) {
+              closeModal();
+              setTimeout(function () { location.reload(); }, 300);
+            } else {
+              errDiv.textContent = data.error || 'Submission failed';
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Submit';
+            }
+          })
+          .catch(function () {
+            errDiv.textContent = 'Server error';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit';
+          });
+      });
+    }
+
+    if (draftBtn) {
+      draftBtn.addEventListener('click', function () {
+        errDiv.textContent = '';
+        var reasonQtys = [];
+        reasonsGrid.querySelectorAll('.nq-reason-qty').forEach(function (inp) {
+          var entered = inp.value.trim();
+          if (entered !== '') reasonQtys.push({ reason_id: parseInt(inp.dataset.reasonId, 10), qty: parseInt(entered, 10) || 0 });
+        });
+        var rejTrays = [];
+        rejectSlotsCont.querySelectorAll('.nq-rej-tray-input').forEach(function (inp) {
+          var tid = inp.value.trim();
+          var qty = parseInt(inp.dataset.qty, 10) || 0;
+          if (tid) rejTrays.push({ tray_id: tid, qty: qty });
+        });
+        var accTrays = [];
+        acceptSlotsCont.querySelectorAll('.nq-acc-tray-input').forEach(function (inp) {
+          var tid = inp.value.trim();
+          var qty = parseInt(inp.dataset.qty, 10) || 0;
+          if (tid) accTrays.push({ tray_id: tid, qty: qty, is_top: inp.dataset.isTop === '1' });
+        });
+        var draftPayload = {
+          action: 'SAVE_DRAFT',
+          lot_id: state.lotId,
+          draft_data: {
+            reason_qtys: reasonQtys,
+            reject_trays: rejTrays,
+            delink_trays: state.reuseTrays,
+            accept_trays: accTrays,
+            remarks: document.getElementById('nqRejectRemarksInput').value.trim(),
+            rejected_qty: getTotalRejectQty(),
+            accepted_qty: Math.max(state.totalQty - getTotalRejectQty(), 0),
+            total_lot_qty: state.totalQty,
+            plating_stk_no: state.platingStk,
+            original_trays: state.origTrays,
+            reject_slots: state.rejectSlots,
+            accept_slots: state.acceptSlots,
+            delink_slots: state.delinkSlots,
+            accept_auto_trays: state.acceptAutoTrays,
+            auto_delink_tray_ids: state.autoDelinkIds,
+            tray_capacity: state.trayCapacity,
+            tray_type: state.trayType,
+            rej_prefix: state.rejPrefix,
+            rej_cap: state.rejCap,
+            full_lot_rejection: !!(fullRejCb && fullRejCb.checked),
+            partial_selection: getTotalRejectQty() > 0 && getTotalRejectQty() < state.totalQty,
+            tray_counts: {
+              original: state.origTrays.length,
+              reject: rejTrays.length,
+              accept: accTrays.length,
+              delink: state.reuseTrays.length,
+            },
+            isDraft: true,
+            status: 'Draft',
+          },
+        };
+        draftBtn.disabled = true;
+        draftBtn.innerHTML = '<i class="fa fa-save"></i> Saving...';
+        post(API_BASE + 'action/', draftPayload)
+          .then(function (data) {
+            if (data.success) {
+              closeModal();
+              setTimeout(function () { location.reload(); }, 300);
+            } else {
+              errDiv.textContent = data.error || 'Draft save failed';
+              draftBtn.disabled = false;
+              draftBtn.innerHTML = '<i class="fa fa-save"></i> Draft';
+            }
+          })
+          .catch(function () {
+            errDiv.textContent = 'Server error saving draft';
+            draftBtn.disabled = false;
+            draftBtn.innerHTML = '<i class="fa fa-save"></i> Draft';
+          });
+      });
+    }
+  });
+
+  function debounce(fn, ms) {
+    var t;
+    return function () { clearTimeout(t); t = setTimeout(fn, ms); };
+  }
+})();
+</script>
+
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+
+  var scanButton = document.getElementById('scanButton');
+  if (scanButton) {
+    scanButton.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (window.GlobalPickTableScanner && typeof window.GlobalPickTableScanner.openScanModal === 'function') {
+        window.GlobalPickTableScanner.openScanModal();
+      } else if (typeof window.openGlobalScanModal === 'function') {
+        window.openGlobalScanModal();
+      }
+    });
+  }
+
+  function normalizeModule(value) {
+    return String(value || '').trim().toLowerCase().replace(/_/g, ' ');
+  }
+
+  function findRowByLot(lotId) {
+    if (!lotId) return null;
+    var normalizedLotId = String(lotId).trim();
+    return Array.from(document.querySelectorAll('#order-listing tbody tr[data-stock-lot-id]')).find(function (row) {
+      return row.getAttribute('data-stock-lot-id') === normalizedLotId || row.getAttribute('data-lot-id') === normalizedLotId;
+    }) || null;
+  }
+
+  document.addEventListener('globalScan:success', function (event) {
+    var detail = (event && event.detail) || {};
+    var moduleName = normalizeModule(detail.module);
+    if (moduleName !== 'nickel wiping' && moduleName !== 'nickel inspection') return;
+
+    window.setTimeout(function () {
+      var row = document.querySelector('#order-listing tbody tr[data-global-scan-active="1"]') ||
+        findRowByLot(detail.lot_id) ||
+        document.querySelector('#order-listing tbody tr.dp-row-action-highlight, #order-listing tbody tr.gkb-row-focus, #order-listing tbody tr.gs-active-scan');
+      if (!row || row.classList.contains('row-inactive') || row.querySelector('.row-inactive-blur')) return;
+
+      var rejectButton = row.querySelector('button.tray-scan-btn.btn-reject-is');
+      if (!rejectButton || rejectButton.disabled || rejectButton.classList.contains('disabled') || rejectButton.getAttribute('aria-disabled') === 'true') return;
+
+      rejectButton.click();
+      document.dispatchEvent(new CustomEvent('nickelQC:autoOpenRejectModal', {
+        detail: {
+          tray_id: detail.tray_id || '',
+          lot_id: row.getAttribute('data-stock-lot-id') || detail.lot_id || '',
+          zone: 'Z1',
+          triggered_by: 'global_scan'
+        }
+      }));
+    }, 300);
+  });
+});
+</script>
+
+<!-- Hold / Release Toggle (Nickel Wiping Zone 1) -->
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+  var HOLD_API = '/nickle_inspection/api/hold-unhold/';
+  var holdCsrf = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+
+  document.querySelectorAll('.hold-remark-icon').forEach(function (icon) {
+    icon.addEventListener('click', function () {
+      var title = this.getAttribute('title') || '';
+      if (!title) return;
+      if (window.Swal && typeof Swal.fire === 'function') {
+        Swal.fire({ icon: 'info', title: 'Hold / Release Remark', html: '<div style="text-align:left;">' + title.replace(/&#10;/g, '<br>') + '</div>', confirmButtonColor: '#028084' });
+      } else {
+        alert(title);
+      }
+    });
+  });
+
+  (function initNqHoldToggle() {
+    var holdModal = document.getElementById('holdRemarkModal');
+    var holdInput = document.getElementById('holdRemarkInput');
+    var holdError = document.getElementById('holdRemarkError');
+    var holdTitle = holdModal ? holdModal.querySelector('h5') : null;
+    var saveBtn = document.getElementById('saveHoldRemarkBtn');
+    var closeBtn = document.getElementById('closeHoldRemarkModal');
+
+    if (!holdModal || !holdInput || !saveBtn) return;
+
+    window.nqHoldToggleState = null;
+
+    document.querySelectorAll('.hold-toggle-btn').forEach(function (toggle) {
+      toggle.addEventListener('change', function (e) {
+        e.preventDefault();
+        var row = this.closest('tr');
+        var lotId = row ? row.getAttribute('data-stock-lot-id') : null;
+        if (!lotId) return;
+
+        // checked = active (not held), unchecked = held
+        var intendedHold = !this.checked;
+        var action = intendedHold ? 'hold' : 'unhold';
+
+        window.nqHoldToggleState = {
+          toggle: this,
+          row: row,
+          lotId: lotId,
+          action: action,
+          originalChecked: !intendedHold
+        };
+        // Revert toggle visually until modal confirms
+        this.checked = !intendedHold;
+
+        if (holdTitle) holdTitle.textContent = action === 'hold' ? 'Hold Reason' : 'Release Reason';
+        holdInput.value = '';
+        if (holdError) holdError.textContent = '';
+        holdModal.style.display = 'flex';
+        holdInput.focus();
+      });
+    });
+
+    saveBtn.addEventListener('click', function () {
+      var state = window.nqHoldToggleState;
+      if (!state) return;
+
+      var remark = holdInput.value.trim();
+      if (!remark) {
+        if (holdError) holdError.textContent = 'Remark is required.';
+        return;
+      }
+      if (remark.length > 50) {
+        if (holdError) holdError.textContent = 'Max 50 characters allowed.';
+        return;
+      }
+
+      saveBtn.disabled = true;
+      fetch(HOLD_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': holdCsrf },
+        body: JSON.stringify({ lot_id: state.lotId, action: state.action, remark: remark })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          saveBtn.disabled = false;
+          if (data.success) {
+            holdModal.style.display = 'none';
+            if (window.Swal && typeof Swal.fire === 'function') {
+              Swal.fire({
+                icon: 'success',
+                title: state.action === 'hold' ? 'Lot Held' : 'Lot Released',
+                text: data.message,
+                timer: 1500,
+                showConfirmButton: false
+              });
+            }
+            setTimeout(function () { location.reload(); }, 1500);
+          } else {
+            if (holdError) holdError.textContent = data.error || 'Failed to save.';
+          }
+        })
+        .catch(function (err) {
+          saveBtn.disabled = false;
+          if (holdError) holdError.textContent = 'Network error.';
+          console.error('[NickelWiping Z1] Hold/Unhold error:', err);
+        });
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        holdModal.style.display = 'none';
+        window.nqHoldToggleState = null;
+      });
+    }
+  })();
+});
+</script>
+
+
+<script src="{% static 'js/row_lock_guard.js' %}"></script>
+
+{% endblock %} {% endblock content %}

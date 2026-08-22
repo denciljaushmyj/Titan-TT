@@ -1,0 +1,1002 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<style nonce="{{ csp_nonce }}">
+#order-listing {
+  --ss-sticky-col-1: 64px;
+  --ss-sticky-col-2: 132px;
+  --ss-sticky-col-3: 156px;
+  position: relative;
+  border-collapse: separate !important;
+  border-spacing: 0;
+}
+#order-listing thead th {
+  position: sticky; top: 0; z-index: 10;
+  background: #028084 !important; color: #e5fcff !important;
+  vertical-align: middle !important; border-bottom: 2.5px solid #bdbdbd !important;
+  padding: 8px 12px !important; white-space: normal !important;
+  line-height: 1.3 !important; font-weight: 600;
+}
+#order-listing th, #order-listing td {
+  border-right: 1.5px solid #bababa !important;
+  border-bottom: 1.5px solid #121413 !important;
+  background-clip: padding-box;
+}
+#order-listing tr, #order-listing td, #order-listing th {
+  height: 20px !important; padding: 4px 8px !important;
+}
+#order-listing th:nth-child(1), #order-listing td:nth-child(1) {
+  position: sticky; left: 0 !important; z-index: 14;
+  background: #f7fafd;
+  width: var(--ss-sticky-col-1); min-width: var(--ss-sticky-col-1); max-width: var(--ss-sticky-col-1);
+}
+#order-listing th:nth-child(2), #order-listing td:nth-child(2) {
+  position: sticky; left: var(--ss-sticky-col-1) !important; z-index: 14;
+  background: #f7fafd;
+  width: var(--ss-sticky-col-2); min-width: var(--ss-sticky-col-2); max-width: var(--ss-sticky-col-2);
+}
+#order-listing th:nth-child(3), #order-listing td:nth-child(3) {
+  position: sticky; left: calc(var(--ss-sticky-col-1) + var(--ss-sticky-col-2)) !important; z-index: 14;
+  background: #f7fafd;
+  width: var(--ss-sticky-col-3); min-width: var(--ss-sticky-col-3); max-width: var(--ss-sticky-col-3);
+  box-shadow: 1px 0 0 #bababa;
+}
+#order-listing thead th:nth-child(-n + 3) {
+  z-index: 18;
+  background: #028084 !important;
+  color: #e5fcff !important;
+}
+#order-listing th:nth-child(-n + 3),
+#order-listing td:nth-child(-n + 3) {
+  white-space: nowrap !important;
+}
+.calendar-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.calendar-bar label { font-weight: 600; font-size: 13px; }
+.calendar-bar input[type="date"] { padding: 4px 8px; border: 1px solid #ccc; border-radius: 6px; }
+.ss-btn-primary {
+  background: #028084; color: #fff; border: none; padding: 6px 16px;
+  border-radius: 6px; font-weight: 600; cursor: pointer;
+}
+.ss-btn-primary:hover { background: #016668; }
+.ss-btn-secondary {
+  background: #6c757d; color: #fff; border: none; padding: 6px 16px;
+  border-radius: 6px; font-weight: 600; cursor: pointer;
+}
+.ss-tray-view-btn {
+  background: transparent; border: none; padding: 2px 4px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px; color: #028084;
+}
+.ss-tray-view-btn img { width: 22px; height: 22px; object-fit: contain; }
+.ss-tray-count-pill {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px;
+  border-radius: 999px; background: #e7f7f7; border: 1px solid #b9e5e6; color: #025254;
+  font-size: 11px; font-weight: 700; padding: 0 6px;
+}
+.ss-tray-view-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.34);
+  z-index: 100000; align-items: center; justify-content: center; padding: 16px;
+}
+.ss-tray-view-overlay.open { display: flex; }
+.ss-tray-view-box {
+  background: #fff; border: 1px solid #dce7eb; border-radius: 8px; width: min(460px, calc(100vw - 32px));
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18); overflow: hidden;
+}
+.ss-tray-view-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px; background: #f7fbfb; border-bottom: 1px solid #dce7eb;
+}
+.ss-tray-view-title { color: #025254; font-size: 15px; font-weight: 700; margin: 0; }
+.ss-tray-view-close { background: transparent; border: none; color: #60727c; font-size: 24px; line-height: 1; cursor: pointer; }
+.ss-tray-view-body { padding: 14px 16px 16px; }
+.ss-tray-view-meta { color: #51656f; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+.ss-tray-view-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.ss-tray-view-chip {
+  display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 7px 9px;
+  border: 1px solid #cfe0e5; background: #fbfcfd; border-radius: 6px; color: #17333d; font-size: 12px; font-weight: 700;
+}
+.ss-tray-view-index { color: #6b7b84; font-size: 11px; font-weight: 600; }
+.ss-tray-view-empty { text-align: center; color: #6b7b84; padding: 12px; font-size: 12px; font-weight: 600; }
+.model-hover-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  word-break: break-all;
+}
+.spider-model-preview-btn {
+  background: transparent;
+  border: none;
+  color: #028084;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+.model-image-tooltip {
+  display: none; position: absolute; left: 80%; top: 110%; transform: translateX(-50%); z-index: 10010;
+  background: #fff; border: 1px solid #ccc; border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 48px 18px 18px;
+  justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; box-sizing: border-box;
+}
+.model-image-tooltip.is-visible {
+  display: flex;
+  opacity: 1;
+  pointer-events: auto;
+}
+.model-image-tooltip img,
+.model-image-tooltip .spider-preview-img,
+.model-image-tooltip .model-preview-image {
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 240px !important;
+  max-height: 190px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  margin: auto !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  outline: none !important;
+  filter: none !important;
+  clip-path: none !important;
+}
+.dp-row-action-highlight td {
+  background: #fff8d8 !important;
+  transition: background-color 0.25s ease;
+}
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+  #order-listing {
+    --ss-sticky-col-1: 90px;
+    --ss-sticky-col-2: 150px;
+    --ss-sticky-col-3: 180px;
+  }
+  * { font-size: var(--ttt-font-size-tablet) !important; }
+}
+
+/* Spider Spindle model hover interaction fix */
+.model-hover-trigger { cursor: default !important; }
+.model-image-tooltip {
+  z-index: 10010 !important;
+  pointer-events: auto;
+}
+.model-image-tooltip.is-visible {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+.model-image-tooltip .info-btn,
+.model-image-tooltip .close-btn {
+  z-index: 10011;
+  pointer-events: auto !important;
+}
+.dp-row-action-highlight td {
+  background: #fff3b0 !important;
+}
+
+
+.model-image-tooltip {
+  pointer-events: none;
+}
+.model-image-tooltip.is-visible,
+.model-image-tooltip.pinned {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+/* Keep the model popup reachable while moving from stock text to Info/Close. */
+.model-hover-trigger {
+  position: relative !important;
+}
+
+.model-image-tooltip {
+  pointer-events: none !important;
+}
+
+.model-image-tooltip::before {
+  content: "";
+  position: absolute;
+  left: -24px;
+  top: -14px;
+  width: calc(100% + 48px);
+  height: calc(100% + 28px);
+  background: transparent;
+  pointer-events: auto;
+  z-index: -1;
+}
+
+.model-image-tooltip.is-visible,
+.model-image-tooltip.pinned {
+  pointer-events: auto !important;
+}
+
+.model-image-tooltip .info-btn,
+.model-image-tooltip .close-btn {
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+
+/* ================================================================
+   SPIDER SPINDLE — DYNAMIC MODEL PREVIEW FINAL OVERRIDE
+   Compact tooltip, uncropped image, tablet-safe sizing.
+   ================================================================ */
+.model-image-tooltip .img-gallery {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 260px;
+  height: 210px;
+  min-height: 210px;
+  box-sizing: border-box;
+}
+
+</style>
+
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body" style="padding-bottom:12px;">
+          <h5 class="text-left mt-0 mb-3" style="font-weight:700;">
+            Spider Spindle Z2 - Completed Table (Other Colors)
+          </h5>
+
+          <form method="get" class="calendar-bar">
+            <div class="date-input-group">
+              <label>From:</label>
+              <input type="date" name="from_date" value="{{ from_date }}" />
+            </div>
+            <div class="date-input-group">
+              <label>To:</label>
+              <input type="date" name="to_date" value="{{ to_date }}" />
+            </div>
+            <button type="submit" class="ss-btn-primary">Search</button>
+            <a href="{% url 'ss_z2_completed' %}" class="ss-btn-secondary" style="text-decoration:none;">Clear</a>
+          </form>
+
+          <div class="table-responsive">
+            <table id="order-listing" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Lot ID</th>
+                  <th>Completed At</th>
+                  <th>Plating Stk No</th>
+                  <th>Polishing Stk No</th>
+                  <th>Plating Color</th>
+                  <th>Category</th>
+                  <th>Polish Finish</th>
+                  <th>Version</th>
+                  <th>Tray Type</th>
+                  <th>Source</th>
+                  <th>Type of Input</th>
+                  <th>Input Qty</th>
+                  <th>Tray ID</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in master_data %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ item.lot_id }}</td>
+                  <td>{{ item.completed_at|date:"d M Y H:i" }}</td>
+                  <td>
+                    <span class="model-hover-trigger" data-plating-stk-no="{{ item.plating_stk_no }}">
+                      {{ item.plating_stk_no }}
+                      <div class="model-image-tooltip">
+                        <button type="button" class="close-btn" style="position:absolute;top:14px;right:16px;z-index:2;">Close</button>
+                        <button type="button" class="info-btn" style="position:absolute;top:14px;left:16px;z-index:2;">Info</button>
+                        <button type="button" class="img-scroll-left" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8592;</button>
+                        <div class="img-gallery" style="display:flex;justify-content:center;align-items:center;width:260px;height:210px;min-height:210px;overflow:hidden;box-sizing:border-box;">
+                          <span class="model-preview-loading" style="font-size:12px;color:#777;text-align:center;">Loading...</span>
+                        </div>
+                        <button type="button" class="img-scroll-right" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8594;</button>
+                      </div>
+                    </span>
+                  </td>
+                  <td>{{ item.polishing_stk_no }}</td>
+                  <td>{{ item.plating_color }}</td>
+                  <td>{{ item.category }}</td>
+                  <td>{{ item.polish_finish }}</td>
+                  <td>{{ item.version }}</td>
+                  <td>{{ item.tray_type }}</td>
+                  <td>{{ item.location }}</td>
+                  <td>{% include 'partials/_type_of_input_cell.html' with type_of_input=item.type_of_input %}</td>
+                  <td>{{ item.total_case_qty }}</td>
+                  <td>
+                    {% if item.linked_tray_ids %}
+                      <button type="button" class="ss-tray-view-btn" title="View delinked tray IDs"
+                              data-lot-id="{{ item.lot_id }}"
+                              data-tray-ids="{{ item.linked_tray_ids|join:'|' }}">
+                        <img src="{% static 'assets/icons/view.png' %}" alt="View" />
+                        <span class="ss-tray-count-pill">{{ item.linked_tray_count }}</span>
+                      </button>
+                    {% else %}
+                      <span class="text-muted">—</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ item.spider_pick_remarks }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="15" class="text-center text-muted py-4">
+                    No completed Spider Spindle Z2 records found for selected date range.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% if page_obj.has_other_pages %}
+          <div class="pagination-wrapper mt-3 d-flex justify-content-center">
+            <nav>
+              <ul class="pagination pagination-sm">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}&from_date={{ from_date }}&to_date={{ to_date }}">&laquo;</a>
+                </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                  <a class="page-link" href="?page={{ num }}&from_date={{ from_date }}&to_date={{ to_date }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}&from_date={{ from_date }}&to_date={{ to_date }}">&raquo;</a>
+                </li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ss-tray-view-overlay" id="ssTrayViewOverlay" aria-hidden="true">
+  <div class="ss-tray-view-box" role="dialog" aria-modal="true" aria-labelledby="ssTrayViewTitle">
+    <div class="ss-tray-view-header">
+      <h5 class="ss-tray-view-title" id="ssTrayViewTitle">Delinked Tray IDs</h5>
+      <button type="button" class="ss-tray-view-close" id="ssTrayViewClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="ss-tray-view-body">
+      <div class="ss-tray-view-meta" id="ssTrayViewMeta">Lot: -</div>
+      <div class="ss-tray-view-list" id="ssTrayViewList"></div>
+    </div>
+  </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function() {
+  const overlay = document.getElementById('ssTrayViewOverlay');
+  const closeBtn = document.getElementById('ssTrayViewClose');
+  const meta = document.getElementById('ssTrayViewMeta');
+  const list = document.getElementById('ssTrayViewList');
+  const previewCache = window.SpiderModelPreviewCache || new Map();
+  window.SpiderModelPreviewCache = previewCache;
+  let activePreviewTrigger = null;
+  let activePreviewStockNo = '';
+  let modelPreviewCloseTimer = null;
+  let movedRow = null;
+  let movedRowParent = null;
+  let movedRowNextSibling = null;
+
+  function restoreRowPosition() {
+    if (movedRow && movedRowParent) {
+      movedRow.classList.remove('dp-row-action-highlight');
+      movedRowParent.insertBefore(movedRow, movedRowNextSibling);
+    }
+    document.querySelectorAll('#order-listing tbody tr.dp-row-action-highlight').forEach(function(row) {
+      row.classList.remove('dp-row-action-highlight');
+    });
+    movedRow = null;
+    movedRowParent = null;
+    movedRowNextSibling = null;
+  }
+
+  function highlightRow(row) {
+    if (!row || !row.parentNode) return;
+    restoreRowPosition();
+    movedRow = row;
+    movedRowParent = row.parentNode;
+    movedRowNextSibling = row.nextElementSibling;
+    row.classList.add('dp-row-action-highlight');
+    if (movedRowParent.firstElementChild !== row) {
+      movedRowParent.insertBefore(row, movedRowParent.firstElementChild);
+    }
+  }
+
+
+  // Shared dynamic model hover behaviour.
+  const previewRequestCache = new Map();
+
+  function normalizeModelImageUrl(rawUrl) {
+    const value = String(rawUrl || '').trim();
+    if (!value) return '';
+
+    try {
+      const parsed = new URL(value, window.location.origin);
+      const hostname = String(parsed.hostname || '').toLowerCase();
+      const isLoopbackHost =
+        hostname === '127.0.0.1' ||
+        hostname === 'localhost' ||
+        hostname === '::1' ||
+        hostname === '[::1]';
+      const isApplicationAsset =
+        parsed.pathname.startsWith('/media/') ||
+        parsed.pathname.startsWith('/static/');
+
+      if (
+        parsed.origin === window.location.origin ||
+        (isLoopbackHost && isApplicationAsset)
+      ) {
+        return parsed.pathname + parsed.search + parsed.hash;
+      }
+
+      return parsed.href;
+    } catch (error) {
+      return value;
+    }
+  }
+
+  window.normalizeStockImageUrl = window.normalizeStockImageUrl || normalizeModelImageUrl;
+
+  function getStockCacheKey(stockNo) {
+    return String(stockNo || '').trim().toUpperCase();
+  }
+
+  function getDefaultVisualAidUrl(stockNo) {
+    return '/adminportal/dp_visualaid/?plating_stk_no=' + encodeURIComponent(stockNo);
+  }
+
+  function setTriggerVisualAidUrl(trigger, stockNo, payload) {
+    if (!trigger || !stockNo) return;
+    trigger.dataset.visualAidUrl =
+      payload && payload.visual_aid_url ? payload.visual_aid_url : getDefaultVisualAidUrl(stockNo);
+  }
+
+  function getModelImageUrlFromEntry(entry) {
+    if (!entry) return '';
+    return normalizeModelImageUrl(entry.preview_image || entry.image_url || entry.url || entry.src || entry.image || '');
+  }
+
+  function resolveModelPreviewImage(payload) {
+    const previewImage = normalizeModelImageUrl(payload && payload.preview_image);
+    if (previewImage) {
+      return {
+        url: previewImage,
+        view: payload && payload.preview_view ? payload.preview_view : 'Inside View',
+        isPlaceholder: payload && (payload.is_placeholder || payload.is_fallback)
+      };
+    }
+
+    const images = Array.isArray(payload && payload.images) ? payload.images : [];
+    const insideView = images.find(function(entry) {
+      return String(entry && entry.view_code || '').toUpperCase() === 'IV';
+    });
+    const insideViewUrl = getModelImageUrlFromEntry(insideView);
+    if (insideViewUrl) {
+      return { url: insideViewUrl, view: 'Inside View', isPlaceholder: false };
+    }
+
+    const noImage = images.find(function(entry) {
+      const viewCode = String(entry && entry.view_code || '').toUpperCase();
+      return viewCode === 'NO_IMAGE' || entry && entry.is_placeholder === true;
+    });
+    const noImageUrl = getModelImageUrlFromEntry(noImage);
+    if (noImageUrl) {
+      return { url: noImageUrl, view: 'No Image', isPlaceholder: true };
+    }
+
+    return null;
+  }
+
+  function fetchModelPreview(stockNo) {
+    if (!stockNo) return Promise.resolve(null);
+    const cacheKey = getStockCacheKey(stockNo);
+
+    if (previewCache.has(cacheKey)) {
+      return Promise.resolve(previewCache.get(cacheKey));
+    }
+
+    if (previewRequestCache.has(cacheKey)) {
+      return previewRequestCache.get(cacheKey);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(function() {
+      controller.abort();
+    }, 10000);
+
+    const request = fetch(
+      '/adminportal/api/model-hover-preview/?stock_no=' +
+      encodeURIComponent(stockNo) +
+      '&_ts=' +
+      Date.now(),
+      {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        signal: controller.signal
+      }
+    )
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error('Preview API returned HTTP ' + response.status);
+        }
+        return response.json();
+      })
+      .then(function(payload) {
+        const resolvedImage = resolveModelPreviewImage(payload);
+        if (payload) {
+          payload.preview_image = resolvedImage ? resolvedImage.url : '';
+          payload.preview_view = resolvedImage ? resolvedImage.view : payload.preview_view;
+          payload.is_placeholder = resolvedImage ? resolvedImage.isPlaceholder : payload.is_placeholder;
+        }
+        previewCache.set(cacheKey, payload || null);
+        return payload || null;
+      })
+      .finally(function() {
+        window.clearTimeout(timeoutId);
+        previewRequestCache.delete(cacheKey);
+      });
+
+    previewRequestCache.set(cacheKey, request);
+    return request;
+  }
+
+  function prepareModelTooltip(tooltip) {
+    if (!tooltip || tooltip.dataset.previewReady === '1') return;
+
+    tooltip.dataset.previewReady = '1';
+    tooltip.innerHTML =
+      '<button type="button" class="close-btn" style="position:absolute;top:14px;right:16px;z-index:2;">Close</button>' +
+      '<button type="button" class="info-btn" style="position:absolute;top:14px;left:16px;z-index:2;">Info</button>' +
+      '<button type="button" class="img-scroll-left" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8592;</button>' +
+      '<div class="img-gallery" style="display:flex;justify-content:center;align-items:center;width:260px;height:210px;min-height:210px;overflow:hidden;box-sizing:border-box;">' +
+        '<span class="model-preview-loading" style="font-size:12px;color:#777;text-align:center;">Loading...</span>' +
+      '</div>' +
+      '<button type="button" class="img-scroll-right" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;">&#8594;</button>';
+  }
+
+  function setModelPreviewMessage(trigger, message) {
+    const tooltip = trigger
+      ? trigger.querySelector('.model-image-tooltip')
+      : null;
+    const container = tooltip
+      ? tooltip.querySelector('.img-gallery')
+      : null;
+
+    if (!container) return;
+
+    container.textContent = '';
+
+    const messageElement = document.createElement('span');
+    messageElement.className = 'model-preview-loading';
+    messageElement.textContent = message;
+    messageElement.style.cssText =
+      'font-size:12px;color:#777;text-align:center;';
+    container.appendChild(messageElement);
+  }
+
+  function cancelModelPreviewClose() {
+    if (modelPreviewCloseTimer) {
+      window.clearTimeout(modelPreviewCloseTimer);
+      modelPreviewCloseTimer = null;
+    }
+  }
+
+  function scheduleModelPreviewClose(trigger) {
+    cancelModelPreviewClose();
+
+    modelPreviewCloseTimer = window.setTimeout(function() {
+      const tooltip = trigger
+        ? trigger.querySelector('.model-image-tooltip')
+        : null;
+
+      if (!trigger || !tooltip) return;
+
+      const pointerStillInside =
+        trigger.matches(':hover') || tooltip.matches(':hover');
+
+      if (
+        !pointerStillInside &&
+        !tooltip.classList.contains('pinned')
+      ) {
+        closeModelPreview(trigger);
+      }
+    }, 180);
+  }
+
+  function closeModelPreview(trigger) {
+    const tooltip = trigger
+      ? trigger.querySelector('.model-image-tooltip')
+      : null;
+
+    if (!tooltip) return;
+
+    tooltip.classList.remove('is-visible', 'pinned');
+    tooltip.style.opacity = '0';
+    tooltip.style.pointerEvents = 'none';
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.display = 'none';
+
+    trigger.style.backgroundColor = '';
+    trigger.style.borderRadius = '';
+
+    if (activePreviewTrigger === trigger) {
+      activePreviewTrigger = null;
+      activePreviewStockNo = '';
+    }
+  }
+
+  function renderModelPreview(trigger, stockNo, payload) {
+    const tooltip = trigger
+      ? trigger.querySelector('.model-image-tooltip')
+      : null;
+    const container = tooltip
+      ? tooltip.querySelector('.img-gallery')
+      : null;
+
+    if (!container) return;
+
+    const resolvedImage = resolveModelPreviewImage(payload);
+    const rawUrl = resolvedImage && resolvedImage.url;
+    const imageUrl = normalizeModelImageUrl(rawUrl);
+
+    if (!imageUrl) {
+      setModelPreviewMessage(trigger, 'Coming Soon');
+      return;
+    }
+
+    container.textContent = '';
+
+    const image = document.createElement('img');
+    image.className = 'spider-preview-img model-preview-image';
+    image.alt = resolvedImage && resolvedImage.isPlaceholder
+      ? 'No image available'
+      : 'Model IV preview';
+    image.loading = 'eager';
+    image.decoding = 'async';
+    image.style.cssText =
+      'display:block;width:auto;height:auto;max-width:240px;max-height:190px;' +
+      'object-fit:contain;object-position:center;margin:auto;' +
+      'border-radius:6px;background:#fff;';
+
+    image.addEventListener('error', function() {
+      console.error(
+        '[Spider Spindle] Preview image failed',
+        { stockNo: stockNo, rawUrl: rawUrl, normalizedUrl: imageUrl }
+      );
+      setModelPreviewMessage(trigger, 'Image could not be loaded');
+    }, { once: true });
+
+    container.appendChild(image);
+    image.src = imageUrl;
+  }
+
+  function openModelPreview(trigger, pinned) {
+    if (!trigger) return;
+
+    cancelModelPreviewClose();
+
+    const stockNo = String(
+      trigger.dataset.platingStkNo || ''
+    ).trim();
+    const cacheKey = getStockCacheKey(stockNo);
+    const tooltip = trigger.querySelector('.model-image-tooltip');
+
+    if (!stockNo || !tooltip) return;
+    setTriggerVisualAidUrl(trigger, stockNo);
+
+    document
+      .querySelectorAll('.model-image-tooltip.is-visible')
+      .forEach(function(openTooltip) {
+        const openTrigger = openTooltip.closest('.model-hover-trigger');
+        if (openTrigger !== trigger) {
+          closeModelPreview(openTrigger);
+        }
+      });
+
+    prepareModelTooltip(tooltip);
+
+    activePreviewTrigger = trigger;
+    activePreviewStockNo = stockNo;
+
+    tooltip.classList.add('is-visible');
+    tooltip.style.display = 'flex';
+    tooltip.style.visibility = 'visible';
+    tooltip.style.opacity = '1';
+    tooltip.style.pointerEvents = 'auto';
+
+    if (pinned) {
+      tooltip.classList.add('pinned');
+      trigger.style.backgroundColor = '#e3f2fd';
+      trigger.style.borderRadius = '4px';
+    }
+
+    if (previewCache.has(cacheKey)) {
+      const cachedPayload = previewCache.get(cacheKey);
+      setTriggerVisualAidUrl(trigger, stockNo, cachedPayload);
+      renderModelPreview(trigger, stockNo, cachedPayload);
+      return;
+    }
+
+    setModelPreviewMessage(trigger, 'Loading...');
+
+    fetchModelPreview(stockNo)
+      .then(function(payload) {
+        // Complete the originating tooltip even if the pointer briefly leaves.
+        // This prevents a valid request from leaving the popup on Loading.
+        setTriggerVisualAidUrl(trigger, stockNo, payload);
+        renderModelPreview(trigger, stockNo, payload);
+      })
+      .catch(function(error) {
+        console.error(
+          '[Spider Spindle] Model preview request failed',
+          stockNo,
+          error
+        );
+
+        if (error && error.name === 'AbortError') {
+          setModelPreviewMessage(trigger, 'Image request timed out');
+        } else {
+          setModelPreviewMessage(trigger, 'Coming Soon');
+        }
+      });
+  }
+
+  document
+    .querySelectorAll('.model-hover-trigger')
+    .forEach(function(trigger) {
+      const tooltip = trigger.querySelector('.model-image-tooltip');
+      if (!tooltip) return;
+
+      prepareModelTooltip(tooltip);
+
+      trigger.addEventListener('mouseenter', function() {
+        cancelModelPreviewClose();
+
+        if (!tooltip.classList.contains('pinned')) {
+          openModelPreview(trigger, false);
+        }
+      });
+
+      trigger.addEventListener('mouseleave', function(event) {
+        const destination = event.relatedTarget;
+
+        if (
+          destination &&
+          (
+            tooltip.contains(destination) ||
+            trigger.contains(destination)
+          )
+        ) {
+          return;
+        }
+
+        if (!tooltip.classList.contains('pinned')) {
+          scheduleModelPreviewClose(trigger);
+        }
+      });
+
+      tooltip.addEventListener('mouseenter', function() {
+        cancelModelPreviewClose();
+
+        if (activePreviewTrigger === trigger) {
+          tooltip.style.display = 'flex';
+          tooltip.style.visibility = 'visible';
+          tooltip.style.opacity = '1';
+          tooltip.style.pointerEvents = 'auto';
+        }
+      });
+
+      tooltip.addEventListener('mouseleave', function(event) {
+        const destination = event.relatedTarget;
+
+        if (
+          destination &&
+          (
+            trigger.contains(destination) ||
+            tooltip.contains(destination)
+          )
+        ) {
+          return;
+        }
+
+        if (!tooltip.classList.contains('pinned')) {
+          scheduleModelPreviewClose(trigger);
+        }
+      });
+
+      trigger.addEventListener('click', function(event) {
+        if (
+          event.target.closest('.info-btn') ||
+          event.target.closest('.close-btn')
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+        openModelPreview(trigger, true);
+      });
+
+      const infoButton = tooltip.querySelector('.info-btn');
+      if (infoButton) {
+        infoButton.addEventListener('pointerdown', function(event) {
+          cancelModelPreviewClose();
+          tooltip.classList.add('pinned');
+          tooltip.style.display = 'flex';
+          tooltip.style.visibility = 'visible';
+          tooltip.style.opacity = '1';
+          tooltip.style.pointerEvents = 'auto';
+          event.stopPropagation();
+        });
+
+        infoButton.addEventListener('click', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const stockNo = String(
+            trigger.dataset.platingStkNo || ''
+          ).trim();
+
+          if (!stockNo) return;
+
+          window.location.href = trigger.dataset.visualAidUrl || getDefaultVisualAidUrl(stockNo);
+        });
+      }
+
+      const closeButton = tooltip.querySelector('.close-btn');
+      if (closeButton) {
+        closeButton.addEventListener('pointerdown', function(event) {
+          cancelModelPreviewClose();
+          event.stopPropagation();
+        });
+
+        closeButton.addEventListener('click', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeModelPreview(trigger);
+          restoreRowPosition();
+        });
+      }
+    });
+
+  document.addEventListener('click', function(event) {
+    const actionable = event.target.closest(
+      'button, a, input, select, textarea, [role="button"]'
+    );
+    if (actionable) {
+      const actionRow = actionable.closest('#order-listing tbody tr');
+      const isHoverOnlyTarget = actionable.closest('.model-hover-trigger')
+        && !actionable.closest('.model-image-tooltip .info-btn')
+        && !actionable.closest('.model-image-tooltip .close-btn');
+
+      if (actionRow && !isHoverOnlyTarget) {
+        highlightRow(actionRow);
+      }
+    }
+    const infoBtn = event.target.closest('.model-image-tooltip .info-btn');
+    if (infoBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const trigger = infoBtn.closest('.model-hover-trigger');
+      const stockNo = trigger ? trigger.dataset.platingStkNo : '';
+      if (stockNo) window.location.href = trigger.dataset.visualAidUrl || getDefaultVisualAidUrl(stockNo);
+      return;
+    }
+    const previewCloseBtn = event.target.closest('.model-image-tooltip .close-btn');
+    if (previewCloseBtn) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeModelPreview(previewCloseBtn.closest('.model-hover-trigger'));
+      restoreRowPosition();
+      return;
+    }
+    if (
+      !event.target.closest('.model-image-tooltip') &&
+      !event.target.closest('.model-hover-trigger')
+    ) {
+      document
+        .querySelectorAll('.model-image-tooltip.is-visible')
+        .forEach(function(openTooltip) {
+          closeModelPreview(
+            openTooltip.closest('.model-hover-trigger')
+          );
+        });
+      restoreRowPosition();
+    }
+  });
+
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      document
+        .querySelectorAll('.model-image-tooltip.is-visible')
+        .forEach(function(openTooltip) {
+          closeModelPreview(
+            openTooltip.closest('.model-hover-trigger')
+          );
+        });
+      restoreRowPosition();
+    }
+  });
+
+  document.querySelector('#order-listing')?.addEventListener('focusin', function(event) {
+    const actionable = event.target.closest(
+      'button, a, input, select, textarea, [role="button"]'
+    );
+    if (!actionable || actionable.closest('.model-hover-trigger')) return;
+    highlightRow(actionable.closest('tr'));
+  });
+
+  function closeTrayView() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    restoreRowPosition();
+  }
+
+  function openTrayView(button) {
+    const lotId = button.getAttribute('data-lot-id') || '-';
+    const trayIds = (button.getAttribute('data-tray-ids') || '').split('|').map(function(trayId) {
+      return trayId.trim();
+    }).filter(Boolean);
+
+    meta.textContent = 'Lot: ' + lotId + ' | ' + trayIds.length + (trayIds.length === 1 ? ' tray' : ' trays');
+    list.innerHTML = '';
+    if (!trayIds.length) {
+      const empty = document.createElement('div');
+      empty.className = 'ss-tray-view-empty';
+      empty.textContent = 'No tray IDs found.';
+      list.appendChild(empty);
+    } else {
+      trayIds.forEach(function(trayId, index) {
+        const chip = document.createElement('div');
+        chip.className = 'ss-tray-view-chip';
+        const serial = document.createElement('span');
+        serial.className = 'ss-tray-view-index';
+        serial.textContent = String(index + 1).padStart(2, '0');
+        const value = document.createElement('span');
+        value.textContent = trayId;
+        chip.append(serial, value);
+        list.appendChild(chip);
+      });
+    }
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    closeBtn.focus();
+  }
+
+  document.querySelectorAll('.ss-tray-view-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+      highlightRow(button.closest('tr'));
+      openTrayView(button);
+    });
+  });
+  closeBtn.addEventListener('click', closeTrayView);
+  overlay.addEventListener('click', function(event) {
+    if (event.target === overlay) closeTrayView();
+  });
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && overlay.classList.contains('open')) closeTrayView();
+  });
+});
+</script>
+{% endblock %}

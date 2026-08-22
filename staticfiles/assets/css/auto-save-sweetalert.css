@@ -1,0 +1,162 @@
+/* Auto-Save SweetAlert Styles with Maximum Z-Index */
+
+/* Zone 1 Auto-Save Alert Styles */
+.auto-save-alert-container {
+  z-index: 999999 !important;
+  position: fixed !important;
+}
+
+.auto-save-alert-popup {
+  z-index: 999999 !important;
+  position: relative !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 15px !important;
+  min-width: 450px !important;
+  max-width: 600px !important;
+}
+
+.auto-save-alert-title {
+  color: #2c3e50 !important;
+  font-weight: 600 !important;
+  font-size: 22px !important;
+  margin-bottom: 0 !important;
+}
+
+.auto-save-alert-content {
+  padding: 20px 10px !important;
+  text-align: left !important;
+}
+
+.auto-save-confirm-btn {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 12px 25px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.auto-save-confirm-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+}
+
+.auto-save-cancel-btn {
+  background: linear-gradient(135deg, #6c757d, #868e96) !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 12px 25px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.auto-save-cancel-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4) !important;
+}
+
+/* Zone 2 Auto-Save Alert Styles */
+.auto-save-alert-container-zone2 {
+  z-index: 999999 !important;
+  position: fixed !important;
+}
+
+.auto-save-alert-popup-zone2 {
+  z-index: 999999 !important;
+  position: relative !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 15px !important;
+  min-width: 450px !important;
+  max-width: 600px !important;
+}
+
+.auto-save-alert-title-zone2 {
+  color: #2c3e50 !important;
+  font-weight: 600 !important;
+  font-size: 22px !important;
+  margin-bottom: 0 !important;
+}
+
+.auto-save-alert-content-zone2 {
+  padding: 20px 10px !important;
+  text-align: left !important;
+}
+
+.auto-save-confirm-btn-zone2 {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 12px 25px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.auto-save-confirm-btn-zone2:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+}
+
+.auto-save-cancel-btn-zone2 {
+  background: linear-gradient(135deg, #6c757d, #868e96) !important;
+  border: none !important;
+  border-radius: 25px !important;
+  padding: 12px 25px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.auto-save-cancel-btn-zone2:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4) !important;
+}
+
+/* Override any existing SweetAlert z-index */
+.swal2-container {
+  z-index: 999999 !important;
+}
+
+.swal2-popup {
+  z-index: 999999 !important;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+  .auto-save-alert-popup,
+  .auto-save-alert-popup-zone2 {
+    min-width: 90vw !important;
+    max-width: 95vw !important;
+    margin: 0 auto !important;
+  }
+  
+  .auto-save-confirm-btn,
+  .auto-save-cancel-btn,
+  .auto-save-confirm-btn-zone2,
+  .auto-save-cancel-btn-zone2 {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (pointer: coarse) and (min-width: 680px) and (max-width: 1400px) {
+  .auto-save-alert-popup,
+  .auto-save-alert-popup-zone2 {
+    min-width: 500px !important;
+  }
+  
+  .auto-save-confirm-btn,
+  .auto-save-cancel-btn,
+  .auto-save-confirm-btn-zone2,
+  .auto-save-cancel-btn-zone2 {
+    padding: 14px 28px !important;
+    font-size: 18px !important;
+  }
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server is Down</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        .icon {
+            font-size: 70px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0 0 15px;
+            font-size: 40px;
+            color: #1e293b;
+        }
+
+        p {
+            margin: 0;
+            color: #64748b;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px 25px;
+            border: 1px solid #2563eb;
+            background: white;
+            color: #2563eb;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #2563eb;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="icon">⚠️</div>
+
+        <h1>Server is down</h1>
+
+        <p>
+            The server is currently unavailable.
+            Please try again later.
+        </p>
+        <button onclick="window.location.href='/'">
+            Refresh
+        </button>
+
+
+    </div>
+
+</body>
+</html>

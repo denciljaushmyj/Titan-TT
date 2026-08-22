@@ -1,0 +1,231 @@
+<?xml version="1.0" ?>
+<bom xmlns="http://cyclonedx.org/schema/bom/1.6" serialNumber="urn:uuid:ba4a9206-f496-469e-aa4f-06e3b22b624a" version="1">
+  <metadata>
+    <timestamp>2026-01-28T04:17:41.691373+00:00</timestamp>
+    <tools>
+      <components>
+        <component type="application">
+          <group>CycloneDX</group>
+          <name>cyclonedx-py</name>
+          <version>7.2.1</version>
+          <description>CycloneDX Software Bill of Materials (SBOM) generator for Python projects and environments</description>
+          <licenses>
+            <license acknowledgement="declared">
+              <id>Apache-2.0</id>
+            </license>
+          </licenses>
+          <externalReferences>
+            <reference type="build-system">
+              <url>https://github.com/CycloneDX/cyclonedx-python/actions</url>
+            </reference>
+            <reference type="distribution">
+              <url>https://pypi.org/project/cyclonedx-bom/</url>
+            </reference>
+            <reference type="documentation">
+              <url>https://cyclonedx-bom-tool.readthedocs.io/</url>
+            </reference>
+            <reference type="issue-tracker">
+              <url>https://github.com/CycloneDX/cyclonedx-python/issues</url>
+            </reference>
+            <reference type="license">
+              <url>https://github.com/CycloneDX/cyclonedx-python/blob/main/LICENSE</url>
+            </reference>
+            <reference type="release-notes">
+              <url>https://github.com/CycloneDX/cyclonedx-python/blob/main/CHANGELOG.md</url>
+            </reference>
+            <reference type="vcs">
+              <url>https://github.com/CycloneDX/cyclonedx-python/</url>
+            </reference>
+            <reference type="website">
+              <url>https://github.com/CycloneDX/cyclonedx-python/#readme</url>
+            </reference>
+          </externalReferences>
+        </component>
+        <component type="library">
+          <group>CycloneDX</group>
+          <name>cyclonedx-python-lib</name>
+          <version>11.6.0</version>
+          <description>Python library for CycloneDX</description>
+          <licenses>
+            <license acknowledgement="declared">
+              <id>Apache-2.0</id>
+            </license>
+          </licenses>
+          <externalReferences>
+            <reference type="build-system">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/actions</url>
+            </reference>
+            <reference type="distribution">
+              <url>https://pypi.org/project/cyclonedx-python-lib/</url>
+            </reference>
+            <reference type="documentation">
+              <url>https://cyclonedx-python-library.readthedocs.io/</url>
+            </reference>
+            <reference type="issue-tracker">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/issues</url>
+            </reference>
+            <reference type="license">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/LICENSE</url>
+            </reference>
+            <reference type="release-notes">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/CHANGELOG.md</url>
+            </reference>
+            <reference type="vcs">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib</url>
+            </reference>
+            <reference type="website">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/#readme</url>
+            </reference>
+          </externalReferences>
+        </component>
+      </components>
+    </tools>
+  </metadata>
+  <components>
+    <component type="library" bom-ref="requirements-L1">
+      <name>Django</name>
+      <version>5.2.6</version>
+      <description>requirements line 1: Django==5.2.6</description>
+      <purl>pkg:pypi/django@5.2.6</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/Django/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L11">
+      <name>Pillow</name>
+      <version>10.4.0</version>
+      <description>requirements line 11: Pillow==10.4.0</description>
+      <purl>pkg:pypi/pillow@10.4.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/Pillow/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L5">
+      <name>beautifulsoup4</name>
+      <version>4.13.5</version>
+      <description>requirements line 5: beautifulsoup4==4.13.5</description>
+      <purl>pkg:pypi/beautifulsoup4@4.13.5</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/beautifulsoup4/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L3">
+      <name>django-csp</name>
+      <version>4.0</version>
+      <description>requirements line 3: django-csp==4.0</description>
+      <purl>pkg:pypi/django-csp@4.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/django-csp/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L2">
+      <name>djangorestframework</name>
+      <version>3.16.1</version>
+      <description>requirements line 2: djangorestframework==3.16.1</description>
+      <purl>pkg:pypi/djangorestframework@3.16.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/djangorestframework/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L9">
+      <name>et-xmlfile</name>
+      <version>2.0.0</version>
+      <description>requirements line 9: et-xmlfile==2.0.0</description>
+      <purl>pkg:pypi/et-xmlfile@2.0.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/et-xmlfile/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L8">
+      <name>openpyxl</name>
+      <version>3.1.5</version>
+      <description>requirements line 8: openpyxl==3.1.5</description>
+      <purl>pkg:pypi/openpyxl@3.1.5</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/openpyxl/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L10">
+      <name>packaging</name>
+      <version>25.0</version>
+      <description>requirements line 10: packaging==25.0</description>
+      <purl>pkg:pypi/packaging@25.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/packaging/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L4">
+      <name>psycopg2-binary</name>
+      <version>2.9.10</version>
+      <description>requirements line 4: psycopg2-binary==2.9.10</description>
+      <purl>pkg:pypi/psycopg2-binary@2.9.10</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/psycopg2-binary/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L6">
+      <name>soupsieve</name>
+      <version>2.8</version>
+      <description>requirements line 6: soupsieve==2.8</description>
+      <purl>pkg:pypi/soupsieve@2.8</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/soupsieve/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L7">
+      <name>typing-extensions</name>
+      <version>4.15.0</version>
+      <description>requirements line 7: typing-extensions==4.15.0</description>
+      <purl>pkg:pypi/typing-extensions@4.15.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/typing-extensions/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+  </components>
+  <dependencies>
+    <dependency ref="requirements-L1"/>
+    <dependency ref="requirements-L10"/>
+    <dependency ref="requirements-L11"/>
+    <dependency ref="requirements-L2"/>
+    <dependency ref="requirements-L3"/>
+    <dependency ref="requirements-L4"/>
+    <dependency ref="requirements-L5"/>
+    <dependency ref="requirements-L6"/>
+    <dependency ref="requirements-L7"/>
+    <dependency ref="requirements-L8"/>
+    <dependency ref="requirements-L9"/>
+  </dependencies>
+</bom>

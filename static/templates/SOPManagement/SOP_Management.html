@@ -1,0 +1,161 @@
+{% extends "base.html" %} {% load static %} {% block page_title %}
+<div class="page-header">
+  <h3 class="page-title">SOP Management</h3>
+</div>
+{% endblock %} {% block content %}
+<style nonce="{{ csp_nonce }}">
+  .sop-admin-wrap { padding: 20px; }
+  .sop-toolbar {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    justify-content: space-between; margin-bottom: 16px;
+  }
+  .sop-toolbar-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .sop-toolbar-filters input, .sop-toolbar-filters select {
+    padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; min-width: 180px;
+  }
+  #sopAddBtn {
+    background: #028084; color: #fff; border: none; border-radius: 8px;
+    padding: 9px 18px; font-weight: 600; font-size: 13px; cursor: pointer;
+  }
+  #sopAddBtn:hover { background: #025254; }
+  .sop-table-card {
+    background: #fff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow-x: auto;
+  }
+  #sopTable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  #sopTable th, #sopTable td { padding: 10px 12px; border-bottom: 1px solid #eef2f6; text-align: left; white-space: nowrap; }
+  #sopTable th { background: #f8fafc; color: #334155; font-weight: 700; }
+  .sop-status-badge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .sop-status-active { background: #dcfce7; color: #15803d; }
+  .sop-status-inactive { background: #fee2e2; color: #b91c1c; }
+  .sop-action-btn {
+    border: none; background: none; cursor: pointer; font-size: 14px; margin-right: 8px; color: #028084;
+  }
+  .sop-action-btn.sop-delete { color: #dc2626; }
+  .sop-empty-row td { text-align: center; color: #64748b; padding: 24px; }
+  #sopPagination { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+  #sopPagination button {
+    background: #fff; border: 1px solid #e2e8f0; color: #64748b; padding: 5px 12px;
+    border-radius: 6px; font-size: 13px; cursor: pointer;
+  }
+  #sopPagination button[disabled] { background: #028084; color: #fff; border-color: #028084; }
+
+  /* Add/Edit modal */
+  .sop-form-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(15,23,42,.55); z-index: 20000;
+    align-items: center; justify-content: center;
+  }
+  .sop-form-overlay.sop-modal-open { display: flex; }
+  .sop-form-box { background: #fff; border-radius: 12px; width: 92vw; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+  .sop-form-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid #e5e7eb; }
+  .sop-form-header h5 { margin: 0; color: #025254; font-weight: 700; }
+  .sop-form-body { padding: 18px 20px; }
+  .sop-form-group { margin-bottom: 14px; }
+  .sop-form-group label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 5px; }
+  .sop-form-group input[type=text], .sop-form-group select, .sop-form-group textarea {
+    width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 7px; font-size: 13px;
+  }
+  .sop-dropzone {
+    border: 2px dashed #94a3b8; border-radius: 8px; padding: 20px; text-align: center;
+    font-size: 13px; color: #64748b; cursor: pointer; transition: all .15s ease;
+  }
+  .sop-dropzone.sop-dragover { border-color: #028084; background: #ecfeff; color: #025254; }
+  .sop-form-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #e5e7eb; }
+  .sop-btn-secondary { background: #f1f5f9; color: #334155; border: none; border-radius: 8px; padding: 9px 16px; cursor: pointer; font-weight: 600; }
+  .sop-btn-primary { background: #028084; color: #fff; border: none; border-radius: 8px; padding: 9px 16px; cursor: pointer; font-weight: 600; }
+  .sop-form-error { color: #dc2626; font-size: 12px; margin-top: 8px; display: none; }
+  .sop-access-denied { padding: 60px 20px; text-align: center; color: #64748b; }
+</style>
+
+{% if is_admin %}
+<div class="sop-admin-wrap">
+  <div class="sop-toolbar">
+    <div class="sop-toolbar-filters">
+      <input type="text" id="sopSearchInput" placeholder="Search by title, version, module..." autocomplete="off">
+      <select id="sopModuleFilter"><option value="">All Modules</option></select>
+      <select id="sopStatusFilter">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+    <button type="button" id="sopAddBtn">+ Add SOP</button>
+  </div>
+
+  <div class="sop-table-card">
+    <table id="sopTable">
+      <thead>
+        <tr>
+          <th>Module Name</th>
+          <th>SOP Name</th>
+          <th>Version</th>
+          <th>Uploaded By</th>
+          <th>Uploaded Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="sopTableBody">
+        <tr class="sop-empty-row"><td colspan="7">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="sopPagination"></div>
+</div>
+
+<!-- Add / Edit SOP Modal -->
+<div id="sopFormModal" class="sop-form-overlay">
+  <div class="sop-form-box">
+    <div class="sop-form-header">
+      <h5 id="sopFormTitle">Add SOP</h5>
+      <button type="button" class="sop-modal-close" id="sopFormClose" style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748b;">&times;</button>
+    </div>
+    <div class="sop-form-body">
+      <form id="sopForm">
+        <input type="hidden" id="sopFormId" value="">
+        <div class="sop-form-group">
+          <label for="sopFormModule">Module *</label>
+          <select id="sopFormModule" required></select>
+        </div>
+        <div class="sop-form-group">
+          <label for="sopFormTitleInput">SOP Title *</label>
+          <input type="text" id="sopFormTitleInput" maxlength="200" required>
+        </div>
+        <div class="sop-form-group">
+          <label for="sopFormVersion">Version *</label>
+          <input type="text" id="sopFormVersion" maxlength="20" required placeholder="e.g. 1.0">
+        </div>
+        <div class="sop-form-group">
+          <label for="sopFormDescription">Description</label>
+          <textarea id="sopFormDescription" rows="3" maxlength="2000"></textarea>
+        </div>
+        <div class="sop-form-group">
+          <label>PDF Document <span id="sopFormFileRequiredHint">*</span></label>
+          <div id="sopDropzone" class="sop-dropzone">
+            Drag &amp; drop a PDF here, or click to browse
+            <div id="sopSelectedFileName" style="margin-top:6px;font-weight:600;color:#025254;"></div>
+          </div>
+          <input type="file" id="sopFormFile" accept="application/pdf,.pdf" style="display:none;">
+        </div>
+        <div class="sop-form-group" style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="sopFormActive" style="width:auto;" checked>
+          <label for="sopFormActive" style="margin:0;">Active (visible to users)</label>
+        </div>
+        <div id="sopFormError" class="sop-form-error"></div>
+      </form>
+    </div>
+    <div class="sop-form-footer">
+      <button type="button" class="sop-btn-secondary" id="sopFormCancel">Cancel</button>
+      <button type="button" class="sop-btn-primary" id="sopFormSubmit">Save</button>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="sop-access-denied">
+  <h4>Access Restricted</h4>
+  <p>Only administrators can manage SOP documents. Use the SOP icon in the header to view SOPs.</p>
+</div>
+{% endif %}
+
+<script src="{% static 'js/sop_management.js' %}" nonce="{{ csp_nonce }}"></script>
+{% endblock %}

@@ -1,0 +1,784 @@
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] 
+  Last tray: JB-A00050, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] 
+  Last tray: JB-A00050, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 100 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 100
+[INFO] 
+Original qty: 100, Required qty: 100
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 100 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 10, leftover: 2
+[INFO] 
+  Half-filled tray detected: JB-A00038 with 10 used, 2 leftover
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 98
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+  Last tray: JB-A00050, original: 12, used: 12, leftover: 0
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 10, leftover: 2
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+  Half-filled tray detected: JB-A00038 with 10 used, 2 leftover
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 10, leftover: 2
+[INFO] 
+  Half-filled tray detected: JB-A00038 with 10 used, 2 leftover
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00030', 4), ('JB-A00031', 12), ('JB-A00032', 12), ('JB-A00033', 12), ('JB-A00034', 12), ('JB-A00035', 12), ('JB-A00036', 12), ('JB-A00037', 12), ('JB-A00038', 12)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+  Last tray: JB-A00038, original: 12, used: 10, leftover: 2
+[INFO] 
+  Half-filled tray detected: JB-A00038 with 10 used, 2 leftover
+[INFO] 
+Generating optimal distribution for 2 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 2 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 2, Required qty: 2
+[INFO] 
+Original qty: 2, Required qty: 2
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00039', 2)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 1 trays totaling 2 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 2 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 2 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 2, Required qty: 2
+[INFO] 
+Original qty: 2, Required qty: 2
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00039', 2)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 1 trays totaling 2 pieces
+[INFO] 
+  Last tray: JB-A00039, original: 2, used: 2, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 2 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 2 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 2, Required qty: 2
+[INFO] 
+Original qty: 2, Required qty: 2
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00039', 2)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 1 trays totaling 2 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 2 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Generating optimal distribution for 2 pieces using tray capacity 12
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Original qty: 2, Required qty: 2
+[INFO] 
+Original qty: 2, Required qty: 2
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00039', 2)]
+[INFO] [LOT: LID230920251822050005 | BATCH: BATCH-20250923181640-48] Final delink distribution: 1 trays totaling 2 pieces
+[INFO] 
+  Last tray: JB-A00039, original: 2, used: 2, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Original qty: 95, Required qty: 70
+[INFO] 
+Original qty: 95, Required qty: 70
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('NB-A00001', 15), ('NB-A00002', 16), ('NB-A00003', 16), ('NB-A00004', 16), ('NB-A00005', 16), ('NB-A00006', 16)]
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Final delink distribution: 5 trays totaling 70 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Original qty: 95, Required qty: 70
+[INFO] 
+Original qty: 95, Required qty: 70
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('NB-A00001', 15), ('NB-A00002', 16), ('NB-A00003', 16), ('NB-A00004', 16), ('NB-A00005', 16), ('NB-A00006', 16)]
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Final delink distribution: 5 trays totaling 70 pieces
+[INFO] 
+  Last tray: NB-A00005, original: 16, used: 7, leftover: 9
+[INFO] 
+  Half-filled tray detected: NB-A00005 with 7 used, 9 leftover
+[INFO] 
+Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Original qty: 95, Required qty: 70
+[INFO] 
+Original qty: 95, Required qty: 70
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('NB-A00001', 15), ('NB-A00002', 16), ('NB-A00003', 16), ('NB-A00004', 16), ('NB-A00005', 16), ('NB-A00006', 16)]
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Final delink distribution: 5 trays totaling 70 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Original qty: 95, Required qty: 70
+[INFO] 
+Original qty: 95, Required qty: 70
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('NB-A00001', 15), ('NB-A00002', 16), ('NB-A00003', 16), ('NB-A00004', 16), ('NB-A00005', 16), ('NB-A00006', 16)]
+[INFO] [LOT: LID230920251822500006 | BATCH: BATCH-20250923181640-47] Final delink distribution: 5 trays totaling 70 pieces
+[INFO] 
+  Last tray: NB-A00005, original: 16, used: 7, leftover: 9
+[INFO] 
+  Half-filled tray detected: NB-A00005 with 7 used, 9 leftover
+[INFO] 
+Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Original qty: 75, Required qty: 75
+[INFO] 
+Original qty: 75, Required qty: 75
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00040', 3), ('JB-A00041', 12), ('JB-A00042', 12), ('JB-A00043', 12), ('JB-A00044', 12), ('JB-A00045', 12), ('JB-A00046', 12)]
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Final delink distribution: 7 trays totaling 75 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Original qty: 75, Required qty: 75
+[INFO] 
+Original qty: 75, Required qty: 75
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00040', 3), ('JB-A00041', 12), ('JB-A00042', 12), ('JB-A00043', 12), ('JB-A00044', 12), ('JB-A00045', 12), ('JB-A00046', 12)]
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Final delink distribution: 7 trays totaling 75 pieces
+[INFO] 
+  Last tray: JB-A00046, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Original qty: 75, Required qty: 75
+[INFO] 
+Original qty: 75, Required qty: 75
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00040', 3), ('JB-A00041', 12), ('JB-A00042', 12), ('JB-A00043', 12), ('JB-A00044', 12), ('JB-A00045', 12), ('JB-A00046', 12)]
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Final delink distribution: 7 trays totaling 75 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Original qty: 75, Required qty: 75
+[INFO] 
+Original qty: 75, Required qty: 75
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00040', 3), ('JB-A00041', 12), ('JB-A00042', 12), ('JB-A00043', 12), ('JB-A00044', 12), ('JB-A00045', 12), ('JB-A00046', 12)]
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Final delink distribution: 7 trays totaling 75 pieces
+[INFO] 
+  Last tray: JB-A00046, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Original qty: 75, Required qty: 75
+[INFO] 
+Original qty: 75, Required qty: 75
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00040', 3), ('JB-A00041', 12), ('JB-A00042', 12), ('JB-A00043', 12), ('JB-A00044', 12), ('JB-A00045', 12), ('JB-A00046', 12)]
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Final delink distribution: 7 trays totaling 75 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Original qty: 75, Required qty: 75
+[INFO] 
+Original qty: 75, Required qty: 75
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00040', 3), ('JB-A00041', 12), ('JB-A00042', 12), ('JB-A00043', 12), ('JB-A00044', 12), ('JB-A00045', 12), ('JB-A00046', 12)]
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Final delink distribution: 7 trays totaling 75 pieces
+[INFO] 
+  Last tray: JB-A00046, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Original qty: 75, Required qty: 75
+[INFO] 
+Original qty: 75, Required qty: 75
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00040', 3), ('JB-A00041', 12), ('JB-A00042', 12), ('JB-A00043', 12), ('JB-A00044', 12), ('JB-A00045', 12), ('JB-A00046', 12)]
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Final delink distribution: 7 trays totaling 75 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Generating optimal distribution for 75 pieces using tray capacity 12
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Original qty: 75, Required qty: 75
+[INFO] 
+Original qty: 75, Required qty: 75
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00040', 3), ('JB-A00041', 12), ('JB-A00042', 12), ('JB-A00043', 12), ('JB-A00044', 12), ('JB-A00045', 12), ('JB-A00046', 12)]
+[INFO] [LOT: LID230920251824440008 | BATCH: BATCH-20250923181640-45] Final delink distribution: 7 trays totaling 75 pieces
+[INFO] 
+  Last tray: JB-A00046, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Original qty: 85, Required qty: 70
+[INFO] 
+Original qty: 85, Required qty: 70
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('NB-A00007', 5), ('NB-A00008', 16), ('NB-A00009', 16), ('NB-A00010', 16), ('NB-A00011', 16), ('NB-A00012', 16)]
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Final delink distribution: 6 trays totaling 70 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Original qty: 85, Required qty: 70
+[INFO] 
+Original qty: 85, Required qty: 70
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('NB-A00007', 5), ('NB-A00008', 16), ('NB-A00009', 16), ('NB-A00010', 16), ('NB-A00011', 16), ('NB-A00012', 16)]
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Final delink distribution: 6 trays totaling 70 pieces
+[INFO] 
+  Last tray: NB-A00012, original: 16, used: 1, leftover: 15
+[INFO] 
+  Half-filled tray detected: NB-A00012 with 1 used, 15 leftover
+[INFO] 
+Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Original qty: 85, Required qty: 70
+[INFO] 
+Original qty: 85, Required qty: 70
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('NB-A00007', 5), ('NB-A00008', 16), ('NB-A00009', 16), ('NB-A00010', 16), ('NB-A00011', 16), ('NB-A00012', 16)]
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Final delink distribution: 6 trays totaling 70 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Generating optimal distribution for 70 pieces using tray capacity 16
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Original qty: 85, Required qty: 70
+[INFO] 
+Original qty: 85, Required qty: 70
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('NB-A00007', 5), ('NB-A00008', 16), ('NB-A00009', 16), ('NB-A00010', 16), ('NB-A00011', 16), ('NB-A00012', 16)]
+[INFO] [LOT: LID230920251823350007 | BATCH: BATCH-20250923181640-46] Final delink distribution: 6 trays totaling 70 pieces
+[INFO] 
+  Last tray: NB-A00012, original: 16, used: 1, leftover: 15
+[INFO] 
+  Half-filled tray detected: NB-A00012 with 1 used, 15 leftover
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] 
+  Last tray: JB-A00050, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Generating optimal distribution for 45 pieces using tray capacity 12
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Original qty: 45, Required qty: 45
+[INFO] 
+Original qty: 45, Required qty: 45
+[INFO] 
+Processing full quantity: True
+[INFO] 
+Actual tray data: [('JB-A00047', 9), ('JB-A00048', 12), ('JB-A00049', 12), ('JB-A00050', 12)]
+[INFO] [LOT: LID230920251825090009 | BATCH: BATCH-20250923181640-43] Final delink distribution: 4 trays totaling 45 pieces
+[INFO] 
+  Last tray: JB-A00050, original: 12, used: 12, leftover: 0
+[INFO] 
+  No leftover in last tray, no half-filled tray needed
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00067', 4), ('JB-A00068', 12), ('JB-A00069', 12), ('JB-A00070', 12), ('JB-A00071', 12), ('JB-A00072', 12), ('JB-A00073', 12), ('JB-A00074', 12), ('JB-A00075', 12)]
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00067', 4), ('JB-A00068', 12), ('JB-A00069', 12), ('JB-A00070', 12), ('JB-A00071', 12), ('JB-A00072', 12), ('JB-A00073', 12), ('JB-A00074', 12), ('JB-A00075', 12)]
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+  Last tray: JB-A00075, original: 12, used: 10, leftover: 2
+[INFO] 
+  Half-filled tray detected: JB-A00075 with 10 used, 2 leftover
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00067', 4), ('JB-A00068', 12), ('JB-A00069', 12), ('JB-A00070', 12), ('JB-A00071', 12), ('JB-A00072', 12), ('JB-A00073', 12), ('JB-A00074', 12), ('JB-A00075', 12)]
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+HALF FILLED CALCULATION (USING ACTUAL TRAY DISTRIBUTION):
+[INFO] 
+Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Generating optimal distribution for 98 pieces using tray capacity 12
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Original qty: 100, Required qty: 98
+[INFO] 
+Original qty: 100, Required qty: 98
+[INFO] 
+Processing full quantity: False
+[INFO] 
+Actual tray data: [('JB-A00067', 4), ('JB-A00068', 12), ('JB-A00069', 12), ('JB-A00070', 12), ('JB-A00071', 12), ('JB-A00072', 12), ('JB-A00073', 12), ('JB-A00074', 12), ('JB-A00075', 12)]
+[INFO] [LOT: LID250920251103520011 | BATCH: BATCH-20250925110208-1] Final delink distribution: 9 trays totaling 98 pieces
+[INFO] 
+  Last tray: JB-A00075, original: 12, used: 10, leftover: 2
+[INFO] 
+  Half-filled tray detected: JB-A00075 with 10 used, 2 leftover

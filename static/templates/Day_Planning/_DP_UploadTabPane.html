@@ -1,0 +1,53 @@
+{% load static %}
+<div class="dp-bulk-upload-page">
+    <!-- Header with Records, Buttons, Files, and Upload Area All in One Line -->
+    <div class="dp-header-controls">
+      <h7 style="font-weight: 500">{{ header_text }}</h7>
+      <div class="dp-records-badge">
+        Records: <span id="top-record-count{{ id_suffix }}">0</span>
+      </div>
+
+      <div class="dp-button-group">
+        <button id="download-template-btn{{ id_suffix }}" class="btn btn-outline" style="background: linear-gradient(135deg, rgba(52, 211, 153, 0.4), rgba(52, 211, 153, 0.3)); border: 1px solid rgba(52, 211, 153, 0.3); padding: 0.5rem 0.85rem; color: var(--clr-text); gap: 0.4rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Template
+        </button>
+        <button id="add-model-btn{{ id_suffix }}" class="btn btn-outline" style="background: linear-gradient(135deg, rgba(20, 184, 166, 0.4), rgba(20, 184, 166, 0.3)); border: 1px solid rgba(20, 184, 166, 0.3); padding: 0.5rem 0.85rem!important; color: var(--clr-text); gap: 0.4rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          Upload
+        </button>
+      </div>
+
+      <!-- Drag and Drop Zone in Header -->
+      <div class="file-upload-area" id="file-upload-area{{ id_suffix }}" style="padding: 0.5rem 0.8rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--clr-primary);">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p style="margin: 0; white-space: nowrap;">Drop files or browse</p>
+        <input type="file" id="file-upload{{ id_suffix }}" accept=".xlsx,.xls" hidden>
+      </div>
+
+      <div class="dp-files-chips" id="dp-files-chips-container{{ id_suffix }}"></div>
+    </div>
+</div>
+
+<!-- Empty State Section - shown when no data uploaded -->
+<div id="empty-state-section{{ id_suffix }}" class="show">
+  <img src="{% static 'assets/images/notfound.jpg' %}" alt="No Data">
+  <h3>No Data Uploaded Yet</h3>
+  <p>Upload an Excel file to see your data here. Click "Upload" or drag files to get started.</p>
+</div>
+
+<div id="data-table-section{{ id_suffix }}" class="data-table-card dp-bulk-upload-page" style="display:none; background: var(--clr-surface); border-radius: 12px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+  <div class="card-body" style="padding: 0;">
+    <div class="table-header" style="padding: 1px 24px; margin-bottom: 0; border-bottom: 1px solid var(--clr-border); display: flex; justify-content: space-between; align-items: center;">
+      <h4 style="margin: 0; color: var(--clr-text); font-weight: 600;">Data Table</h4>
+      <div class="table-actions"></div>
+    </div>
+    <div class="table-container" id="data-table-container{{ id_suffix }}" style="max-height: 400px; overflow-y: auto;"></div>
+  </div>
+</div>

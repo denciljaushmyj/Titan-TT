@@ -1,0 +1,115 @@
+COMMON_DP_HEADINGS = [
+    "S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color",
+    "Category", "Polish Finish", "Version", "Tray Cate-Capacity", "Source",
+    "No of Trays", "Input Qty", "Process Status", "Action", "Lot Status",
+    "Current Stage", "Remarks",
+]
+
+MODULE_REGISTRY = [
+    {"name": "Data Upload", "file_name": "Day_Planning/DP_BulkUpload.html", "headings": ["Single Upload", "Bulk Upload", "Preview Table Edit"]},
+    {"name": "DP Pick Table", "file_name": "Day_Planning/DP_PickTable.html", "headings": COMMON_DP_HEADINGS},
+    {"name": "DP Complete Table", "file_name": "Day_Planning/DP_Completed_Table.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "No of Tray", "Input Qty", "Tray Cate- Capacity", "Process Status", "Lot Status", "Current Stage", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Source", "Remarks"]},
+
+    {"name": "Input Pick Table", "file_name": "Input_Screening/IS_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "LOT Qty", "No of Trays", "Accept Qty", "Reject Qty", "Process Status", "Lot Status", "Current Stage", "Tray Cate- Capacity", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Input Source", "IPA Wiping", "Remarks", "Physical Qty"]},
+    {"name": "Input Completed Table", "file_name": "Input_Screening/IS_Completed_Table.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "Lot Qty", "No of Trays", "Accept Qty", "Reject Qty", "Process Status", "Lot Status", "Current Stage", "Tray Cate- Capacity", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Input Source", "Remarks"]},
+    {"name": "Input Accept Table", "file_name": "Input_Screening/IS_AcceptTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "LOT Qty", "No of Trays", "Accept Qty", "Process Status", "Lot Status", "Current Stage", "Tray Cate- Capacity", "Polishing Stock No", "Plating Color", "Category", "Polish Finish", "Input Source", "Remarks"]},
+    {"name": "Input Reject Table", "file_name": "Input_Screening/IS_RejectTable.html", "headings": ["Select All", "S.No", "Last Updated", "Plating Stk No", "Reject Qty", "No of Trays", "Rejection Reasons", "Tray Cate- Capacity", "Plating Color", "Category", "Polish Finish", "Input Source"]},
+
+    {"name": "Brass Qc Pick Table", "file_name": "Brass_Qc/Brass_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "Lot Qty", "No of Trays", "Accept Qty", "Reject Qty", "Process Status", "Lot Status", "Current Stage", "Tray Cate- Capacity", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Input Source", "Remarks"]},
+    {"name": "Brass Qc Completed Table", "file_name": "Brass_Qc/Brass_Completed.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "Lot Qty", "No of Trays", "Accept Qty", "Reject Qty", "Process Status", "Lot Status", "Current Stage", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Input Source", "Remarks", "Rejection Remarks"]},
+
+    {"name": "IQF Pick Table", "file_name": "IQF/Iqf_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "RW Qty", "No of Trays", "Accept Qty", "Reject Qty", "Process Status", "Lot Status", "Current Stage", "Tray Cate- Capacity", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Input Source", "Remarks", "Version"]},
+    {"name": "IQF Completed Table", "file_name": "IQF/Iqf_Completed.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "Lot Qty", "No of Trays", "Accept Qty", "Reject Qty", "Process Status", "Batch Status", "Current Location", "Tray Cate- Capacity", "Polishing Stk No", "Plating Color", "Polish Finish", "Source - Location", "Remarks"]},
+    {"name": "IQF Accept Table", "file_name": "IQF/Iqf_AcceptTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "Accept Qty", "No of Trays", "Process Status", "Batch Status", "Current Location", "Tray Cate- Capacity", "Polishing Stk No", "Plating Color", "Polish Finish", "Source - Location", "Accepted Remarks", "Remarks"]},
+    {"name": "IQF Reject Table", "file_name": "IQF/Iqf_RejectTable.html", "headings": ["Select All", "S.No", "Last Updated", "Plating Stk No", "Action", "Lot Qty", "Reject Qty", "Tray Type Capacity", "Polish Stk No", "Plating Color", "Polish Finish", "Source - Location", "Reject Reason", "Lot Remark"]},
+
+    {"name": "Brass Audit Pick Table", "file_name": "BrassAudit/BrassAudit_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Process Status", "Lot Status", "Current Stage", "Tray Cate- Capacity", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Input Source", "Remarks"]},
+    {"name": "Brass Audit Complete Table", "file_name": "BrassAudit/BrassAudit_Completed.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Lot Status", "Current Stage", "Process Status", "Tray Cate- Capacity"]},
+    {"name": "Brass Audit Reject Table", "file_name": "BrassAudit/BrassAudit_RejectTable.html", "headings": ["S.No", "Action", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Polish Finish", "Source - Location", "Tray Type Capacity", "No of Trays", "Reject Qty", "Reject Reason", "Lot Remark"]},
+
+    {"name": "Jig Pick Table", "file_name": "JigLoading/Jig_Picktable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "LOT Qty", "No of Trays", "Process Status", "Lot Status", "Current Stage", "Polishing Stk No", "Plating Color", "Polish Finish", "Jig Type", "In.p Info", "Version", "Remarks"]},
+    {"name": "Jig Completed Table", "file_name": "JigLoading/Jig_Completedtable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "LOT Qty", "No of Trays", "Process Status", "Lot Status", "Current Stage", "Polishing Stk No", "Plating Color", "Polish Finish", "Tray Type - Capacity", "Jig Type Capacity", "Jig ID", "Remarks"]},
+
+    {"name": "IP Main", "file_name": "Inprocess_Inspection/Inprocess_Inspection.html", "headings": ["S.No", "JIG ID", "Date & Time", "Model Presents", "Nickel Bath No", "Action", "Bath Type", "Process Status", "Jig Cate-Capacity", "Lot Qty", "Lot Status", "Current Stage", "Plating Stk No", "Plating Color", "Polish Finish", "Tray Cate-Capacity", "In.P Info", "Version", "Remarks"]},
+    {"name": "IP Completed", "file_name": "Inprocess_Inspection/Inprocess_Inspection_Completed.html", "headings": ["S.No", "JIG ID", "Date & Time", "Model Presents", "Plating Stk No", "Polishing Stk No", "Plating Color", "Polish Finish", "Version", "Source- Location", "Tray Type - Capacity", "Jig Type - Capacity", "Bath Type", "Jig Lot Qty", "Bath No", "IP Info", "Process Status", "Action", "Batch Status", "Current Stage", "Remarks"]},
+
+    {"name": "JUL Main Table", "file_name": "Jig_Unloading/Jig_Unloading_Main.html", "headings": ["S.No", "JIG ID", "Last Updated", "Action", "Lot Qty", "Model Presents", "Bath No", "Process Status", "Lot Status", "Current Stage", "Polish Finish", "Remarks"]},
+    {"name": "JUL Completed", "file_name": "Jig_Unloading/JigUnloading_Completedtable.html", "headings": ["S.No", "JIG ID", "Last Updated", "Model Presents", "Action", "Lot Qty", "No of Trays", "Process Status", "Batch Status", "Current Location", "Plating Stk No", "Polishing Stk No", "Plating Color", "Polish Finish", "Tray Cate - Capacity", "Version", "Remarks"]},
+    {"name": "JUL Main Table Zone 2", "file_name": "Jig_Unloading - Zone_two/Jig_Unloading_Main_zone_two.html", "headings": ["S.No", "JIG ID", "Last Updated", "Action", "Lot Qty", "Model Presents", "Bath No", "Process Status", "Lot Status", "Current Stage", "Polish Finish", "Remarks"]},
+    {"name": "JUL Completed Zone 2", "file_name": "Jig_Unloading - Zone_two/JigUnloading_Completedtable_zone_two.html", "headings": ["S.No", "JIG ID", "Last Updated", "Model Presents", "Action", "Lot Qty", "No of Trays", "Process Status", "Batch Status", "Current Location", "Plating Stk No", "Polishing Stk No", "Plating Color", "Polish Finish", "Tray Cate - Capacity", "Version", "Remarks"]},
+
+    {"name": "Nickel Main Table", "file_name": "Nickel_Inspection/Nickel_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Lot Status", "Current Stage", "Process Status", "Polishing Stk No", "Plating Color", "Polish Finish", "Input Source", "Remarks", "Version"]},
+    {"name": "Nickel Completed Table", "file_name": "Nickel_Inspection/NI_Completed.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "Tray Cate- Capacity", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Lot Status", "Current Stage", "Process Status", "Polishing Stk No", "Plating Color", "Polish Finish", "Input Source", "Remarks", "Version"]},
+    {"name": "NA Pick Table", "file_name": "Nickel_Audit/NickelAudit_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Lot Status", "Current Stage", "Process Status", "Polishing Stk No", "Plating Color", "Polish Finish", "Input Source", "Remarks", "Version"]},
+    {"name": "NA Completed", "file_name": "Nickel_Audit/NickelAudit_Completed.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Stk No", "Category", "Polish Finish", "Tray Cate- Capacity", "Input Source", "No of Trays", "Lot Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+    {"name": "Nickel Inspection Zone 2 Pick Table", "file_name": "Nickel_Inspection - Zone_two/Nickel_PickTable_zone_two.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Lot Status", "Current Stage", "Process Status", "Polishing Stk No", "Plating Color", "Polish Finish", "Input Source", "Remarks", "Version"]},
+    {"name": "Nickel Inspection Zone 2 Reject Table", "file_name": "Nickel_Inspection - Zone_two/NickelQc_RejectTable_zone_two.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Reject Qty", "Reject Reason", "Lot Remark"]},
+    {"name": "Nickel Inspection Zone 2 Completed Table", "file_name": "Nickel_Inspection - Zone_two/NI_Completed_zone_two.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "Tray Cate- Capacity", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Lot Status", "Current Stage", "Process Status", "Polishing Stk No", "Plating Color", "Polish Finish", "Input Source", "Remarks", "Version"]},
+    {"name": "Nickel Audit Zone 2 Pick Table", "file_name": "Nickel_Audit - Zone_two/NickelAudit_PickTable_zone_two.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Action", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Lot Status", "Current Stage", "Process Status", "Polishing Stk No", "Plating Color", "Polish Finish", "Input Source", "Remarks", "Version"]},
+    {"name": "Nickel Audit Zone 2 Completed Table", "file_name": "Nickel_Audit - Zone_two/NickelAudit_Completed_zone_two.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Polish Finish", "Tray Cate- Capacity", "Input Source", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+
+    {"name": "Spider Spindle Z1 Pick Table", "file_name": "SpiderSpindle_Z1/ss_z1_pick_table.html", "headings": ["S.No", "Date & Time", "Plating Stk No", "Action", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Tray Type", "Source", "Input Qty", "Remarks"]},
+    {"name": "Spider Spindle Z1 Completed Table", "file_name": "SpiderSpindle_Z1/ss_z1_completed.html", "headings": ["S.No", "Lot ID", "Completed At", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Tray Type", "Source", "Input Qty", "Tray ID", "Remarks"]},
+    {"name": "Spider Spindle Z2 Pick Table", "file_name": "SpiderSpindle_Z2/ss_z2_pick_table.html", "headings": ["S.No", "Date & Time", "Plating Stk No", "Action", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Tray Type", "Source", "Input Qty", "Remarks"]},
+    {"name": "Spider Spindle Z2 Completed Table", "file_name": "SpiderSpindle_Z2/ss_z2_completed.html", "headings": ["S.No", "Lot ID", "Completed At", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Tray Type", "Source", "Input Qty", "Tray ID", "Remarks"]},
+
+    {"name": "Recovery Data Upload", "file_name": "Recovery_DP/Recovery_DP_BulkUpload.html", "headings": ["Bulk Upload File", "Preview Table Edit"]},
+    {"name": "Recovery Pick Table", "file_name": "Recovery_DP/Recovery_DP_PickTable.html", "headings": COMMON_DP_HEADINGS},
+    {"name": "Recovery Completed Table", "file_name": "Recovery_DP/Recovery_DP_Completed_Table.html", "headings": COMMON_DP_HEADINGS},
+    {"name": "R-Pick Table", "file_name": "Recovery_IS/Recovery_IS_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Tray Cate- Capacity", "Input Source", "IPA Wiping", "No of Trays", "Lot Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+    {"name": "R-Completed Table", "file_name": "Recovery_IS/Recovery_IS_Completed_Table.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Tray Cate- Capacity", "Input Source", "No of Trays", "Lot Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+    {"name": "R-Accept Table", "file_name": "Recovery_IS/Recovery_IS_AcceptTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stock No", "Plating Color", "Category", "Polish Finish", "Tray Cate- Capacity", "Input Source", "No of Trays", "Lot Qty", "Accept Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+    {"name": "R-Reject Table", "file_name": "Recovery_IS/Recovery_IS_RejectTable.html", "headings": ["Select All", "S.No", "Last Updated", "Plating Stk No", "Plating Color", "Category", "Polish Finish", "Tray Cate- Capacity", "Input Source", "No of Tray", "Reject Qty", "Rejection Reasons"]},
+    {"name": "R-Brass Qc Pick Table", "file_name": "Recovery_Brass_Qc/Recovery_Brass_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Tray Cate- Capacity", "Input Source", "No of Trays", "LOT Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+    {"name": "R-Brass Qc Completed Table", "file_name": "Recovery_Brass_Qc/Recovery_Brass_Completed.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Tray Cate- Capacity", "Input Source", "No of Trays", "Lot Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+    {"name": "R-IQF Pick Table", "file_name": "Recovery_IQF/Recovery_Iqf_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Tray Cate- Capacity", "Input Source", "No of Trays", "RW Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+    {"name": "R-IQF Accept Table", "file_name": "Recovery_IQF/Recovery_Iqf_AcceptTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Polish Finish", "Source - Location", "Tray Cate- Capacity", "No of Trays", "Lot Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Batch Status", "Current Location", "Remarks"]},
+    {"name": "R-IQF Reject Table", "file_name": "Recovery_IQF/Recovery_Iqf_RejectTable.html", "headings": ["Select All", "S.No", "Last Updated", "Plating Stk No", "Polish Stk No", "Plating Color", "Polish Finish", "Source - Location", "Tray Type Capacity", "Tray Cate- Capacity", "Reject Qty", "Reject Reason", "Lot Remark"]},
+    {"name": "R-IQF Completed Table", "file_name": "Recovery_IQF/Recovery_Iqf_Completed.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Polish Finish", "Source - Location", "Tray Cate- Capacity", "No of Trays", "Lot Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Batch Status", "Current Location", "Remarks"]},
+    {"name": "R-Brass Audit Pick Table", "file_name": "Recovery_BrassAudit/Recovery_BrassAudit_PickTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Version", "Tray Cate- Capacity", "Input Source", "No of Trays", "Lot Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+    {"name": "R-Brass Audit Reject Table", "file_name": "Recovery_BrassAudit/Recovery_BrassAudit_RejectTable.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polish Stk No", "Plating Color", "Polish Finish", "Source - Location", "Tray Type Capacity", "Tray Cate- Capacity", "Reject Qty", "Reject Reason", "Lot Remark"]},
+    {"name": "R-Brass Audit Complete Table", "file_name": "Recovery_BrassAudit/Recovery_BrassAudit_Completed.html", "headings": ["S.No", "Last Updated", "Plating Stk No", "Polishing Stk No", "Plating Color", "Category", "Polish Finish", "Tray Cate- Capacity", "Input Source", "No of Trays", "Lot Qty", "Physical Qty", "Accept Qty", "Reject Qty", "Process Status", "Action", "Lot Status", "Current Stage", "Remarks"]},
+]
+
+USER_CATEGORY_MODULES = {
+    "DP User": ["Data Upload", "DP Pick Table", "DP Complete Table"],
+    "IS User": ["Input Pick Table", "Input Completed Table", "Input Accept Table", "Input Reject Table"],
+    "BQC User": ["Brass Qc Pick Table", "Brass Qc Completed Table"],
+    "IQF User": ["IQF Pick Table", "IQF Completed Table", "IQF Accept Table", "IQF Reject Table"],
+    "BA User": ["Brass Audit Pick Table", "Brass Audit Complete Table", "Brass Audit Reject Table"],
+    "JIG-L User": ["Jig Pick Table", "Jig Completed Table"],
+    "IP User": ["IP Main", "IP Completed"],
+    "JIG-UL User": ["JUL Main Table", "JUL Completed"],
+    "JIG-UL-Z2 User": ["JUL Main Table Zone 2", "JUL Completed Zone 2"],
+    "NQ User": ["Nickel Main Table", "Nickel Completed Table"],
+    "NA User": ["NA Pick Table", "NA Completed"],
+    "Nickel Inspection Zone 2 User": ["Nickel Inspection Zone 2 Pick Table", "Nickel Inspection Zone 2 Completed Table", "Nickel Inspection Zone 2 Reject Table"],
+    "Nickel Audit Zone 2 User": ["Nickel Audit Zone 2 Pick Table", "Nickel Audit Zone 2 Completed Table"],
+    "SP-Z1 User": ["Spider Spindle Z1 Pick Table", "Spider Spindle Z1 Completed Table"],
+    "SP-Z2 User": ["Spider Spindle Z2 Pick Table", "Spider Spindle Z2 Completed Table"],
+    "Recovery DP User": ["Recovery Data Upload", "Recovery Pick Table", "Recovery Completed Table"],
+    "Recovery IS User": ["R-Pick Table", "R-Completed Table", "R-Accept Table", "R-Reject Table"],
+    "Recovery BQC User": ["R-Brass Qc Pick Table", "R-Brass Qc Completed Table"],
+    "Recovery IQF User": ["R-IQF Pick Table", "R-IQF Accept Table", "R-IQF Reject Table", "R-IQF Completed Table"],
+    "Recovery BA User": ["R-Brass Audit Pick Table", "R-Brass Audit Reject Table", "R-Brass Audit Complete Table"],
+}
+
+LEGACY_MODULE_NAME_MAP = {
+    "Input Screening": ["Input Pick Table", "Input Completed Table", "Input Accept Table", "Input Reject Table"],
+    "Input Main Table": ["Input Pick Table"],
+    "Input Complete Table": ["Input Completed Table"],
+    "Brass QC Pick Table": ["Brass Qc Pick Table"],
+    "Brass QC Complete Table": ["Brass Qc Completed Table"],
+    "IQF Complete Table": ["IQF Completed Table"],
+    "Recovery Bulk Upload": ["Recovery Data Upload"],
+    "Recovery Complete Table": ["Recovery Completed Table"],
+    "Jig Loading": ["Jig Pick Table", "Jig Completed Table"],
+    "Jig Unloading": ["JUL Main Table", "JUL Completed"],
+    "IP Inspection": ["IP Main", "IP Completed"],
+    "Nickel Inspection": ["Nickel Main Table", "Nickel Completed Table"],
+    "Nickel Audit": ["NA Pick Table", "NA Completed"],
+    "Spider Spindle": ["Spider Spindle Z1 Pick Table", "Spider Spindle Z1 Completed Table", "Spider Spindle Z2 Pick Table", "Spider Spindle Z2 Completed Table"],
+    "Spider Spindle Z1": ["Spider Spindle Z1 Pick Table", "Spider Spindle Z1 Completed Table"],
+    "Spider Spindle Z2": ["Spider Spindle Z2 Pick Table", "Spider Spindle Z2 Completed Table"],
+}
+

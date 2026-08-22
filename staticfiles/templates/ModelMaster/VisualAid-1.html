@@ -1,0 +1,1105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style nonce="{{ csp_nonce }}">
+    .image-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 10px;
+    }
+
+    .image-controls .control-icon {
+        font-size: 20px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        user-select: none;
+    }
+
+    .image-controls .control-icon:hover {
+        background-color: #e0e0e0;
+    }
+
+    .image-controls .control-icon:active {
+        background-color: #d0d0d0;
+    }
+
+    .image-controls .fa {
+        font-size: 18px;
+    }
+
+    .model-title {
+        font-weight: 600;
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 15px;
+        margin-top: 0;
+        text-align: center;
+    }
+
+    .big-image-container {
+        margin-left: -15px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+    }
+
+    .big-image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+        display: block;
+        transition: transform 0.3s ease;
+        cursor: grab;
+    }
+
+    .big-image-container img:active {
+        cursor: grabbing;
+    }
+
+    .visual-aid-empty-state {
+        color: #666;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .big-image-container {
+            margin-left: 0;
+            height: 250px;
+        }
+    }
+
+    .table-container {
+        overflow-x: auto;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .scrollable-images {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+    .scrollable-image {
+        width: 22%;
+        max-width: 150px;
+        height: auto;
+        aspect-ratio: 1/1;
+        border-radius: 8px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 2px solid transparent;
+    }
+
+    .scrollable-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .scrollable-image.active {
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    }
+
+    @media (max-width: 768px) {
+        .scrollable-image {
+            width: 45%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .scrollable-image {
+            width: 100%;
+        }
+    }
+
+    .zoom-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .no-images-message {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 20px;
+    }
+
+    /* Styles for similar model links */
+    .similar-model-link {
+        color: #089da5;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        display: block;
+        padding: 5px;
+        border-radius: 4px;
+    }
+
+    .similar-model-link:hover {
+        color: #067580;
+        text-decoration: underline;
+        background-color: #f8f9fa;
+    }
+
+    .similar-model-link:focus {
+        outline: 2px solid #089da5;
+        outline-offset: 2px;
+    }
+
+    /* Highlight current model */
+    .current-model {
+        background-color: #e8f4f5;
+        font-weight: 600;
+        color: #055c61;
+    }
+
+    /* Disabled model style - keeping for potential future use */
+    .disabled-model {
+        color: #999;
+        cursor: not-allowed;
+        background-color: #f8f9fa;
+        opacity: 0.7;
+    }
+
+    .disabled-model:hover {
+        background-color: #f8f9fa;
+        color: #999;
+        text-decoration: none;
+    }
+
+    /* Badge styles for data source indicator */
+    .badge {
+        font-size: 0.7em;
+        margin-left: 5px;
+        padding: 2px 6px;
+        border-radius: 10px;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    /* Data source badge in title */
+    .data-source-badge {
+        margin-left: 10px;
+    }
+
+    .data-source-badge .badge {
+        font-size: 0.6em;
+        vertical-align: middle;
+    }
+
+    /* Small text styling in similar models */
+    .similar-model-link small {
+        font-size: 0.75em;
+        margin-top: 2px;
+    }
+
+    .similar-model-link .d-block {
+        display: block !important;
+    }
+
+    .version-value-trigger {
+        border: 0;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .version-value-trigger:hover,
+    .version-value-trigger:focus {
+        color: #067580;
+    }
+
+    .model-variant-comparison-image-wrap {
+        overflow-x: auto;
+        text-align: center;
+    }
+
+    #modelVariantComparisonImage {
+        max-width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+    }
+
+    .model-variant-comparison-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+    }
+
+    .model-variant-comparison-info {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f8fafc;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        color: #334155;
+        font-size: 0.9rem;
+    }
+
+    .model-variant-comparison-info-title {
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .model-variant-comparison-info ol {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    body.version-modal-scroll-locked {
+        overflow: hidden !important;
+        padding-right: var(--version-scrollbar-width, 0px);
+    }
+
+    #modelVariantComparisonModal {
+        overscroll-behavior: contain;
+    }
+
+    #modelVariantComparisonModal .modal-dialog {
+        max-height: calc(100vh - 40px);
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    #modelVariantComparisonModal .modal-content {
+        max-height: calc(100vh - 40px);
+        overflow: hidden;
+    }
+
+    #modelVariantComparisonModal .modal-body {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    .model-variant-comparison-gallery .version-image-inline-view-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f8fafc;
+        min-height: 180px;
+        padding: 8px;
+        cursor: zoom-in;
+    }
+
+    .model-variant-comparison-gallery img {
+        width: 100%;
+        max-height: 260px;
+        object-fit: contain;
+    }
+
+    .version-inline-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    #versionInlineZoomLabel {
+        min-width: 52px;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    #versionInlineImageViewport {
+        height: 65vh;
+        overflow: auto;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overscroll-behavior: contain;
+        border-radius: 8px;
+    }
+
+    #versionInlineImage {
+        max-width: 100%;
+        max-height: 100%;
+        transform-origin: center center;
+        transition: transform 0.15s ease;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% else %}
+        <div class="row mb-4">
+            <!-- Big Image View -->
+            <div class="col-lg-6 col-md-12 mb-3">
+                <h5 class="model-title">
+                    Model No: {{ plating_stk_no|default:"N/A" }}
+                </h5>
+                <div class="big-image-container">
+                    {% if image_urls and image_urls|length > 0 %}
+                        <img id="bigImage" src="{{ image_urls.0 }}" alt="Big View" />
+                    {% else %}
+                        <div class="visual-aid-empty-state">
+                            No image available
+                        </div>
+                    {% endif %}
+                    <div class="zoom-indicator" id="zoomIndicator">100%</div>
+                </div>
+                <div class="image-controls">
+                    <span class="control-icon" id="prevBtn"><i class="fa fa-arrow-left"></i></span>
+                    <span class="control-icon" id="zoomInBtn"><i class="fa fa-search-plus"></i></span>
+                    <span class="control-icon" id="zoomOutBtn"><i class="fa fa-search"></i></span>
+                    <span class="control-icon" id="nextBtn"><i class="fa fa-arrow-right"></i></span>
+                </div>
+            </div>
+            
+            <!-- Table -->
+            <div class="col-lg-6 col-md-12">
+                <div class="row">
+                    <!-- Main Model Details Table -->
+                    <div class="col-md-8">
+                        <div class="table-container">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>Model No</th>
+                                        <td>{{ plating_stk_no|default:"N/A" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Version</th>
+                                        <td>
+                                            {% if version and plating_stk_no %}
+                                                <button
+                                                    type="button"
+                                                    class="model-variant-comparison-trigger version-value-trigger"
+                                                    data-model-number="{{ plating_stk_no }}"
+                                                    data-version="{{ version }}"
+                                                    aria-label="View version differences for version {{ version }}"
+                                                >
+                                                    {{ version }}
+                                                </button>
+                                            {% else %}
+                                                {{ version|default:"N/A" }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Variants</th>
+                                        <td>
+                                            {% if modelmaster_versions %}
+                                                {{ modelmaster_versions|join:", " }}
+                                            {% else %}
+                                                <span class="text-muted">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% if data_source == "ModelMasterCreation" %}
+                                        <tr>
+                                            <th>Changes</th>
+                                            <td>{{ changes|default:"N/A" }}</td>
+                                        </tr>
+                                    {% else %}
+
+                                    {% endif %}
+
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Similar Models Table with Links -->
+                    <div class="col-md-4">
+                        <div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="background-color: #089da5; color: #fff;">
+                                            Similar models
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if same_model_list %}
+                                        {% for model_info in same_model_list %}
+                                            <tr>
+                                                <td class="text-center">
+                                                    {% if model_info.plating_stk_no == plating_stk_no %}
+                                                        <!-- Current model - no link, just highlight -->
+                                                        <span class="similar-model-link current-model">
+                                                            {{ model_info.plating_stk_no }}
+
+                                                        </span>
+                                                    {% else %}
+                                                        <!-- All other models are clickable since they exist in ModelMaster -->
+                                                        <a href="?plating_stk_no={{ model_info.plating_stk_no }}" 
+                                                           class="similar-model-link"
+                                                           title="View details for {{ model_info.plating_stk_no }}{% if model_info.version %} (Version: {{ model_info.version }}){% endif %}">
+                                                            {{ model_info.plating_stk_no }}
+
+                                                
+                                                        </a>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td class="text-center text-muted">No similar models found</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            
+                <!-- 360° View -->
+                <div class="mt-4">
+                   <!--  <h5 class="text-center">360° View</h5> -->
+                    <div class="scrollable-images" id="imageGallery">
+                        {% if image_urls and image_urls|length > 0 %}
+                            {% for url in image_urls %}
+                                <img src="{{ url }}" 
+                                     alt="360 View {{ forloop.counter }}" 
+                                     class="scrollable-image {% if forloop.first %}active{% endif %}" 
+                                     data-index="{{ forloop.counter0 }}" />
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-images-message visual-aid-empty-state">
+                                No image available
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="modelVariantComparisonModal" tabindex="-1" aria-labelledby="modelVariantComparisonTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title" id="modelVariantComparisonTitle"></h5>
+                    <div class="text-muted small">
+                        Model number: <span id="modelVariantComparisonModelNumber">N/A</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modelVariantComparisonLoading" class="text-center py-4">
+                    Loading version differences...
+                </div>
+                <div id="modelVariantComparisonMessage" class="alert alert-info d-none" role="alert"></div>
+                <p id="modelVariantComparisonDescription" class="text-muted d-none"></p>
+                <div id="modelVariantComparisonInfo" class="model-variant-comparison-info d-none"></div>
+                <div id="versionGalleryView">
+                    <div class="model-variant-comparison-image-wrap d-none" id="modelVariantComparisonImageWrap">
+                        <button type="button" class="version-image-inline-view-trigger" id="modelVariantComparisonSingleImageBtn">
+                            <img id="modelVariantComparisonImage" src="" alt="Model version comparison" />
+                        </button>
+                    </div>
+                    <div class="model-variant-comparison-gallery d-none" id="modelVariantComparisonGallery"></div>
+                </div>
+                <div id="versionInlineImageView" hidden>
+                    <div class="version-inline-toolbar">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="versionInlineBackBtn">Back to Images</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="versionInlineZoomOutBtn">-</button>
+                        <span id="versionInlineZoomLabel">100%</span>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="versionInlineZoomInBtn">+</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="versionInlineResetBtn">Reset</button>
+                    </div>
+                    <div id="versionInlineImageViewport">
+                        <img id="versionInlineImage" src="" alt="Version reference image">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function() {
+    const bigImg = document.getElementById('bigImage');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const zoomIndicator = document.getElementById('zoomIndicator');
+    const smallImages = document.querySelectorAll('.scrollable-image');
+    
+    let currentImageIndex = 0;
+    let zoomLevel = 1;
+    const zoomStep = 0.2;
+    const zoomMin = 0.5;
+    const zoomMax = 3;
+
+    // Build image URLs array from Django template
+    const imageUrls = [
+        {% if image_urls and image_urls|length > 0 %}
+            {% for url in image_urls %}
+                "{{ url|escapejs }}"{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
+    ].map(function(rawUrl) {
+        const value = String(rawUrl || "").trim();
+        if (!value) return "";
+
+        try {
+            const parsed = new URL(value, window.location.origin);
+            if (parsed.origin === window.location.origin) {
+                return parsed.pathname + parsed.search + parsed.hash;
+            }
+            return parsed.href;
+        } catch (error) {
+            return value;
+        }
+    }).filter(Boolean);
+
+    console.log('🖼️ Loaded images:', imageUrls);
+
+    const visualAidFallback = "{% static 'assets/images/imagePlaceholder.jpg' %}";
+
+    function applySafeImageSource(imageElement, sourceUrl) {
+        if (!imageElement) return;
+
+        const normalizedSource = String(sourceUrl || "").trim();
+        if (normalizedSource) {
+            imageElement.src = normalizedSource;
+        }
+
+        imageElement.addEventListener("error", function handleImageError() {
+            imageElement.removeEventListener("error", handleImageError);
+            if (
+                visualAidFallback &&
+                imageElement.getAttribute("src") !== visualAidFallback
+            ) {
+                imageElement.src = visualAidFallback;
+            }
+        });
+    }
+
+    if (bigImg && imageUrls.length > 0) {
+        applySafeImageSource(bigImg, imageUrls[0]);
+    }
+
+    smallImages.forEach(function(imageElement, index) {
+        if (imageUrls[index]) {
+            applySafeImageSource(imageElement, imageUrls[index]);
+        }
+    });
+
+    // Update zoom indicator
+    function updateZoomIndicator() {
+        zoomIndicator.textContent = Math.round(zoomLevel * 100) + '%';
+    }
+
+    // Update active image indicator
+    function updateActiveImage() {
+        smallImages.forEach((img, index) => {
+            img.classList.toggle('active', index === currentImageIndex);
+        });
+    }
+
+    // Change big image
+    function changeBigImage(index) {
+        if (index >= 0 && index < imageUrls.length) {
+            currentImageIndex = index;
+            applySafeImageSource(bigImg, imageUrls[index]);
+            updateActiveImage();
+            // Reset zoom when changing image
+            zoomLevel = 1;
+            bigImg.style.transform = `scale(${zoomLevel})`;
+            updateZoomIndicator();
+            
+            console.log(`🔄 Changed to image ${index + 1}/${imageUrls.length}`);
+        }
+    }
+
+    // Only initialize controls if we have images
+    if (imageUrls.length > 0) {
+        // Zoom In
+        zoomInBtn.addEventListener('click', function() {
+            if (zoomLevel < zoomMax) {
+                zoomLevel = Math.min(zoomLevel + zoomStep, zoomMax);
+                bigImg.style.transform = `scale(${zoomLevel})`;
+                updateZoomIndicator();
+                console.log(`🔍 Zoom in: ${Math.round(zoomLevel * 100)}%`);
+            }
+        });
+
+        // Zoom Out
+        zoomOutBtn.addEventListener('click', function() {
+            if (zoomLevel > zoomMin) {
+                zoomLevel = Math.max(zoomLevel - zoomStep, zoomMin);
+                bigImg.style.transform = `scale(${zoomLevel})`;
+                updateZoomIndicator();
+                console.log(`🔍 Zoom out: ${Math.round(zoomLevel * 100)}%`);
+            }
+        });
+
+        // Previous Image
+        prevBtn.addEventListener('click', function() {
+            const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : imageUrls.length - 1;
+            changeBigImage(newIndex);
+        });
+
+        // Next Image
+        nextBtn.addEventListener('click', function() {
+            const newIndex = currentImageIndex < imageUrls.length - 1 ? currentImageIndex + 1 : 0;
+            changeBigImage(newIndex);
+        });
+
+        // Small image click handlers
+        smallImages.forEach((img, index) => {
+            img.addEventListener('click', function() {
+                changeBigImage(index);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    prevBtn.click();
+                    break;
+                case 'ArrowRight':
+                    nextBtn.click();
+                    break;
+                case '+':
+                case '=':
+                    zoomInBtn.click();
+                    break;
+                case '-':
+                    zoomOutBtn.click();
+                    break;
+            }
+        });
+
+        // Mouse wheel zoom
+        bigImg.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomInBtn.click();
+            } else {
+                zoomOutBtn.click();
+            }
+        });
+
+        // Add visual feedback for controls
+        [zoomInBtn, zoomOutBtn, prevBtn, nextBtn].forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'scale(1)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Initialize
+        updateActiveImage();
+        updateZoomIndicator();
+        
+        console.log(`✅ VisualAid initialized with ${imageUrls.length} images`);
+    } else {
+        console.log('⚠️ No images available for this model');
+        // Disable navigation controls if no images
+        [prevBtn, nextBtn, zoomInBtn, zoomOutBtn].forEach(btn => {
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+        });
+    }
+
+    // Add smooth loading animation for similar model links
+    const similarLinks = document.querySelectorAll('.similar-model-link[href]');
+    similarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Add loading indicator
+            this.style.opacity = '0.7';
+            this.innerHTML += ' <i class="fa fa-spinner fa-spin"></i>';
+        });
+    });
+});
+</script>
+
+<script nonce="{{ csp_nonce }}">
+document.addEventListener("DOMContentLoaded", function() {
+    const triggers = document.querySelectorAll('.model-variant-comparison-trigger');
+    const modalElement = document.getElementById('modelVariantComparisonModal');
+
+    if (!triggers.length || !modalElement) {
+        return;
+    }
+
+    const modalTitle = document.getElementById('modelVariantComparisonTitle');
+    const modalModelNumber = document.getElementById('modelVariantComparisonModelNumber');
+    const loadingState = document.getElementById('modelVariantComparisonLoading');
+    const messageState = document.getElementById('modelVariantComparisonMessage');
+    const descriptionState = document.getElementById('modelVariantComparisonDescription');
+    const infoState = document.getElementById('modelVariantComparisonInfo');
+    const imageWrap = document.getElementById('modelVariantComparisonImageWrap');
+    const comparisonImage = document.getElementById('modelVariantComparisonImage');
+    const comparisonGallery = document.getElementById('modelVariantComparisonGallery');
+    const galleryView = document.getElementById('versionGalleryView');
+    const inlineView = document.getElementById('versionInlineImageView');
+    const inlineImage = document.getElementById('versionInlineImage');
+    const inlineBackBtn = document.getElementById('versionInlineBackBtn');
+    const inlineZoomOutBtn = document.getElementById('versionInlineZoomOutBtn');
+    const inlineZoomInBtn = document.getElementById('versionInlineZoomInBtn');
+    const inlineResetBtn = document.getElementById('versionInlineResetBtn');
+    const inlineZoomLabel = document.getElementById('versionInlineZoomLabel');
+    let versionInlineScale = 1;
+    const VERSION_INLINE_MIN_SCALE = 0.5;
+    const VERSION_INLINE_MAX_SCALE = 4;
+    const VERSION_INLINE_SCALE_STEP = 0.25;
+
+    function escapeVersionInfoText(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function buildVersionInfoLines(modelNumber, info) {
+        const normalizedModel = String(modelNumber || '').trim().toUpperCase();
+        const details = info || {};
+        const lines = [];
+
+        if (normalizedModel === '2617') {
+            if (details.o_ring_pocket) {
+                lines.push('Presence of O Ring Pocket in Case - ' + details.o_ring_pocket);
+            }
+            if (details.cph_depth) {
+                lines.push('CPH Depth = ' + details.cph_depth);
+            }
+            if (details.cph_centre_to_dial_butting) {
+                lines.push('CPH Centre to Dial Butting = ' + details.cph_centre_to_dial_butting);
+            }
+            return lines;
+        }
+
+        if (normalizedModel === '1805') {
+            if (details.outer_wall_thickness) {
+                lines.push('Outer Wall Thickness = ' + details.outer_wall_thickness + ' mm');
+            }
+            if (details.cph_centre_to_bc_butting) {
+                lines.push('CPH Centre to BC Butting = ' + details.cph_centre_to_bc_butting + ' mm');
+            }
+            if (details.crm_length) {
+                lines.push('CRM Length = ' + details.crm_length + ' mm');
+            }
+            return lines;
+        }
+
+        if (details.o_ring_pocket) {
+            lines.push('Presence of O Ring Pocket in Case - ' + details.o_ring_pocket);
+        }
+        if (details.dial_slant_finish) {
+            lines.push('Dial Slant Finish - ' + details.dial_slant_finish);
+        }
+        if (details.thickness && details.bcb_to_lug_bottom) {
+            lines.push('Thickness = ' + details.thickness + ' and BCB to lug bottom = ' + details.bcb_to_lug_bottom);
+        } else if (details.thickness) {
+            lines.push('Thickness = ' + details.thickness);
+        } else if (details.bcb_to_lug_bottom) {
+            lines.push('BCB to lug bottom = ' + details.bcb_to_lug_bottom);
+        }
+        if (details.dial_slant_angle) {
+            lines.push('Dial Slant Angle = ' + details.dial_slant_angle + ' degree');
+        }
+        if (details.dial_slant_height) {
+            lines.push('Dial Slant Height = ' + details.dial_slant_height);
+        }
+
+        return lines;
+    }
+
+    function renderVersionInfo(modelNumber, info) {
+        if (!infoState) return;
+        const lines = buildVersionInfoLines(modelNumber, info);
+        if (!lines.length) {
+            infoState.classList.add('d-none');
+            infoState.innerHTML = '';
+            return;
+        }
+
+        infoState.innerHTML = '<div class="model-variant-comparison-info-title">Identification</div><ol>' +
+            lines.map(function(line) {
+                return '<li>' + escapeVersionInfoText(line) + '</li>';
+            }).join('') +
+            '</ol>';
+        infoState.classList.remove('d-none');
+    }
+
+    function applyVersionInlineScale() {
+        if (inlineImage) {
+            inlineImage.style.transform = `scale(${versionInlineScale})`;
+        }
+        if (inlineZoomLabel) {
+            inlineZoomLabel.textContent = `${Math.round(versionInlineScale * 100)}%`;
+        }
+    }
+
+    function resetVersionInlineViewer() {
+        versionInlineScale = 1;
+        if (inlineImage) {
+            inlineImage.removeAttribute('src');
+            inlineImage.style.transform = 'scale(1)';
+        }
+        if (inlineZoomLabel) {
+            inlineZoomLabel.textContent = '100%';
+        }
+        if (inlineView) {
+            inlineView.hidden = true;
+        }
+        if (galleryView) {
+            galleryView.hidden = false;
+        }
+    }
+
+    function showVersionImageInline(imageUrl) {
+        if (!imageUrl || !inlineImage || !inlineView || !galleryView) {
+            return;
+        }
+        versionInlineScale = 1;
+        inlineImage.src = imageUrl;
+        galleryView.hidden = true;
+        inlineView.hidden = false;
+        applyVersionInlineScale();
+    }
+
+    if (comparisonGallery && comparisonGallery.dataset.inlineViewBound !== 'true') {
+        comparisonGallery.dataset.inlineViewBound = 'true';
+        comparisonGallery.addEventListener('click', function(event) {
+            const trigger = event.target.closest('.version-image-inline-view-trigger');
+            if (!trigger) return;
+            event.preventDefault();
+            event.stopPropagation();
+            showVersionImageInline(trigger.dataset.imageUrl);
+        });
+    }
+
+    if (imageWrap && imageWrap.dataset.inlineViewBound !== 'true') {
+        imageWrap.dataset.inlineViewBound = 'true';
+        imageWrap.addEventListener('click', function(event) {
+            const trigger = event.target.closest('.version-image-inline-view-trigger');
+            if (!trigger) return;
+            event.preventDefault();
+            event.stopPropagation();
+            showVersionImageInline(trigger.dataset.imageUrl);
+        });
+    }
+
+    if (inlineBackBtn) {
+        inlineBackBtn.addEventListener('click', resetVersionInlineViewer);
+    }
+    if (inlineZoomOutBtn) {
+        inlineZoomOutBtn.addEventListener('click', function() {
+            versionInlineScale = Math.max(VERSION_INLINE_MIN_SCALE, versionInlineScale - VERSION_INLINE_SCALE_STEP);
+            applyVersionInlineScale();
+        });
+    }
+    if (inlineZoomInBtn) {
+        inlineZoomInBtn.addEventListener('click', function() {
+            versionInlineScale = Math.min(VERSION_INLINE_MAX_SCALE, versionInlineScale + VERSION_INLINE_SCALE_STEP);
+            applyVersionInlineScale();
+        });
+    }
+    if (inlineResetBtn) {
+        inlineResetBtn.addEventListener('click', function() {
+            versionInlineScale = 1;
+            applyVersionInlineScale();
+        });
+    }
+
+    function getModalInstance() {
+        if (window.bootstrap && window.bootstrap.Modal) {
+            return window.bootstrap.Modal.getOrCreateInstance(modalElement);
+        }
+        return null;
+    }
+
+    function openModalFallback() {
+        modalElement.style.display = 'block';
+        modalElement.classList.add('show');
+        modalElement.removeAttribute('aria-hidden');
+        modalElement.setAttribute('aria-modal', 'true');
+        document.body.classList.add('modal-open');
+        lockVersionModalScroll();
+    }
+
+    function lockVersionModalScroll() {
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        document.documentElement.style.setProperty('--version-scrollbar-width', `${scrollbarWidth}px`);
+        document.body.classList.add('version-modal-scroll-locked');
+    }
+
+    function unlockVersionModalScroll() {
+        document.body.classList.remove('version-modal-scroll-locked');
+        document.documentElement.style.removeProperty('--version-scrollbar-width');
+    }
+
+    function resetModal(modelNumber) {
+        resetVersionInlineViewer();
+        modalTitle.textContent = '';
+        modalModelNumber.textContent = modelNumber || 'N/A';
+        loadingState.classList.remove('d-none');
+        messageState.classList.add('d-none');
+        messageState.textContent = '';
+        descriptionState.classList.add('d-none');
+        descriptionState.textContent = '';
+        if (infoState) {
+            infoState.classList.add('d-none');
+            infoState.innerHTML = '';
+        }
+        imageWrap.classList.add('d-none');
+        comparisonImage.removeAttribute('src');
+        if (comparisonGallery) {
+            comparisonGallery.classList.add('d-none');
+            comparisonGallery.innerHTML = '';
+        }
+    }
+
+    function showMessage(message) {
+        loadingState.classList.add('d-none');
+        messageState.textContent = message;
+        messageState.classList.remove('d-none');
+    }
+
+    modalElement.addEventListener('shown.bs.modal', lockVersionModalScroll);
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        unlockVersionModalScroll();
+        resetVersionInlineViewer();
+    });
+
+    triggers.forEach(function(trigger) {
+        trigger.addEventListener('click', function() {
+            const modelNumber = trigger.getAttribute('data-model-number') || '';
+            const version = trigger.getAttribute('data-version') || '';
+            resetModal(modelNumber);
+
+            const modal = getModalInstance();
+            if (modal) {
+                modal.show();
+            } else {
+                openModalFallback();
+            }
+
+            const params = new URLSearchParams({ model_number: modelNumber });
+            if (version) {
+                params.set('version', version);
+            }
+
+            fetch('/adminportal/api/model-version-comparison/?' + params.toString(), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin'
+            })
+                .then(function(response) {
+                    return response.json().then(function(data) {
+                        return {
+                            ok: response.ok,
+                            data: data
+                        };
+                    });
+                })
+                .then(function(result) {
+                    const data = result.data || {};
+                    if (!result.ok || !data.success) {
+                        showMessage('Coming soon');
+                        return;
+                    }
+
+                    loadingState.classList.add('d-none');
+                    modalTitle.textContent = data.title || '';
+                    modalModelNumber.textContent = data.model_number || modelNumber || 'N/A';
+
+                    if (data.description) {
+                        descriptionState.textContent = data.description;
+                        descriptionState.classList.remove('d-none');
+                    }
+
+                    renderVersionInfo(data.model_number || modelNumber, data.info);
+
+                    const images = Array.isArray(data.images) && data.images.length ? data.images : [data.comparison_image].filter(Boolean);
+                    if (images.length > 1 && comparisonGallery) {
+                        comparisonGallery.innerHTML = images.map(function(imageUrl) {
+                            const safeUrl = encodeURI(imageUrl);
+                            return '<button type="button" class="version-image-inline-view-trigger" data-image-url="' + safeUrl + '" data-image-name="Version reference image"><img src="' + safeUrl + '" alt="Version reference image"></button>';
+                        }).join('');
+                        comparisonGallery.classList.remove('d-none');
+                    } else if (images.length) {
+                        comparisonImage.src = images[0];
+                        const singleImageBtn = document.getElementById('modelVariantComparisonSingleImageBtn');
+                        if (singleImageBtn) {
+                            singleImageBtn.dataset.imageUrl = images[0];
+                        }
+                        imageWrap.classList.remove('d-none');
+                    }
+                })
+                .catch(function() {
+                    showMessage('Unable to load the variant comparison image. Please try again.');
+                });
+        });
+    });
+});
+</script>
+
+{% endblock %}
